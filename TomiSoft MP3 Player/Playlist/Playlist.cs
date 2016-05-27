@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace TomiSoft_MP3_Player {
+	/// <summary>
+	/// Represents a playlist.
+	/// </summary>
 	class Playlist : ObservableCollection<SongInfo> {
 		private int currentlyPlaying;
 
@@ -46,6 +49,9 @@ namespace TomiSoft_MP3_Player {
 			}
 		}
 
+		/// <summary>
+		/// Creates an empty playlist.
+		/// </summary>
 		public Playlist() : base() {
 			this.CurrentlyPlaying = 0;
 			this.CollectionChanged += PlaylistChanged;
