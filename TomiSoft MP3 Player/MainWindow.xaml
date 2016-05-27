@@ -1,0 +1,26 @@
+﻿<Window x:Class="TomiSoft_MP3_Player.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:local="clr-namespace:TomiSoft_MP3_Player"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="TomiSoft MP3 Player" SizeToContent="WidthAndHeight" Background="#FF3C3C3C" KeyUp="Window_KeyUp"
+        ResizeMode="CanMinimize"
+        AllowDrop="True"
+        Drop="Window_Drop">
+    <Window.Resources>
+        <local:BassChannelPositionConverter x:Key="BassChannelPositionConverter" />
+    </Window.Resources>
+    <Grid Height="336" Width="270" Name="UI_Player">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="99"/>
+        </Grid.RowDefinitions>
+        <local:PlaybackControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" x:Name="PlaybackController">
+            <local:PlaybackControl.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Black" Offset="1"/>
+                    <GradientStop Color="#FF151515"/>
+                </LinearGradientBrush>
+            </local:PlaybackControl.Background>
+        </local:PlaybackControl>
+    </Grid>
+</Window>
