@@ -44,10 +44,19 @@ namespace TomiSoft_MP3_Player {
 
 		/// <summary>
 		/// Sends the file list to the server then closes the application.
+		/// Currently only the first file is sent.
 		/// </summary>
 		private void SendFileListToServer() {
-			using (PlayerClient Client = new PlayerClient()) {
-				Client.Play(@"D:\Zenék\IA - IA IA ★ Night of Desire.mp3");
+			try {
+				using (PlayerClient Client = new PlayerClient()) {
+					string[] args = Environment.GetCommandLineArgs();
+
+					if (args.Length > 0)
+						Client.Play(args[0]);
+				}
+			}
+			catch (Exception e) {
+				PlayerUtils.ErrorMessageBox("TomiSoft MP3 Player", e.Message);
 			}
 
 			Environment.Exit(0);
