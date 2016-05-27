@@ -8,14 +8,28 @@ using System.Windows.Threading;
 using Un4seen.Bass;
 
 namespace TomiSoft_MP3_Player {
+	/// <summary>
+	/// Provides basic functionality for playback handlers that uses
+	/// BASS to play the media.
+	/// </summary>
 	abstract class BassPlaybackAbstract : IPlaybackManager {
 		private bool playing;
 		private int channelID;
-		public event PropertyChangedEventHandler PropertyChanged;
-		public event Action SongEnded;
-
 		private DispatcherTimer PlaybackTimer;
 
+		/// <summary>
+		/// Occurs when a property is changed.
+		/// </summary>
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		/// <summary>
+		/// Occurs when the song is ended.
+		/// </summary>
+		public event Action SongEnded;
+
+		/// <summary>
+		/// Gets if playback is running.
+		/// </summary>
 		public bool IsPlaying {
 			get {
 				return this.playing;
@@ -33,6 +47,9 @@ namespace TomiSoft_MP3_Player {
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the playback volume (min. 0, max. 100).
+		/// </summary>
 		public int Volume {
 			get {
 				float vol = 1;
@@ -48,6 +65,9 @@ namespace TomiSoft_MP3_Player {
 			}
 		}
 
+		/// <summary>
+		/// Gets the left peak level (min. 0, max. 32768).
+		/// </summary>
 		public int LeftPeak {
 			get {
 				if (!IsPlaying)
@@ -57,6 +77,9 @@ namespace TomiSoft_MP3_Player {
 			}
 		}
 
+		/// <summary>
+		/// Gets the right peak level (min. 0, max. 32768).
+		/// </summary>
 		public int RightPeak {
 			get {
 				if (!IsPlaying)
@@ -66,12 +89,18 @@ namespace TomiSoft_MP3_Player {
 			}
 		}
 
+		/// <summary>
+		/// Gets the BASS playback channel's ID.
+		/// </summary>
 		public int ChannelID {
 			get {
 				return this.channelID;
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the playback position in bytes (min. 0, max. Length).
+		/// </summary>
 		public long Position {
 			get {
 				return Bass.BASS_ChannelGetPosition(this.ChannelID);
@@ -89,12 +118,19 @@ namespace TomiSoft_MP3_Player {
 			}
 		}
 
+		/// <summary>
+		/// Gets the song's length in bytes.
+		/// </summary>
 		public long Length {
 			get {
 				return Bass.BASS_ChannelGetLength(this.ChannelID);
 			}
 		}
 
+		/// <summary>
+		/// Initializes a new instance of BassPlaybackAbstract using the given channel ID.
+		/// </summary>
+		/// <param name="ChannelID">The channel ID provided by BASS.</param>
 		public BassPlaybackAbstract(int ChannelID) {
 			if (ChannelID == 0) {
 				throw new Exception("Nem sikerült megnyitni a fájlt: " + Bass.BASS_ErrorGetCode());
@@ -119,12 +155,18 @@ namespace TomiSoft_MP3_Player {
 			this.IsPlaying = false;
 		}
 
+		/// <summary>
+		/// Plays the stream.
+		/// </summary>
 		public void Play() {
 			if (Bass.BASS_ChannelPlay(this.ChannelID, false)) {
 				this.IsPlaying = true;
 			}
 		}
 
+		/// <summary>
+		/// Stops the playback and sets the playback position to 0.
+		/// </summary>
 		public void Stop() {
 			if (Bass.BASS_ChannelStop(this.ChannelID)) {
 				this.IsPlaying = false;
@@ -133,6 +175,9 @@ namespace TomiSoft_MP3_Player {
 			}
 		}
 
+		/// <summary>
+		/// Stops the playback but does not rewind the playback position to 0.
+		/// </summary>
 		public void Pause() {
 			if (Bass.BASS_ChannelPause(this.ChannelID)) {
 				this.IsPlaying = false;
@@ -140,6 +185,9 @@ namespace TomiSoft_MP3_Player {
 			}
 		}
 
+		/// <summary>
+		/// Closes the BASS channel.
+		/// </summary>
 		public void Dispose() {
 			if (this.IsPlaying) {
 				this.Stop();
@@ -148,12 +196,19 @@ namespace TomiSoft_MP3_Player {
 			Bass.BASS_StreamFree(this.ChannelID);
 		}
 
+		/// <summary>
+		/// Fires the PropertyChanged event using the given property name.
+		/// </summary>
+		/// <param name="info">The property's name that changed.</param>
 		private void NotifyPropertyChanged(String info) {
 			if (PropertyChanged != null) {
 				PropertyChanged(this, new PropertyChangedEventArgs(info));
 			}
 		}
 
+		/// <summary>
+		/// Fires PropertyChanged event for all properties.
+		/// </summary>
 		private void NotifyAll() {
 			foreach (var Property in this.GetType().GetProperties()) {
 				this.NotifyPropertyChanged(Property.Name);
