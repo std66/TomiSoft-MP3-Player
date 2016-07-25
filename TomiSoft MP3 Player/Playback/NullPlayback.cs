@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TomiSoft_MP3_Player {
 	class NullPlayback : IPlaybackManager {
@@ -35,6 +31,12 @@ namespace TomiSoft_MP3_Player {
 		public int Volume {
 			get;
 			set;
+		}
+
+		public ISongInfo SongInfo {
+			get {
+				return null;
+			}
 		}
 
 		public void Play() {

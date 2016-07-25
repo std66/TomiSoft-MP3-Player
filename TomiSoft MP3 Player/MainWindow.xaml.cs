@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Microsoft.Win32;
 using Un4seen.Bass;
 
@@ -85,6 +74,7 @@ namespace TomiSoft_MP3_Player {
 		}
 
 		private void Window_KeyUp(object sender, KeyEventArgs e) {
+			//When CTRL+O is pressed, a file open dialog appears that lets the user to load a file.
 			if (e.Key == Key.O && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) {
 				if (this.OpenFile()) {
 					this.PlayerOperaion(() => this.Player.Play());
@@ -102,6 +92,12 @@ namespace TomiSoft_MP3_Player {
 				this.AttachPlayer(
 					PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)
 				);
+
+				Toast t = new Toast(System.Reflection.Assembly.GetExecutingAssembly().FullName) {
+					Title = "Próba cím",
+					Content = "Nevenincs Előadó"
+				};
+				t.Show();
 			}
 		}
 
@@ -133,7 +129,7 @@ namespace TomiSoft_MP3_Player {
 				this.AttachPlayer(
 					PlaybackFactory.LoadFile(Filename)
 				);
-
+				
 				return true;
 			}
 			catch (Exception e) {
@@ -175,6 +171,22 @@ namespace TomiSoft_MP3_Player {
 			PlaybackController.Player = this.Player;
 
 			this.Player.SongEnded += this.PlayNext;
+
+			//Display album art and send toast notification
+			System.Drawing.Image AlbumImage = Properties.Resources.AbstractAlbumArt;
+			if (Player.SongInfo != null) {
+				AlbumImage = this.Player.SongInfo.AlbumImage;
+				if (AlbumImage == null)
+					AlbumImage = Properties.Resources.AbstractAlbumArt;
+
+				Toast t = new Toast(System.Reflection.Assembly.GetExecutingAssembly().FullName) {
+					Title = this.Player.SongInfo.Title,
+					Content = this.Player.SongInfo.Artist,
+					Image = AlbumImage
+				};
+				t.Show();
+			}
+			albumArt.Source = AlbumImage.ToImageSource();
 		}
 
 		/// <summary>

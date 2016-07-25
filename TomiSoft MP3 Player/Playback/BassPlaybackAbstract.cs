@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 using Un4seen.Bass;
 
@@ -16,6 +12,7 @@ namespace TomiSoft_MP3_Player {
 		private bool playing;
 		private int channelID;
 		private DispatcherTimer PlaybackTimer;
+		protected ISongInfo songInfo;
 
 		/// <summary>
 		/// Occurs when a property is changed.
@@ -124,6 +121,15 @@ namespace TomiSoft_MP3_Player {
 		public long Length {
 			get {
 				return Bass.BASS_ChannelGetLength(this.ChannelID);
+			}
+		}
+
+		/// <summary>
+		/// Gets informations about the song.
+		/// </summary>
+		public ISongInfo SongInfo {
+			get {
+				return this.songInfo;
 			}
 		}
 

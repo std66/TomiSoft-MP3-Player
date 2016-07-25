@@ -22,5 +22,6 @@
                 </LinearGradientBrush>
             </local:PlaybackControl.Background>
         </local:PlaybackControl>
+        <Image x:Name="albumArt" HorizontalAlignment="Left" Height="217" VerticalAlignment="Top" Width="217" Margin="27,10,0,0"/>
     </Grid>
 </Window>

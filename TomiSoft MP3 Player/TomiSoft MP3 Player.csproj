@@ -40,6 +40,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -47,6 +48,12 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Windows.Data">
+      <HintPath>C:\Windows\System32\WinMetadata\Windows.Data.winmd</HintPath>
+    </Reference>
+    <Reference Include="Windows.UI">
+      <HintPath>C:\Windows\System32\WinMetadata\Windows.UI.winmd</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -62,12 +69,16 @@
     <Compile Include="PlaybackControl.xaml.cs">
       <DependentUpon>PlaybackControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Playback\BassSongInfo.cs" />
+    <Compile Include="Playback\ISongInfo.cs" />
     <Compile Include="Playback\NullPlayback.cs" />
     <Compile Include="Playlist\Playlist.cs" />
     <Compile Include="Communication\PlayerClient.cs" />
     <Compile Include="Communication\PlayerServer.cs" />
+    <Compile Include="Utils\MiscExtensions.cs" />
     <Compile Include="Utils\SongInfo.cs" />
     <Compile Include="Utils\StringRegexExtensions.cs" />
+    <Compile Include="Windows\Toast.cs" />
     <Compile Include="Windows\User32.cs" />
     <Compile Include="Utils\PlayerUtils.cs" />
     <Page Include="MainWindow.xaml">
@@ -168,6 +179,7 @@
     <Content Include="Bass\x86\bass_fx.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\default.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
