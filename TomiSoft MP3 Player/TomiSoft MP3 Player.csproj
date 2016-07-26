@@ -72,6 +72,8 @@
     <Compile Include="Playback\BassSongInfo.cs" />
     <Compile Include="Playback\ISongInfo.cs" />
     <Compile Include="Playback\NullPlayback.cs" />
+    <Compile Include="Exceptions\BassInitializationException.cs" />
+    <Compile Include="Exceptions\BassLoadException.cs" />
     <Compile Include="Playlist\Playlist.cs" />
     <Compile Include="Communication\PlayerClient.cs" />
     <Compile Include="Communication\PlayerServer.cs" />
