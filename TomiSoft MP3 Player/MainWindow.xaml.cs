@@ -34,20 +34,10 @@ namespace TomiSoft_MP3_Player {
 			);
 
 			//Load BASS with its all plugins.
-			bool SuccessfullyLoaded = false;
-			try {
-				BassManager.Load();
-				SuccessfullyLoaded = true;
-			}
-			catch (BassInitializationException) {
-				PlayerUtils.ErrorMessageBox("TomiSoft MP3 Player", "Valami miatt nem sikerült a hangkimenetet beállítani.");
-			}
-			catch (Exception e) when (e is BassLoadException || e is IOException) {
-				PlayerUtils.ErrorMessageBox("TomiSoft MP3 Player", e.Message);
-			}
-			
-			if (!SuccessfullyLoaded)
+			if (!BassManager.Load()) {
+				PlayerUtils.ErrorMessageBox("TomiSoft MP3 Player", "Nem sikerült betölteni a BASS-t.");
 				Environment.Exit(1);
+			}
 		}
 
 		/// <summary>

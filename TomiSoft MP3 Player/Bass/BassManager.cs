@@ -17,19 +17,24 @@ namespace TomiSoft_MP3_Player {
 		/// output device. BASS DLLs must be located in the directory
 		/// \Bass\x64 and \Bass\x86.
 		/// </summary>
-		public static void Load() {
+		/// <returns>True if BASS is successfully loaded, false if not.</returns>
+		public static bool Load() {
 			string Directory = String.Format(
 				@"{0}\Bass\{1}\",
 				Environment.CurrentDirectory,
 				Environment.Is64BitProcess ? "x64" : "x86"
 			);
 
-			LoadBass(Directory);
+			if (!LoadBass(Directory))
+				return false;
+
 			LoadBassPlugins(Directory);
 
 			if (!Bass.BASS_Init(-1, 44800, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero)) {
-				throw new BassInitializationException("Nem sikerült elindítani a BASS-t.");
+				return false;
 			}
+
+			return true;
 		}
 
 		/// <summary>
@@ -44,19 +49,22 @@ namespace TomiSoft_MP3_Player {
 		/// Loads BASS library from the given directory.
 		/// </summary>
 		/// <param name="Directory">The directory that contains bass.dll and its plugins.</param>
-		private static void LoadBass(string Directory) {
+		/// <returns>True if BASS is successfully loaded, false if not.</returns>
+		private static bool LoadBass(string Directory) {
 			string Filename = Directory + "bass.dll";
 			if (!File.Exists(Filename)) {
-				throw new IOException("A BASS nem található itt: " + Filename);
+				return false;
 			}
 
-			if (!Bass.LoadMe(Directory)) {	
-				throw new BassLoadException("Nem sikerült betölteni a BASS-t.");
+			if (!Bass.LoadMe(Directory)) {
+				return false;
 			}
 
 			SupportedExtensions.AddRange(
 				Bass.SupportedStreamExtensions.GetMatches(@"\W+([\w\d]+)").Select(x => x.ToLower())
 			);
+
+			return true;
 		}
 
 		/// <summary>
