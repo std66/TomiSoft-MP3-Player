@@ -21,14 +21,14 @@ namespace TomiSoft_MP3_Player {
 			string Directory = String.Format(
 				@"{0}\Bass\{1}\",
 				Environment.CurrentDirectory,
-				Environment.Is64BitOperatingSystem ? "x64" : "x86"
+				Environment.Is64BitProcess ? "x64" : "x86"
 			);
 
 			LoadBass(Directory);
 			LoadBassPlugins(Directory);
 
 			if (!Bass.BASS_Init(-1, 44800, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero)) {
-				throw new Exception("Nem sikerült elindítani a BASS-t.");
+				throw new BassInitializationException("Nem sikerült elindítani a BASS-t.");
 			}
 		}
 
@@ -47,11 +47,11 @@ namespace TomiSoft_MP3_Player {
 		private static void LoadBass(string Directory) {
 			string Filename = Directory + "bass.dll";
 			if (!File.Exists(Filename)) {
-				throw new Exception("A BASS nem tölthető be: " + Filename);
+				throw new IOException("A BASS nem található itt: " + Filename);
 			}
 
-			if (!Bass.LoadMe()) {
-				throw new Exception("Nem sikerült betölteni a BASS-t.");
+			if (!Bass.LoadMe(Directory)) {	
+				throw new BassLoadException("Nem sikerült betölteni a BASS-t.");
 			}
 
 			SupportedExtensions.AddRange(

@@ -35,5 +35,9 @@ namespace TomiSoft_MP3_Player {
 		public static void ErrorMessageBox(string Title, string Text) {
 			MessageBox.Show(Text, Title, MessageBoxButton.OK, MessageBoxImage.Error);
 		}
+
+		public static void Debug(object Contents) {
+			System.Diagnostics.Debug.WriteLine(Contents.ToString());
+		}
 	}
 }

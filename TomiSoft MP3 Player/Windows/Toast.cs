@@ -2,6 +2,7 @@
 using Windows.Data.Xml.Dom;
 using System.Drawing;
 using System.IO;
+using System.Diagnostics;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -10,8 +11,19 @@ namespace TomiSoft_MP3_Player {
 	public class Toast {
 		private string assemblyName;
 
+		/// <summary>
+		/// A Toast címe
+		/// </summary>
 		public string Title { get; set; }
+
+		/// <summary>
+		/// A Toast tartalma
+		/// </summary>
 		public string Content { get; set; }
+
+		/// <summary>
+		/// A Toast-hoz rendelt kép.
+		/// </summary>
 		public Image Image { get; set; }
 
 		/// <summary>
@@ -26,20 +38,51 @@ namespace TomiSoft_MP3_Player {
 		/// Megjeleníti az értesítést
 		/// </summary>
 		public void Show() {
-			ToastTemplateType template = (this.Image == null) ? ToastTemplateType.ToastText02 : ToastTemplateType.ToastImageAndText02;
-			XmlDocument doc = ToastNotificationManager.GetTemplateContent(template);
+			if (this.Image == null) {
+				this.ShowBasicToast();
+			}
+			else {
+				this.ShowImageToast();
+			}
+		}
+
+		/// <summary>
+		/// Előkészíti a Toast XML dokumentumát a megadott sablon alapján és ráilleszti a szövegeket.
+		/// </summary>
+		/// <param name="TemplateType">A Toast sablon típusa</param>
+		/// <returns>A Toast XML dokumentuma</returns>
+		private XmlDocument PrepareXml(ToastTemplateType TemplateType) {
+			XmlDocument doc = ToastNotificationManager.GetTemplateContent(TemplateType);
 
 			XmlNodeList textNodes = doc.GetElementsByTagName("text");
 			textNodes[0].AppendChild(doc.CreateTextNode(this.Title));
 			textNodes[1].AppendChild(doc.CreateTextNode(this.Content));
 
-			if (this.Image != null) {
-				string ImageFile = Path.GetTempPath() + "\\tsmp3_albumart.png";
-				Image.Save(ImageFile, System.Drawing.Imaging.ImageFormat.Png);
+			return doc;
+		}
 
-				XmlNodeList imageNodes = doc.GetElementsByTagName("image");
-				imageNodes[0].Attributes.GetNamedItem("src").NodeValue = ImageFile;
-			}
+		/// <summary>
+		/// Megjeleníti a csak szöveget tartalmazó Toast-ot.
+		/// </summary>
+		private void ShowBasicToast() {
+			XmlDocument doc = this.PrepareXml(ToastTemplateType.ToastText02);
+
+			ToastNotification notify = new ToastNotification(doc);
+
+			ToastNotificationManager.CreateToastNotifier(this.assemblyName).Show(notify);
+		}
+
+		/// <summary>
+		/// Megjeleníti a szöveget és a képet tartalmazó toast-ot.
+		/// </summary>
+		private void ShowImageToast() {
+			XmlDocument doc = this.PrepareXml(ToastTemplateType.ToastImageAndText02);
+
+			string ImageFile = Path.GetTempPath() + "\\ToastImage.png";
+			Image.Save(ImageFile, System.Drawing.Imaging.ImageFormat.Png);
+
+			XmlNodeList imageNodes = doc.GetElementsByTagName("image");
+			imageNodes[0].Attributes.GetNamedItem("src").NodeValue = ImageFile;
 
 			ToastNotification notify = new ToastNotification(doc);
 

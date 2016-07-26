@@ -9,6 +9,26 @@
     <Window.Resources>
         <local:BassChannelPositionConverter x:Key="BassChannelPositionConverter" />
     </Window.Resources>
+    
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.MouseEnter">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="FileOpenButton" From="0.0" To="1.0" Duration="0:0:0.2">
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="Window.MouseLeave">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="FileOpenButton" From="1.0" To="0.0" Duration="0:0:0.2">
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+    
     <Grid Height="336" Width="270" Name="UI_Player">
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -22,6 +42,7 @@
                 </LinearGradientBrush>
             </local:PlaybackControl.Background>
         </local:PlaybackControl>
-        <Image x:Name="albumArt" HorizontalAlignment="Left" Height="217" VerticalAlignment="Top" Width="217" Margin="27,10,0,0"/>
+        <Image x:Name="albumArt" HorizontalAlignment="Left" Height="217" VerticalAlignment="Top" Width="217" Margin="27,10,0,0" Source="pack://siteoforigin:,,,/Resources/default.png" Stretch="UniformToFill"/>
+        <Button Content="&#x1f4c2;" Name="FileOpenButton" Opacity="0.0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="20" Height="20" Margin="10,10,0,0" Click="FileOpenButton_Click"/>
     </Grid>
 </Window>

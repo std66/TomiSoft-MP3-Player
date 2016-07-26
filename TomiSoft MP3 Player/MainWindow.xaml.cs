@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.Win32;
@@ -14,6 +15,9 @@ namespace TomiSoft_MP3_Player {
 		private PlayerServer Server;
 
 		public MainWindow() {
+			//If an instance is already running, send the file list to it.
+			//Otherwise, this is the only running instance, so we start a server to
+			//listen to the other instances.
 			if (User32.FindWindow(null, "TomiSoft MP3 Player") != IntPtr.Zero) {
 				this.SendFileListToServer();
 			}
@@ -24,11 +28,26 @@ namespace TomiSoft_MP3_Player {
 			InitializeComponent();
 			this.PreparePlaybackController();
 
+			//Attaching a null-playback instance to display default informations.
 			this.AttachPlayer(
 				PlaybackFactory.NullPlayback(100)
 			);
 
-			BassManager.Load();
+			//Load BASS with its all plugins.
+			bool SuccessfullyLoaded = false;
+			try {
+				BassManager.Load();
+				SuccessfullyLoaded = true;
+			}
+			catch (BassInitializationException) {
+				PlayerUtils.ErrorMessageBox("TomiSoft MP3 Player", "Valami miatt nem sikerült a hangkimenetet beállítani.");
+			}
+			catch (Exception e) when (e is BassLoadException || e is IOException) {
+				PlayerUtils.ErrorMessageBox("TomiSoft MP3 Player", e.Message);
+			}
+			
+			if (!SuccessfullyLoaded)
+				Environment.Exit(1);
 		}
 
 		/// <summary>
@@ -92,12 +111,6 @@ namespace TomiSoft_MP3_Player {
 				this.AttachPlayer(
 					PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)
 				);
-
-				Toast t = new Toast(System.Reflection.Assembly.GetExecutingAssembly().FullName) {
-					Title = "Próba cím",
-					Content = "Nevenincs Előadó"
-				};
-				t.Show();
 			}
 		}
 
@@ -226,6 +239,12 @@ namespace TomiSoft_MP3_Player {
 				if (this.OpenFile(Files[0])) {
 					this.Play();
 				}
+			}
+		}
+
+		private void FileOpenButton_Click(object sender, RoutedEventArgs e) {
+			if (this.OpenFile()) {
+				this.PlayerOperaion(() => this.Player.Play());
 			}
 		}
 	}
