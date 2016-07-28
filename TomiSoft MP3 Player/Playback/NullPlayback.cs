@@ -1,8 +1,14 @@
 ﻿using System;
 
 namespace TomiSoft_MP3_Player {
+	/// <summary>
+	/// Represents a playback method that does nothing.
+	/// </summary>
 	class NullPlayback : IPlaybackManager {
-
+		/// <summary>
+		/// Gets or sets the playback position. Always returns 0.
+		/// Setting this value has no effect at all.
+		/// </summary>
 		public long Position {
 			get {
 				return 0;
@@ -12,50 +18,88 @@ namespace TomiSoft_MP3_Player {
 			}
 		}
 
+		/// <summary>
+		/// Gets the song's length. Always returns 1.
+		/// </summary>
 		public long Length {
 			get { return 1; }
 		}
 
+		/// <summary>
+		/// Gets whether the song is playing. Always returns false.
+		/// </summary>
 		public bool IsPlaying {
 			get { return false; }
 		}
 
+		/// <summary>
+		/// Gets the left peak level. Always returns 0.
+		/// </summary>
 		public int LeftPeak {
 			get { return 0; }
 		}
 
+		/// <summary>
+		/// Gets the right peak level. Always returns 0.
+		/// </summary>
 		public int RightPeak {
 			get { return 0; }
 		}
 
+		/// <summary>
+		/// Gets or sets the playback volume.
+		/// </summary>
 		public int Volume {
 			get;
 			set;
 		}
 
+		/// <summary>
+		/// Gets informations about the song. Always returns null.
+		/// </summary>
 		public ISongInfo SongInfo {
 			get {
 				return null;
 			}
 		}
 
+		/// <summary>
+		/// Dummy method for staring playback. This method does nothing.
+		/// </summary>
 		public void Play() {
 			
 		}
 
+		/// <summary>
+		/// Dummy method for stopping playback. This method does nothing.
+		/// </summary>
 		public void Stop() {
 			
 		}
 
+		/// <summary>
+		/// Dummy method for pausing playback. This method does nothing.
+		/// </summary>
 		public void Pause() {
 			
 		}
 
+		/// <summary>
+		/// Dummy method for disposing any allocated resources.
+		/// This method does nothing.
+		/// </summary>
 		public void Dispose() {
 			
 		}
 
+		/// <summary>
+		/// Occures when a property is changed. Never fired.
+		/// </summary>
 		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+		/// <summary>
+		/// Occures when the song is ended. Never fired.
+		/// </summary>
 		public event Action SongEnded;
 	}
 }
