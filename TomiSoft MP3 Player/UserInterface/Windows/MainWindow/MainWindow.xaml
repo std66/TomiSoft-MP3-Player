@@ -9,7 +9,11 @@
     <Window.Resources>
         <local:BassChannelPositionConverter x:Key="BassChannelPositionConverter" />
     </Window.Resources>
-    
+
+    <Window.DataContext>
+        <local:MainWindowViewModel/>
+    </Window.DataContext>
+
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.MouseEnter">
             <BeginStoryboard>
@@ -28,7 +32,7 @@
             </BeginStoryboard>
         </EventTrigger>
     </Window.Triggers>
-    
+
     <Grid Height="336" Width="270" Name="UI_Player">
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -42,7 +46,12 @@
                 </LinearGradientBrush>
             </local:PlaybackControl.Background>
         </local:PlaybackControl>
-        <Image x:Name="albumArt" HorizontalAlignment="Left" Height="217" VerticalAlignment="Top" Width="217" Margin="27,10,0,0" Source="pack://siteoforigin:,,,/Resources/default.png" Stretch="UniformToFill"/>
-        <Button Content="&#x1f4c2;" Name="FileOpenButton" Opacity="0.0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="20" Height="20" Margin="10,10,0,0" Click="FileOpenButton_Click"/>
+        <Image x:Name="albumArt" HorizontalAlignment="Left" Height="190" VerticalAlignment="Top" Width="190" Margin="38,21,0,0" Source="{Binding AlbumImage}" Stretch="UniformToFill"/>
+        <Button Content="&#x1f4c2;" Name="FileOpenButton" Opacity="0.0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="20" Height="20" Margin="240,6,0,0" Click="FileOpenButton_Click"/>
+        <Label x:Name="lSongTitle" HorizontalContentAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="38,-4,0,0" Foreground="#FFAAAAAA" Content="{Binding Title}" Width="190">
+            <Label.Effect>
+                <DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
+            </Label.Effect>
+        </Label>
     </Grid>
 </Window>

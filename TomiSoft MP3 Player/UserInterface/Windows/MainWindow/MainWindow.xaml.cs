@@ -13,6 +13,7 @@ namespace TomiSoft_MP3_Player {
 		private IPlaybackManager Player;
 		private Playlist Playlist = new Playlist();
 		private PlayerServer Server;
+		public MainWindowViewModel viewModel = new MainWindowViewModel();
 
 		public MainWindow() {
 			//If an instance is already running, send the file list to it.
@@ -26,6 +27,7 @@ namespace TomiSoft_MP3_Player {
 			}
 
 			InitializeComponent();
+			this.DataContext = viewModel;
 			this.PreparePlaybackController();
 
 			//Attaching a null-playback instance to display default informations.
@@ -189,7 +191,10 @@ namespace TomiSoft_MP3_Player {
 				};
 				t.Show();
 			}
-			albumArt.Source = AlbumImage.ToImageSource();
+
+			viewModel.Lyrics = "Nem találtunk dalszöveget.";
+			viewModel.Title = this.Player.SongInfo?.Title;
+			viewModel.AlbumImage = AlbumImage.ToImageSource();
 		}
 
 		/// <summary>
