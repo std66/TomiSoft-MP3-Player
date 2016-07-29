@@ -64,7 +64,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Bass\BassChannelPositionConverter.cs" />
+    <Compile Include="Bass\DoubleToTimeConverter.cs" />
     <Compile Include="Lyrics\LrcReader.cs" />
     <Compile Include="UserInterface\Controls\PlaybackControl.xaml.cs">
       <DependentUpon>PlaybackControl.xaml</DependentUpon>

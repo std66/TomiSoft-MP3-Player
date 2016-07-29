@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="93.999" d:DesignWidth="267">
     <UserControl.Resources>
-        <local:BassChannelPositionConverter x:Key="BassChannelPositionConverter" />
+        <local:DoubleToTimeConverter x:Key="DoubleToTimeConverter" />
     </UserControl.Resources>
     <Grid>
 
@@ -19,8 +19,8 @@
         <Button x:Name="UI_PauseButton" Width="23" VerticalAlignment="Top" Margin="36,7,0,0" Height="20" HorizontalAlignment="Left" Content="⏸" Click="UI_PauseButton_Click"/>
         <Button x:Name="UI_StopButton" Width="23" VerticalAlignment="Top" Margin="61,7,0,0" Height="20" HorizontalAlignment="Left" Content="■" Click="UI_StopButton_Click"/>
         <Button x:Name="UI_MuteButton" VerticalAlignment="Top" Margin="0,7,32,0" Height="20" Content="🔊" HorizontalAlignment="Right" Width="23"/>
-        <Label x:Name="UI_CurrentTime" Width="60" VerticalAlignment="Top" Margin="5,50,0,0" Height="25" HorizontalAlignment="Left" Foreground="#FF8D8D8D" Content="{Binding Position, Converter={StaticResource ResourceKey=BassChannelPositionConverter}}" Background="#00000000"/>
-        <Label x:Name="UI_TotalTime" VerticalAlignment="Top" Margin="0,50,96,0" Height="25" HorizontalContentAlignment="Right" Foreground="#FF8D8D8D" Content="{Binding Length, Converter={StaticResource ResourceKey=BassChannelPositionConverter}}" BorderBrush="White" HorizontalAlignment="Right" Width="54" Background="#00000000"/>
+        <Label x:Name="UI_CurrentTime" Width="60" VerticalAlignment="Top" Margin="5,50,0,0" Height="25" HorizontalAlignment="Left" Foreground="#FF8D8D8D" Content="{Binding Position, Converter={StaticResource ResourceKey=DoubleToTimeConverter}}" Background="#00000000"/>
+        <Label x:Name="UI_TotalTime" VerticalAlignment="Top" Margin="0,50,96,0" Height="25" HorizontalContentAlignment="Right" Foreground="#FF8D8D8D" Content="{Binding Length, Converter={StaticResource ResourceKey=DoubleToTimeConverter}}" BorderBrush="White" HorizontalAlignment="Right" Width="54" Background="#00000000"/>
 
     </Grid>
 </UserControl>

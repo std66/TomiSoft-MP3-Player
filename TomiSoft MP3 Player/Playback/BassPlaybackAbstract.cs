@@ -96,11 +96,14 @@ namespace TomiSoft_MP3_Player {
 		}
 
 		/// <summary>
-		/// Gets or sets the playback position in bytes (min. 0, max. Length).
+		/// Gets or sets the playback position in seconds (min. 0, max. Length).
 		/// </summary>
-		public long Position {
+		public double Position {
 			get {
-				return Bass.BASS_ChannelGetPosition(this.ChannelID);
+				return Bass.BASS_ChannelBytes2Seconds(
+					this.ChannelID,
+					Bass.BASS_ChannelGetPosition(this.ChannelID)
+				);
 			}
 			set {
 				if (value < 0 || value > this.Length)
@@ -110,17 +113,22 @@ namespace TomiSoft_MP3_Player {
 						this.Length
 					));
 
-				Bass.BASS_ChannelSetPosition(this.ChannelID, value);
+				Bass.BASS_ChannelSetPosition(this.ChannelID,
+					Bass.BASS_ChannelSeconds2Bytes(this.ChannelID, value)
+				);
 				this.NotifyPropertyChanged("Position");
 			}
 		}
 
 		/// <summary>
-		/// Gets the song's length in bytes.
+		/// Gets the song's length in seconds.
 		/// </summary>
-		public long Length {
+		public double Length {
 			get {
-				return Bass.BASS_ChannelGetLength(this.ChannelID);
+				return Bass.BASS_ChannelBytes2Seconds(
+					this.ChannelID,
+					Bass.BASS_ChannelGetLength(this.ChannelID)
+				);
 			}
 		}
 

@@ -13,6 +13,7 @@ namespace TomiSoft_MP3_Player {
 		private IPlaybackManager Player;
 		private Playlist Playlist = new Playlist();
 		private PlayerServer Server;
+		private LrcReader LyricsReader;
 		public MainWindowViewModel viewModel = new MainWindowViewModel();
 
 		public MainWindow() {
@@ -122,7 +123,8 @@ namespace TomiSoft_MP3_Player {
 		}
 
 		/// <summary>
-		/// Clears the current playlist, then adds the given file to it. 
+		/// Clears the current playlist, then adds the given file to it. Also,
+		/// tries to load the lyrics file if exists.
 		/// </summary>
 		/// <param name="Filename">The file's name to load.</param>
 		/// <returns>True if the file is loaded, false if not.</returns>
@@ -130,6 +132,10 @@ namespace TomiSoft_MP3_Player {
 			try {
 				this.Playlist.Clear();
 				this.Playlist.Add(new SongInfo(Filename));
+
+				//Load lyrics
+				string LyricsFile = Path.ChangeExtension(Filename, "lrc");
+				this.OpenLyrics(LyricsFile);
 
 				this.AttachPlayer(
 					PlaybackFactory.LoadFile(Filename)
@@ -140,6 +146,15 @@ namespace TomiSoft_MP3_Player {
 			catch (Exception e) {
 				MessageBox.Show(e.Message);
 				return false;
+			}
+		}
+
+		private void OpenLyrics(string Filename) {
+			if (File.Exists(Filename)) {
+				this.LyricsReader = new LrcReader(Filename);
+			}
+			else {
+				this.LyricsReader = null;
 			}
 		}
 
@@ -177,6 +192,16 @@ namespace TomiSoft_MP3_Player {
 
 			this.Player.SongEnded += this.PlayNext;
 
+			//Attach lyrics events
+			if (this.LyricsReader != null) {
+				this.Player.SongEnded += () => this.viewModel.Lyrics = "";
+				this.Player.PropertyChanged += (o, ev) => {
+					if (ev.PropertyName == "Position") {
+						this.viewModel.Lyrics = this.LyricsReader.GetLyricsLine(this.Player.Position);
+					}
+				};
+			}
+
 			//Display album art and send toast notification
 			System.Drawing.Image AlbumImage = Properties.Resources.AbstractAlbumArt;
 			if (Player.SongInfo != null) {
@@ -190,10 +215,10 @@ namespace TomiSoft_MP3_Player {
 					Image = AlbumImage
 				};
 				t.Show();
+				viewModel.Title = this.Player.SongInfo.Title;
 			}
 
 			viewModel.Lyrics = "Nem találtunk dalszöveget.";
-			viewModel.Title = this.Player.SongInfo?.Title;
 			viewModel.AlbumImage = AlbumImage.ToImageSource();
 		}
 

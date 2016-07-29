@@ -4,13 +4,19 @@ using System.Windows.Data;
 using Un4seen.Bass;
 
 namespace TomiSoft_MP3_Player {
-	public class BassChannelPositionConverter : IValueConverter {
+	public class DoubleToTimeConverter : IValueConverter {
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
-			if (value is long) {
-				BassPlaybackAbstract LastInstance = PlaybackFactory.GetLastInstance() as BassPlaybackAbstract;
+			if (value is double) {
+				IPlaybackManager LastInstance = PlaybackFactory.GetLastInstance();
 				if (LastInstance != null) {
-					double Seconds = (int)Bass.BASS_ChannelBytes2Seconds(LastInstance.ChannelID, (long)value);
-					return TimeSpan.FromSeconds(Seconds).ToString();
+					double Seconds = (double)value;
+					var t = TimeSpan.FromSeconds(Seconds);
+					return String.Format(
+						"{0}:{1}:{2}", 
+						t.Hours.ToString("d2"), 
+						t.Minutes.ToString("d2"), 
+						t.Seconds.ToString("d2")
+					);
 				}
 			}
 

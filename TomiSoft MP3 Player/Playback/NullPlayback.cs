@@ -9,7 +9,7 @@ namespace TomiSoft_MP3_Player {
 		/// Gets or sets the playback position. Always returns 0.
 		/// Setting this value has no effect at all.
 		/// </summary>
-		public long Position {
+		public double Position {
 			get {
 				return 0;
 			}
@@ -21,8 +21,8 @@ namespace TomiSoft_MP3_Player {
 		/// <summary>
 		/// Gets the song's length. Always returns 1.
 		/// </summary>
-		public long Length {
-			get { return 1; }
+		public double Length {
+			get { return 0.1; }
 		}
 
 		/// <summary>

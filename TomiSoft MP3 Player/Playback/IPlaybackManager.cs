@@ -14,12 +14,12 @@ namespace TomiSoft_MP3_Player {
 		/// <summary>
 		/// Gets the current playback position.
 		/// </summary>
-		long Position { get; set; }
+		double Position { get; set; }
 
 		/// <summary>
 		/// Gets the length of the song.
 		/// </summary>
-		long Length { get; }
+		double Length { get; }
 
 		/// <summary>
 		/// Gets whether the song is currently playing.
