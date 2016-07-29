@@ -54,7 +54,8 @@
             </Label.Effect>
         </Label>
 
-        <Label x:Name="lLyrics" HorizontalContentAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,191,0,0" Foreground="#FFAAAAAA" Content="{Binding Lyrics}" Width="250" Height="46">
+        <Label x:Name="lLyrics" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0,191,0,0" Foreground="#FFAAAAAA" Width="270" Height="46">
+            <TextBlock TextWrapping="WrapWithOverflow" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Lyrics}"></TextBlock>
             <Label.Effect>
                 <DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
             </Label.Effect>
