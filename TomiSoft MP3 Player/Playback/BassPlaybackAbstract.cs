@@ -211,7 +211,7 @@ namespace TomiSoft_MP3_Player {
 		}
 
 		/// <summary>
-		/// Fires the PropertyChanged event using the given property name.
+		/// Fires the PropertyChanged event for the given property.
 		/// </summary>
 		/// <param name="info">The property's name that changed.</param>
 		private void NotifyPropertyChanged(String info) {
@@ -224,8 +224,11 @@ namespace TomiSoft_MP3_Player {
 		/// Fires PropertyChanged event for all properties.
 		/// </summary>
 		private void NotifyAll() {
+			if (this.PropertyChanged == null)
+				return;
+
 			foreach (var Property in this.GetType().GetProperties()) {
-				this.NotifyPropertyChanged(Property.Name);
+				PropertyChanged(this, new PropertyChangedEventArgs(Property.Name));
 			}
 		}
 	}

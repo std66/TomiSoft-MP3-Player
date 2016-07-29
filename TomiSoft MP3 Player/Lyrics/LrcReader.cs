@@ -8,7 +8,7 @@ namespace TomiSoft_MP3_Player {
 	/// <summary>
 	/// Provides functionality to read LRC-format lyrics files.
 	/// </summary>
-	class LrcReader {
+	public class LrcReader : ILyricsReader {
 		private Dictionary<double, string> Lyrics;
 
 		/// <summary>
@@ -27,7 +27,7 @@ namespace TomiSoft_MP3_Player {
 		public string Album { get; private set; }
 
 		/// <summary>
-		/// Gets the creator of the song.
+		/// Gets the creator of the lyrics.
 		/// </summary>
 		public string Creator { get; private set; }
 		

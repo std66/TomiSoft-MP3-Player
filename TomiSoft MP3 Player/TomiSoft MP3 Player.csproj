@@ -65,6 +65,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Bass\DoubleToTimeConverter.cs" />
+    <Compile Include="Lyrics\ILyricsReader.cs" />
     <Compile Include="Lyrics\LrcReader.cs" />
     <Compile Include="UserInterface\Controls\PlaybackControl.xaml.cs">
       <DependentUpon>PlaybackControl.xaml</DependentUpon>

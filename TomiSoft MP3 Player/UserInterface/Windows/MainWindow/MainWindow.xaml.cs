@@ -133,13 +133,13 @@ namespace TomiSoft_MP3_Player {
 				this.Playlist.Clear();
 				this.Playlist.Add(new SongInfo(Filename));
 
-				//Load lyrics
-				string LyricsFile = Path.ChangeExtension(Filename, "lrc");
-				this.OpenLyrics(LyricsFile);
-
 				this.AttachPlayer(
 					PlaybackFactory.LoadFile(Filename)
 				);
+
+				//Load lyrics
+				string LyricsFile = Path.ChangeExtension(Filename, "lrc");
+				this.OpenLyrics(LyricsFile);
 				
 				return true;
 			}
@@ -151,10 +151,10 @@ namespace TomiSoft_MP3_Player {
 
 		private void OpenLyrics(string Filename) {
 			if (File.Exists(Filename)) {
-				this.LyricsReader = new LrcReader(Filename);
+				this.viewModel.LyricsReader = new LrcReader(Filename);
 			}
 			else {
-				this.LyricsReader = null;
+				this.viewModel.LyricsReader = null;
 			}
 		}
 
@@ -187,20 +187,11 @@ namespace TomiSoft_MP3_Player {
 			}
 
 			this.Player = Player;
+			this.viewModel.PlaybackManager = Player;
 			this.Player.Volume = PreviousVolume;
 			PlaybackController.Player = this.Player;
 
 			this.Player.SongEnded += this.PlayNext;
-
-			//Attach lyrics events
-			if (this.LyricsReader != null) {
-				this.Player.SongEnded += () => this.viewModel.Lyrics = "";
-				this.Player.PropertyChanged += (o, ev) => {
-					if (ev.PropertyName == "Position") {
-						this.viewModel.Lyrics = this.LyricsReader.GetLyricsLine(this.Player.Position);
-					}
-				};
-			}
 
 			//Display album art and send toast notification
 			System.Drawing.Image AlbumImage = Properties.Resources.AbstractAlbumArt;
@@ -215,11 +206,7 @@ namespace TomiSoft_MP3_Player {
 					Image = AlbumImage
 				};
 				t.Show();
-				viewModel.Title = this.Player.SongInfo.Title;
 			}
-
-			viewModel.Lyrics = "Nem találtunk dalszöveget.";
-			viewModel.AlbumImage = AlbumImage.ToImageSource();
 		}
 
 		/// <summary>
