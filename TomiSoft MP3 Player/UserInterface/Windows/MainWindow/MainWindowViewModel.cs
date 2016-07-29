@@ -95,6 +95,10 @@ namespace TomiSoft_MP3_Player {
 			}
 		}
 
+		public MainWindowViewModel() {
+			this.NotifyAll();
+		}
+
 		/// <summary>
 		/// Event handler for IPlaybackManager.PropertyChanged.
 		/// </summary>

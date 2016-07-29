@@ -14,7 +14,7 @@ namespace TomiSoft_MP3_Player {
 		private Playlist Playlist = new Playlist();
 		private PlayerServer Server;
 		private LrcReader LyricsReader;
-		public MainWindowViewModel viewModel = new MainWindowViewModel();
+		public MainWindowViewModel viewModel;
 
 		public MainWindow() {
 			//If an instance is already running, send the file list to it.
@@ -28,6 +28,7 @@ namespace TomiSoft_MP3_Player {
 			}
 
 			InitializeComponent();
+			this.viewModel = new MainWindowViewModel();
 			this.DataContext = viewModel;
 			this.PreparePlaybackController();
 
