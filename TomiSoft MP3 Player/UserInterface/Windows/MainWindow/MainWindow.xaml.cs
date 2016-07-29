@@ -194,7 +194,15 @@ namespace TomiSoft_MP3_Player {
 
 			this.Player.SongEnded += this.PlayNext;
 
-			//Display album art and send toast notification
+			//Send toast notification
+			ShowToast(Player);
+		}
+
+		/// <summary>
+		/// Shows toast notification.
+		/// </summary>
+		/// <param name="Player">The IPlaybackManager instance which holds the song's information.</param>
+		private void ShowToast(IPlaybackManager Player) {
 			System.Drawing.Image AlbumImage = Properties.Resources.AbstractAlbumArt;
 			if (Player.SongInfo != null) {
 				AlbumImage = this.Player.SongInfo.AlbumImage;
