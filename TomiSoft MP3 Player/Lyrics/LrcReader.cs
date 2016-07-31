@@ -99,7 +99,7 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="FileContents">The contents of the file.</param>
 		private void ExtractLyrics(string FileContents) {
-			string Pattern = @"\[(?<timestamp>\d+:\d+\.\d+)\](?<text>.+?)\r?\n";
+			string Pattern = @"\[(?<timestamp>\d+:\d+\.\d+)\](?<text>.*?)\r?\n";
 			var Entries = FileContents.GetKeyValueMatches(Pattern, "timestamp", "text");
 
 			var Result = from c in Entries

@@ -263,5 +263,15 @@ namespace TomiSoft_MP3_Player {
 				this.PlayerOperaion(() => this.Player.Play());
 			}
 		}
+
+		private void Label_MouseUp(object sender, MouseButtonEventArgs e) {
+			this.Close();
+		}
+
+		private void Label_MouseMove(object sender, MouseEventArgs e) {
+			if (e.LeftButton == MouseButtonState.Pressed) {
+				
+			}
+		}
 	}
 }

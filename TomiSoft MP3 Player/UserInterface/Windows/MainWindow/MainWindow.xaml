@@ -35,10 +35,13 @@
 
     <Grid Height="336" Width="270" Name="UI_Player">
         <Grid.RowDefinitions>
-            <RowDefinition/>
+            <RowDefinition Height="23*"/>
+            <RowDefinition Height="161*"/>
+            <RowDefinition Height="23*"/>
             <RowDefinition Height="99"/>
         </Grid.RowDefinitions>
-        <local:PlaybackControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="1" x:Name="PlaybackController">
+        
+        <local:PlaybackControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="3" x:Name="PlaybackController">
             <local:PlaybackControl.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="Black" Offset="1"/>
@@ -46,15 +49,15 @@
                 </LinearGradientBrush>
             </local:PlaybackControl.Background>
         </local:PlaybackControl>
-        <Image x:Name="albumArt" HorizontalAlignment="Left" Height="170" VerticalAlignment="Top" Width="170" Margin="47,21,0,0" Source="{Binding AlbumImage}" Stretch="UniformToFill"/>
+        <Image x:Name="albumArt" Margin="0,0,0,0" Source="{Binding AlbumImage}" Stretch="Uniform" Grid.Row="1"/>
         <Button Content="&#x1f4c2;" Name="FileOpenButton" Opacity="0.0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="20" Height="20" Margin="240,6,0,0" Click="FileOpenButton_Click"/>
-        <Label x:Name="lSongTitle" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="38,-4,0,0" Foreground="#FFAAAAAA" Content="{Binding Title}" Width="190">
+        <Label x:Name="lSongTitle" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  Foreground="#FFAAAAAA" Content="{Binding Title}">
             <Label.Effect>
                 <DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
             </Label.Effect>
         </Label>
 
-        <Label x:Name="lLyrics" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,191,0,0" Foreground="#FFAAAAAA" Width="270">
+        <Label x:Name="lLyrics" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,0,0" Foreground="#FFAAAAAA" Grid.Row="2">
             <TextBlock TextWrapping="WrapWithOverflow" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Lyrics}"></TextBlock>
             <Label.Effect>
                 <DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
