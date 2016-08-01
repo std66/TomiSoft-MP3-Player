@@ -33,7 +33,7 @@ namespace TomiSoft_MP3_Player {
 					ClientProc.Start(ClientSocket);
 				}
 			}
-			catch (ThreadInterruptedException e) {
+			catch (ThreadInterruptedException) {
 				this.ServerSocket.Stop();
 			}
 		}
@@ -49,9 +49,7 @@ namespace TomiSoft_MP3_Player {
 
 				string[] Command = Data.Split(';');
 
-				if (CommandReceived != null) {
-					CommandReceived(Command[0], Command[1]);
-				}
+				CommandReceived?.Invoke(Command[0], Command[1]);
 			}
 		}
 

@@ -45,25 +45,21 @@ namespace TomiSoft_MP3_Player {
 		}
 
 		private void UI_StopButton_Click(object sender, RoutedEventArgs e) {
-			if (this.Stop != null)
-				this.Stop();
+			this.Stop?.Invoke();
 		}
 
 		private void UI_PauseButton_Click(object sender, RoutedEventArgs e) {
-			if (this.Pause != null)
-				this.Pause();
+			this.Pause?.Invoke();
 
 			UI_StopButton.IsEnabled = true;
 		}
 
 		private void UI_PlayButton_Click(object sender, RoutedEventArgs e) {
-			if (this.Play != null)
-				this.Play();
+			this.Play?.Invoke();
 		}
 
 		private void UI_PlaybackPosition_MouseUp(object sender, MouseButtonEventArgs e) {
-			if (this.PositionChanged != null)
-				this.PositionChanged((long)UI_PlaybackPosition.Value);
+			this.PositionChanged?.Invoke((long)UI_PlaybackPosition.Value);
 		}
 	}
 }

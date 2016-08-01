@@ -13,7 +13,6 @@ namespace TomiSoft_MP3_Player {
 		private IPlaybackManager Player;
 		private Playlist Playlist = new Playlist();
 		private PlayerServer Server;
-		private LrcReader LyricsReader;
 		public MainWindowViewModel viewModel;
 
 		public MainWindow() {

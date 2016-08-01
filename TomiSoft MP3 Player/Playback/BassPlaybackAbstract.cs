@@ -159,8 +159,7 @@ namespace TomiSoft_MP3_Player {
 				if (Position >= Length) {
 					this.Stop();
 
-					if (this.SongEnded != null)
-						this.SongEnded();
+					this.SongEnded?.Invoke();
 				}
 
 				this.NotifyAll();
@@ -215,9 +214,7 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="info">The property's name that changed.</param>
 		private void NotifyPropertyChanged(String info) {
-			if (PropertyChanged != null) {
-				PropertyChanged(this, new PropertyChangedEventArgs(info));
-			}
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
 		}
 
 		/// <summary>

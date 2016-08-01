@@ -97,7 +97,7 @@ namespace TomiSoft_MP3_Player {
 				this.CurrentlyPlaying = SongIndex;
 				Result = true;
 			}
-			catch (ArgumentOutOfRangeException e) { }
+			catch (ArgumentOutOfRangeException) { }
 
 			return Result;
 		}

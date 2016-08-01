@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace TomiSoft_MP3_Player {
+	[Serializable]
 	class BassInitializationException : Exception {
 		public BassInitializationException() : base() {
 

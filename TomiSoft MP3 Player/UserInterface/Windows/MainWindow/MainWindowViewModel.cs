@@ -128,8 +128,7 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="PropertyName">The property's name that value has changed.</param>
 		private void NotifyPropertyChanged(string PropertyName) {
-			if (this.PropertyChanged != null)
-				this.PropertyChanged(this, new PropertyChangedEventArgs(PropertyName));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
 		}
 
 		/// <summary>
