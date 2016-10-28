@@ -22,7 +22,7 @@ namespace TomiSoft_MP3_Player {
 		public static bool Load() {
 			string Directory = String.Format(
 				@"{0}\Bass\{1}\",
-				Environment.CurrentDirectory,
+				AppDomain.CurrentDomain.BaseDirectory,
 				Environment.Is64BitProcess ? "x64" : "x86"
 			);
 

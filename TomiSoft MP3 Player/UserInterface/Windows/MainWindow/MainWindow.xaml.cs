@@ -50,6 +50,12 @@ namespace TomiSoft_MP3_Player {
 				PlayerUtils.ErrorMessageBox("TomiSoft MP3 Player", "Nem sikerült betölteni a BASS-t.");
 				Environment.Exit(1);
 			}
+
+			this.Closed += (o, e) => {
+				Trace.TraceInformation("[Player] Closing application...");
+				Trace.TraceInformation("[BASS] Free");
+				Bass.BASS_Free();
+			};
 		}
 
 		/// <summary>
@@ -76,11 +82,9 @@ namespace TomiSoft_MP3_Player {
 		/// Starts a TCP server to listen to specific commands.
 		/// </summary>
 		private void StartServer() {
-			Trace.TraceInformation("[Server startup] Starting up server to listen to the incoming connections...");
 			this.Server = new PlayerServer();
 			this.Closed += (o, e) => {
 				this.Server.Dispose();
-				Bass.BASS_Free();
 			};
 
 			Server.CommandReceived += (ClientStream, Command, Parameter) => {
@@ -98,6 +102,10 @@ namespace TomiSoft_MP3_Player {
 						case "IsRunning":
 							wrt.WriteLine("true");
 							wrt.Flush();
+							break;
+
+						default:
+							Trace.TraceWarning("[Server] Unrecognized command");
 							break;
 					}
 				}, ClientStream, Command, Parameter);

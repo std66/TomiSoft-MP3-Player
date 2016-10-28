@@ -8,11 +8,11 @@ namespace TomiSoft_MP3_Player {
 	/// </summary>
 	public partial class App : Application {
 		public App() {
-			Trace.Listeners.Add(new TextWriterTraceListener("application.log"));
+			Trace.Listeners.Add(new TextWriterTraceListener($"{AppDomain.CurrentDomain.BaseDirectory}\\application.log"));
 			Trace.AutoFlush = true;
 
 			Trace.WriteLine("");
-			Trace.WriteLine($"New instance started at {DateTime.Now}");
+			Trace.WriteLine($"New instance started at {DateTime.Now} (Is64BitProcess={Environment.Is64BitProcess})");
 		}
 	}
 }
