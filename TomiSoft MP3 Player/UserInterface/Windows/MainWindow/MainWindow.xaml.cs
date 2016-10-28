@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Diagnostics;
 using Un4seen.Bass;
 
 namespace TomiSoft_MP3_Player {
@@ -19,12 +20,17 @@ namespace TomiSoft_MP3_Player {
 			//If an instance is already running, send the file list to it.
 			//Otherwise, this is the only running instance, so we start a server to
 			//listen to the other instances.
+			Trace.TraceInformation("[Player startup] Checking if an instance is already running...");
 			if (PlayerClient.IsServerRunning()) {
+				Trace.TraceInformation("[Player startup] Found a running instance");
 				this.SendFileListToServer();
 			}
 			else {
+				Trace.TraceInformation("[Player startup] No other instances are running.");
 				this.StartServer();
 			}
+
+			Trace.TraceInformation("[Player startup] Preparing main window to display...");
 
 			InitializeComponent();
 			this.viewModel = new MainWindowViewModel();
@@ -32,12 +38,15 @@ namespace TomiSoft_MP3_Player {
 			this.PreparePlaybackController();
 
 			//Attaching a null-playback instance to display default informations.
-			this.AttachPlayer(
+			Trace.TraceInformation("[Player startup] Attaching a NULL-playback manager");
+			this.AttachPlayer(	
 				PlaybackFactory.NullPlayback(100)
 			);
 
 			//Load BASS with its all plugins.
+			Trace.TraceInformation("[Player startup] Initializing BASS library...");
 			if (!BassManager.Load()) {
+				Trace.TraceError("[Player startup] Fatal error occured. Terminating application...");
 				PlayerUtils.ErrorMessageBox("TomiSoft MP3 Player", "Nem sikerült betölteni a BASS-t.");
 				Environment.Exit(1);
 			}
@@ -52,8 +61,8 @@ namespace TomiSoft_MP3_Player {
 				using (PlayerClient Client = new PlayerClient()) {
 					string[] args = Environment.GetCommandLineArgs();
 
-					if (args.Length > 0)
-						Client.Play(args[0]);
+					if (args.Length > 1)
+						Client.Play(args[1]);
 				}
 			}
 			catch (Exception e) {
@@ -67,6 +76,7 @@ namespace TomiSoft_MP3_Player {
 		/// Starts a TCP server to listen to specific commands.
 		/// </summary>
 		private void StartServer() {
+			Trace.TraceInformation("[Server startup] Starting up server to listen to the incoming connections...");
 			this.Server = new PlayerServer();
 			this.Closed += (o, e) => {
 				this.Server.Dispose();
@@ -76,6 +86,8 @@ namespace TomiSoft_MP3_Player {
 			Server.CommandReceived += (ClientStream, Command, Parameter) => {
 				Dispatcher.Invoke((Action<Stream, string, string>)delegate {
 					StreamWriter wrt = new StreamWriter(ClientStream);
+
+					Trace.TraceInformation($"[Server] Command={Command}; Parameter={Parameter}");
 
 					switch (Command) {
 						case "Play":

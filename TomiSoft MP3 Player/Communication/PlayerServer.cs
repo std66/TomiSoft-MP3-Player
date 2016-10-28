@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -32,8 +33,10 @@ namespace TomiSoft_MP3_Player
         /// új kliens kapcsolódik, egy külön szálat indít el a kommunikációhoz.
         /// </summary>
 		private void Listen() {
+			Trace.TraceInformation("[Server] Starting server at localhost:22613");
 			this.ServerSocket = new TcpListener(IPAddress.Loopback, 22613);
 			this.ServerSocket.Start();
+			Trace.TraceInformation("[Server] Server is running.");
 
 			try {
 				while (true) {
@@ -49,8 +52,11 @@ namespace TomiSoft_MP3_Player
 				}
 			}
 			catch (ThreadInterruptedException) {
+				Trace.TraceInformation("[Server] Stopping server...");
 				this.ServerSocket.Stop();
 			}
+
+			Trace.TraceInformation("[Server] Server stopped");
 		}
 
         /// <summary>
@@ -58,23 +64,25 @@ namespace TomiSoft_MP3_Player
         /// </summary>
         /// <param name="client">A kliens-kapcsolatot reprezentáló TcpClient példány.</param>
 		private void ClientThread(object client) {
-			System.Diagnostics.Debug.WriteLine("Bejövő kapcsolat");
-
 			TcpClient Client = client as TcpClient;
             if (Client == null)
                 return;
 
+			Trace.TraceInformation("[Server] A client has connected.");
+
 			using (StreamReader sr = new StreamReader(Client.GetStream())) {
+				Trace.TraceInformation("[Server] Waiting for incoming data...");
 				string Data = sr.ReadLine();
-				System.Diagnostics.Debug.WriteLine("Adat:");
-				System.Diagnostics.Debug.WriteLine(Data);
+				Trace.TraceInformation("[Server] Data received");
 
-				string[] Command = Data.Split(';');
-
-				CommandReceived?.Invoke(Client.GetStream(), Command[0], Command[1]);
+				if (Data != null) {
+					string[] Command = Data.Split(';');
+					CommandReceived?.Invoke(Client.GetStream(), Command[0], Command[1]);
+				}
 			}
 
             Client.Close();
+			Trace.TraceInformation("[Server] The connection is closed to the client.");
 		}
 
         /// <summary>

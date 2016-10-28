@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Diagnostics;
 
 using Un4seen.Bass;
 
@@ -53,11 +54,19 @@ namespace TomiSoft_MP3_Player {
 		private static bool LoadBass(string Directory) {
 			string Filename = Directory + "bass.dll";
 			if (!File.Exists(Filename)) {
+				Trace.TraceError($"[BASS init] bass.dll file not found ({Filename})");
 				return false;
+			}
+			else {
+				Trace.TraceInformation("[BASS init] bass.dll found, trying to load it...");
 			}
 
 			if (!Bass.LoadMe(Directory)) {
+				Trace.TraceError("[BASS init] bass.dll could not be loaded");
 				return false;
+			}
+			else {
+				Trace.TraceInformation("[BASS init] bass.dll loaded");
 			}
 
 			SupportedExtensions.AddRange(
@@ -80,10 +89,15 @@ namespace TomiSoft_MP3_Player {
 				int Result = Bass.BASS_PluginLoad(File.FullName);
 
 				if (Result == 0) {
+					Trace.TraceInformation($"[BASS init] Plugin loaded: {File.Name}");
+
 					string PluginSupportedExtensions = Utils.BASSAddOnGetSupportedFileExtensions(File.FullName);
 					SupportedExtensions.AddRange(
 						PluginSupportedExtensions.GetMatches(@"\W+([\w\d]+)").Select(x => x.ToLower())
 					);
+				}
+				else {
+					Trace.TraceWarning($"[BASS init] Failed to load plugin: {File.Name} (Code {Result})");
 				}
 			}
 		}
