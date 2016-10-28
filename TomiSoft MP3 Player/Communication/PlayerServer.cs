@@ -16,7 +16,7 @@ namespace TomiSoft_MP3_Player
         /// <summary>
         /// Ez az esemény akkor fut le, ha parancs érkezik valamely klienstől.
         /// </summary>
-		public event Action<string, string> CommandReceived;
+		public event Action<Stream, string, string> CommandReceived;
 
         /// <summary>
         /// Létrehozza a PlayerServer osztály egy új példányát. Külön szálon várakozik
@@ -71,7 +71,7 @@ namespace TomiSoft_MP3_Player
 
 				string[] Command = Data.Split(';');
 
-				CommandReceived?.Invoke(Command[0], Command[1]);
+				CommandReceived?.Invoke(Client.GetStream(), Command[0], Command[1]);
 			}
 
             Client.Close();

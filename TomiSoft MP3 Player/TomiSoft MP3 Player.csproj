@@ -83,7 +83,6 @@
     <Compile Include="Utils\SongInfo.cs" />
     <Compile Include="Utils\StringRegexExtensions.cs" />
     <Compile Include="Windows\Toast.cs" />
-    <Compile Include="Windows\User32.cs" />
     <Compile Include="Utils\PlayerUtils.cs" />
     <Page Include="UserInterface\Windows\MainWindow\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

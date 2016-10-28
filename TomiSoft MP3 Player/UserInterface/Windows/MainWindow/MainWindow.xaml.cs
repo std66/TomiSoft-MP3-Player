@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using Microsoft.Win32;
 using Un4seen.Bass;
 
 namespace TomiSoft_MP3_Player {
@@ -19,7 +19,7 @@ namespace TomiSoft_MP3_Player {
 			//If an instance is already running, send the file list to it.
 			//Otherwise, this is the only running instance, so we start a server to
 			//listen to the other instances.
-			if (User32.FindWindow(null, "TomiSoft MP3 Player") != IntPtr.Zero) {
+			if (PlayerClient.IsServerRunning()) {
 				this.SendFileListToServer();
 			}
 			else {
@@ -73,15 +73,22 @@ namespace TomiSoft_MP3_Player {
 				Bass.BASS_Free();
 			};
 
-			Server.CommandReceived += (Command, Parameter) => {
-				Dispatcher.Invoke((Action<string, string>)delegate {
+			Server.CommandReceived += (ClientStream, Command, Parameter) => {
+				Dispatcher.Invoke((Action<Stream, string, string>)delegate {
+					StreamWriter wrt = new StreamWriter(ClientStream);
+
 					switch (Command) {
 						case "Play":
 							this.OpenFile(Parameter);
 							this.PlayerOperaion(() => this.Player.Play());
 							break;
+
+						case "IsRunning":
+							wrt.WriteLine("true");
+							wrt.Flush();
+							break;
 					}
-				}, new object[] { Command, Parameter });
+				}, ClientStream, Command, Parameter);
 			};
 		}
 
