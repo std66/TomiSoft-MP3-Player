@@ -98,6 +98,7 @@ namespace TomiSoft_MP3_Player {
 		/// <summary>
 		/// Gets or sets the playback position in seconds (min. 0, max. Length).
 		/// </summary>
+		/// <exception cref="ArgumentOutOfRangeException">when value is not between 0 and the value given by Length property</exception>
 		public double Position {
 			get {
 				return Bass.BASS_ChannelBytes2Seconds(
@@ -106,12 +107,14 @@ namespace TomiSoft_MP3_Player {
 				);
 			}
 			set {
+				#region Error checking
 				if (value < 0 || value > this.Length)
 					throw new ArgumentOutOfRangeException(String.Format(
 						"A lejátszási pozíciónak {0} és {1} közt kell lennie.",
 						0,
 						this.Length
 					));
+				#endregion
 
 				Bass.BASS_ChannelSetPosition(this.ChannelID,
 					Bass.BASS_ChannelSeconds2Bytes(this.ChannelID, value)
@@ -146,9 +149,11 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="ChannelID">The channel ID provided by BASS.</param>
 		public BassPlaybackAbstract(int ChannelID) {
+			#region Error checking
 			if (ChannelID == 0) {
 				throw new Exception("Nem sikerült megnyitni a fájlt: " + Bass.BASS_ErrorGetCode());
 			}
+			#endregion
 
 			this.channelID = ChannelID;
 
@@ -221,8 +226,10 @@ namespace TomiSoft_MP3_Player {
 		/// Fires PropertyChanged event for all properties.
 		/// </summary>
 		private void NotifyAll() {
+			#region Error checking
 			if (this.PropertyChanged == null)
 				return;
+			#endregion
 
 			foreach (var Property in this.GetType().GetProperties()) {
 				PropertyChanged(this, new PropertyChangedEventArgs(Property.Name));

@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Diagnostics;
 using Un4seen.Bass;
+using TomiSoft.Music.Lyrics.Lrc;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>

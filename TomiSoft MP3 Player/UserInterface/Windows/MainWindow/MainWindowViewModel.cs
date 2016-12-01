@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Media;
+using System.Linq;
+using TomiSoft.Music.Lyrics;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -116,7 +118,7 @@ namespace TomiSoft_MP3_Player {
 
 				case "Position":
 					if (this.lyricsReader != null) {
-						this.Lyrics = this.lyricsReader.GetLyricsLine(Playback.Position);
+						this.Lyrics = this.lyricsReader.GetLyricsLine(Playback.Position).First();
 						this.NotifyPropertyChanged("Lyrics");
 					}
 					break;

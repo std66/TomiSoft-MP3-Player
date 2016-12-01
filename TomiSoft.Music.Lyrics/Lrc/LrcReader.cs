@@ -4,7 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace TomiSoft_MP3_Player {
+namespace TomiSoft.Music.Lyrics.Lrc {
 	/// <summary>
 	/// Provides functionality to read LRC-format lyrics files.
 	/// </summary>
@@ -30,14 +30,67 @@ namespace TomiSoft_MP3_Player {
 		/// Gets the creator of the lyrics.
 		/// </summary>
 		public string Creator { get; private set; }
-		
+
+		/// <summary>
+		/// Gets the default translation's ID.
+		/// </summary>
+		public string DefaultTranslationID {
+			get {
+				return "default_translation";
+			}
+		}
+
+		/// <summary>
+		/// Gets the length of the song for that this lyrics is created.
+		/// </summary>
+		public double Length {
+			get {
+				return 0;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the current translation ID. Setting this value has no effect.
+		/// </summary>
+		public string TranslationID {
+			get {
+				return this.DefaultTranslationID;
+			}
+
+			set {
+				
+			}
+		}
+
+		/// <summary>
+		/// Gets a dictionary that contains the supported translations. The key is the
+		/// ID of the translation and the value is its user-friendly name.
+		/// </summary>
+		public IReadOnlyDictionary<string, string> Translations {
+			get {
+				return new Dictionary<string, string>() {
+					{ "default_translation", "Default translation" }
+				};
+			}
+		}
+
+		/// <summary>
+		/// Gets whether this class supports multiple translations of the lyrics.
+		/// Always returns false.
+		/// </summary>
+		public bool SupportsMultipleTranslations {
+			get {
+				return false;
+			}
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the LrcReader class. Loads
 		/// the lyrics from the given file.
 		/// </summary>
 		/// <param name="Filename">The path of the file to process.</param>
 		public LrcReader(string Filename)
-			:this(File.OpenRead(Filename)) {
+			: this(File.OpenRead(Filename)) {
 			
 		}
 
@@ -62,14 +115,14 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="Seconds">The timestamp in seconds.</param>
 		/// <returns>The lyrics line at the given timestamp.</returns>
-		public string GetLyricsLine(double Seconds) {
+		public IEnumerable<string> GetLyricsLine(double Seconds) {
 			int i;
 			for (i = 0; i < this.Lyrics.Count; i++) {
 				if (this.Lyrics.ElementAt(i).Key > Seconds)
 					break;
 			}
 
-			return (i == 0) ? String.Empty : this.Lyrics.ElementAt(i - 1).Value;
+			yield return (i == 0) ? String.Empty : this.Lyrics.ElementAt(i - 1).Value;
 		}
 
 		/// <summary>
@@ -123,6 +176,25 @@ namespace TomiSoft_MP3_Player {
 			int MSecs = Convert.ToInt32(Matches[0].Groups["msecs"].Value);
 
 			return Mins * 60 + Secs + (MSecs / 100.0);
+		}
+
+		/// <summary>
+		/// Gets all lines from the lyrics with their starting and ending time.
+		/// </summary>
+		/// <returns>All lines of the lyrics.</returns>
+		public IEnumerable<ILyricsLine> GetAllLines() {
+			for (int i = 0; i < this.Lyrics.Count; i++) {
+				var e = this.Lyrics.ElementAt(i);
+				double End = Double.PositiveInfinity;
+				if (i < this.Lyrics.Count - 1)
+					End = this.Lyrics.ElementAt(i + 1).Key;
+
+				yield return new LyricsLine(
+					e.Key,
+					End,
+					e.Value
+				);
+			}
 		}
 	}
 }
