@@ -2,8 +2,8 @@
 using System.IO;
 using System.Net.Sockets;
 
-namespace TomiSoft_MP3_Player {
-	class PlayerClient : IDisposable {
+namespace TomiSoft.MP3Player.Communication {
+	public class PlayerClient : IDisposable {
 		private TcpClient Client;
 		private StreamWriter sw;
 		private StreamReader sr;
