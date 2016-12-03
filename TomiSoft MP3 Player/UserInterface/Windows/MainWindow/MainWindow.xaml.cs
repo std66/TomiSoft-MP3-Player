@@ -241,7 +241,7 @@ namespace TomiSoft_MP3_Player {
 				if (AlbumImage == null)
 					AlbumImage = Properties.Resources.AbstractAlbumArt;
 
-				Toast t = new Toast() {
+				Toast t = new Toast("TomiSoft MP3 Player") {
 					Title = this.Player.SongInfo.Title,
 					Content = this.Player.SongInfo.Artist,
 					Image = AlbumImage

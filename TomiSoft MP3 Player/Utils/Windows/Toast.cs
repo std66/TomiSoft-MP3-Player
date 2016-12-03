@@ -27,7 +27,7 @@ namespace TomiSoft.MP3Player.Utils.Windows {
 		public Image Image { get; set; }
 
 		/// <summary>
-		/// Létrehozza a TomiSoft.Windows.Notifications.Toast egy új példányát
+		/// Létrehozza a Toast egy új példányát
 		/// </summary>
 		/// <param name="AssemblyName">A Toast-ot megjelenítő szoftver szerelvényének neve</param>
 		public Toast(string AssemblyName) {
@@ -35,7 +35,7 @@ namespace TomiSoft.MP3Player.Utils.Windows {
 		}
 
 		/// <summary>
-		/// Létrehozza a TomiSoft.Windows.Notifications.Toast egy új példányát.
+		/// Létrehozza a Toast egy új példányát.
 		/// </summary>
 		public Toast() : this(System.Reflection.Assembly.GetExecutingAssembly().FullName) { }
 
@@ -83,7 +83,7 @@ namespace TomiSoft.MP3Player.Utils.Windows {
 		private void ShowImageToast() {
 			XmlDocument doc = this.PrepareXml(ToastTemplateType.ToastImageAndText02);
 
-			string ImageFile = Path.GetTempPath() + "\\ToastImage.png";
+			string ImageFile = Path.GetTempPath() + "ToastImage.png";
 			Image.Save(ImageFile, System.Drawing.Imaging.ImageFormat.Png);
 
 			XmlNodeList imageNodes = doc.GetElementsByTagName("image");
