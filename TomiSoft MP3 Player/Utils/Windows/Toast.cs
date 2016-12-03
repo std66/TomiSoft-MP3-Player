@@ -4,7 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Diagnostics;
 
-namespace TomiSoft_MP3_Player {
+namespace TomiSoft.MP3Player.Utils.Windows {
 	/// <summary>
 	/// Egy Toast értesítést állít be és hoz létre
 	/// </summary>
@@ -33,6 +33,11 @@ namespace TomiSoft_MP3_Player {
 		public Toast(string AssemblyName) {
 			this.assemblyName = AssemblyName;
 		}
+
+		/// <summary>
+		/// Létrehozza a TomiSoft.Windows.Notifications.Toast egy új példányát.
+		/// </summary>
+		public Toast() : this(System.Reflection.Assembly.GetExecutingAssembly().FullName) { }
 
 		/// <summary>
 		/// Megjeleníti az értesítést

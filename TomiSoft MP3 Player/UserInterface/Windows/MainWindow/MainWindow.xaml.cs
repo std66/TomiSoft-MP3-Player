@@ -10,6 +10,7 @@ using TomiSoft.MP3Player.Communication;
 using TomiSoft.MP3Player.Playback;
 using TomiSoft.MP3Player.Playlist;
 using TomiSoft.MP3Player.Utils;
+using TomiSoft.MP3Player.Utils.Windows;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -240,7 +241,7 @@ namespace TomiSoft_MP3_Player {
 				if (AlbumImage == null)
 					AlbumImage = Properties.Resources.AbstractAlbumArt;
 
-				Toast t = new Toast(System.Reflection.Assembly.GetExecutingAssembly().FullName) {
+				Toast t = new Toast() {
 					Title = this.Player.SongInfo.Title,
 					Content = this.Player.SongInfo.Artist,
 					Image = AlbumImage

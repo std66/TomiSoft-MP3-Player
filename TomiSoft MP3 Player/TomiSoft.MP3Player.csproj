@@ -79,7 +79,7 @@
     <Compile Include="Utils\Extensions\MiscExtensions.cs" />
     <Compile Include="Utils\SongInfo.cs" />
     <Compile Include="Utils\Extensions\StringRegexExtensions.cs" />
-    <Compile Include="Windows\Toast.cs" />
+    <Compile Include="Utils\Windows\Toast.cs" />
     <Compile Include="Utils\PlayerUtils.cs" />
     <Page Include="UserInterface\Windows\MainWindow\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
