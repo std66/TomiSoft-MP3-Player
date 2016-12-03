@@ -2,7 +2,7 @@
 using System.Linq;
 using System.IO;
 using Un4seen.Bass.AddOn.Tags;
-using TomiSoft_MP3_Player;
+using TomiSoft.MP3Player.Playback;
 
 namespace TomiSoft.MP3Player.Utils {
 	/// <summary>

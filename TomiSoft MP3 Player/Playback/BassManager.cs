@@ -7,7 +7,7 @@ using System.Diagnostics;
 using Un4seen.Bass;
 using TomiSoft.MP3Player.Utils.Extensions;
 
-namespace TomiSoft_MP3_Player {
+namespace TomiSoft.MP3Player.Playback {
 	/// <summary>
 	/// This class manages the BASS library.
 	/// </summary>
@@ -92,7 +92,7 @@ namespace TomiSoft_MP3_Player {
 				if (Result == 0) {
 					Trace.TraceInformation($"[BASS init] Plugin loaded: {File.Name}");
 
-					string PluginSupportedExtensions = Utils.BASSAddOnGetSupportedFileExtensions(File.FullName);
+					string PluginSupportedExtensions = Un4seen.Bass.Utils.BASSAddOnGetSupportedFileExtensions(File.FullName);
 					SupportedExtensions.AddRange(
 						PluginSupportedExtensions.GetMatches(@"\W+([\w\d]+)").Select(x => x.ToLower())
 					);

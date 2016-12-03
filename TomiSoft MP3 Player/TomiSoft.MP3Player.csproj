@@ -89,7 +89,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Bass\BassManager.cs" />
+    <Compile Include="Playback\BassManager.cs" />
     <Compile Include="UserInterface\Windows\MainWindow\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
