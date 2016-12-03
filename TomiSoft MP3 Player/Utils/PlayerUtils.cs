@@ -2,11 +2,11 @@
 using System.IO;
 using System.Windows;
 
-namespace TomiSoft_MP3_Player {
+namespace TomiSoft.MP3Player.Utils {
 	/// <summary>
 	/// Contains useful methods.
 	/// </summary>
-	class PlayerUtils {
+	public class PlayerUtils {
 		/// <summary>
 		/// Extracts the extension from the given filename.
 		/// </summary>

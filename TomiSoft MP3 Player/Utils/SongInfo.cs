@@ -2,8 +2,9 @@
 using System.Linq;
 using System.IO;
 using Un4seen.Bass.AddOn.Tags;
+using TomiSoft_MP3_Player;
 
-namespace TomiSoft_MP3_Player {
+namespace TomiSoft.MP3Player.Utils {
 	/// <summary>
 	/// Stores information about a song.
 	/// </summary>

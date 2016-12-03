@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using TomiSoft_MP3_Player;
+using TomiSoft.MP3Player.Utils;
 
 namespace TomiSoft.MP3Player.Playlist {
 	/// <summary>

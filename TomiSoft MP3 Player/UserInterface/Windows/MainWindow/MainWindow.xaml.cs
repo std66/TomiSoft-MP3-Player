@@ -9,6 +9,7 @@ using TomiSoft.Music.Lyrics.Lrc;
 using TomiSoft.MP3Player.Communication;
 using TomiSoft.MP3Player.Playback;
 using TomiSoft.MP3Player.Playlist;
+using TomiSoft.MP3Player.Utils;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
