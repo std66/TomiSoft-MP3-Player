@@ -1,10 +1,10 @@
 ﻿using Un4seen.Bass;
 
-namespace TomiSoft_MP3_Player {
+namespace TomiSoft.MP3Player.Playback {
 	/// <summary>
 	/// Provides a file playback method using BASS.
 	/// </summary>
-	class LocalAudioFilePlayback : BassPlaybackAbstract {
+	public class LocalAudioFilePlayback : BassPlaybackAbstract {
 		/// <summary>
 		/// Initializes a new instance of LocalAudioFilePlayback using
 		/// the given filename.

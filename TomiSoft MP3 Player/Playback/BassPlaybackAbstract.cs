@@ -3,12 +3,12 @@ using System.ComponentModel;
 using System.Windows.Threading;
 using Un4seen.Bass;
 
-namespace TomiSoft_MP3_Player {
+namespace TomiSoft.MP3Player.Playback {
 	/// <summary>
 	/// Provides basic functionality for playback handlers that uses
 	/// BASS to play the media.
 	/// </summary>
-	abstract class BassPlaybackAbstract : IPlaybackManager {
+	public abstract class BassPlaybackAbstract : IPlaybackManager {
 		private bool playing;
 		private int channelID;
 		private DispatcherTimer PlaybackTimer;

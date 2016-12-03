@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace TomiSoft_MP3_Player {
+namespace TomiSoft.MP3Player.Playback {
 	/// <summary>
 	/// Represents a playback method that does nothing.
 	/// </summary>
-	class NullPlayback : IPlaybackManager {
+	public class NullPlayback : IPlaybackManager {
 		/// <summary>
 		/// Gets or sets the playback position. Always returns 0.
 		/// Setting this value has no effect at all.

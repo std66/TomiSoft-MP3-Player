@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace TomiSoft_MP3_Player {
+namespace TomiSoft.MP3Player.Playback {
 	/// <summary>
 	/// Provides informations about a song.
 	/// </summary>

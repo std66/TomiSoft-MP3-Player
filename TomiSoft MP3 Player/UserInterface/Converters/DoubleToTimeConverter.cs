@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Data;
-
+using TomiSoft.MP3Player.Playback;
 using Un4seen.Bass;
 
 namespace TomiSoft_MP3_Player {

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
+using TomiSoft_MP3_Player;
 
-namespace TomiSoft_MP3_Player {
-	class PlaybackFactory {
+namespace TomiSoft.MP3Player.Playback {
+	public class PlaybackFactory {
 		private static IPlaybackManager lastInstance;
 
 		public static IPlaybackManager LoadFile(string Filename) {

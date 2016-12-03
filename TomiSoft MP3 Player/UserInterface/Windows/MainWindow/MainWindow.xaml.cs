@@ -7,6 +7,7 @@ using System.Diagnostics;
 using Un4seen.Bass;
 using TomiSoft.Music.Lyrics.Lrc;
 using TomiSoft.MP3Player.Communication;
+using TomiSoft.MP3Player.Playback;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>

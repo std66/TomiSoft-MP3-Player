@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace TomiSoft_MP3_Player {
+namespace TomiSoft.MP3Player.Playback {
 	/// <summary>
 	/// This interface is for controlling playback.
 	/// </summary>

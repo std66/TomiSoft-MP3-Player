@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using Un4seen.Bass.AddOn.Tags;
 
-namespace TomiSoft_MP3_Player {
+namespace TomiSoft.MP3Player.Playback {
 	/// <summary>
 	/// Provides information of a song using BassTag plugin.
 	/// </summary>

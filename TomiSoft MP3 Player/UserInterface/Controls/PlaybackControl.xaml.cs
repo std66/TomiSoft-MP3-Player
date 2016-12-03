@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using TomiSoft.MP3Player.Playback;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
