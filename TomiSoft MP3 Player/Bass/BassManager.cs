@@ -5,6 +5,7 @@ using System.IO;
 using System.Diagnostics;
 
 using Un4seen.Bass;
+using TomiSoft.MP3Player.Utils.Extensions;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>

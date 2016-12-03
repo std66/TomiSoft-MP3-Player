@@ -3,8 +3,8 @@ using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace TomiSoft_MP3_Player {
-	static class MiscExtensions {
+namespace TomiSoft.MP3Player.Utils.Extensions {
+	public static class MiscExtensions {
 		/// <summary>
 		/// Creates an System.Windows.Media.ImageSource from the given System.Drawing.Image.
 		/// </summary>

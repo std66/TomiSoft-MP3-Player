@@ -76,9 +76,9 @@
     <Compile Include="Communication\PlayerClient.cs" />
     <Compile Include="Communication\PlayerServer.cs" />
     <Compile Include="UserInterface\Windows\MainWindow\MainWindowViewModel.cs" />
-    <Compile Include="Utils\MiscExtensions.cs" />
+    <Compile Include="Utils\Extensions\MiscExtensions.cs" />
     <Compile Include="Utils\SongInfo.cs" />
-    <Compile Include="Utils\StringRegexExtensions.cs" />
+    <Compile Include="Utils\Extensions\StringRegexExtensions.cs" />
     <Compile Include="Windows\Toast.cs" />
     <Compile Include="Utils\PlayerUtils.cs" />
     <Page Include="UserInterface\Windows\MainWindow\MainWindow.xaml">

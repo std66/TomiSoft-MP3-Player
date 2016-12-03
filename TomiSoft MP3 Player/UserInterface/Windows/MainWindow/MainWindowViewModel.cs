@@ -4,6 +4,7 @@ using System.Windows.Media;
 using System.Linq;
 using TomiSoft.Music.Lyrics;
 using TomiSoft.MP3Player.Playback;
+using TomiSoft.MP3Player.Utils.Extensions;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>

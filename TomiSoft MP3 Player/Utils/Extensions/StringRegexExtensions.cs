@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace TomiSoft_MP3_Player {
+namespace TomiSoft.MP3Player.Utils.Extensions {
 	/// <summary>
 	/// Extends the System.String instances with regular expression
 	/// methods.
 	/// </summary>
-	static class StringRegexExtensions {
+	public static class StringRegexExtensions {
 		/// <summary>
 		/// Gets all matches in the given string using the given pattern.
 		/// </summary>

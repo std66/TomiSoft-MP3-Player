@@ -70,7 +70,7 @@ namespace TomiSoft.MP3Player.Playback {
 				if (!IsPlaying)
 					return 0;
 
-				return Utils.LowWord32(Bass.BASS_ChannelGetLevel(this.channelID));
+				return Un4seen.Bass.Utils.LowWord32(Bass.BASS_ChannelGetLevel(this.channelID));
 			}
 		}
 
@@ -82,7 +82,7 @@ namespace TomiSoft.MP3Player.Playback {
 				if (!IsPlaying)
 					return 0;
 
-				return Utils.HighWord32(Bass.BASS_ChannelGetLevel(this.channelID));
+				return Un4seen.Bass.Utils.HighWord32(Bass.BASS_ChannelGetLevel(this.channelID));
 			}
 		}
 
