@@ -7,7 +7,7 @@ namespace TomiSoft_MP3_Player {
 	/// <summary>
 	/// Stores information about a song.
 	/// </summary>
-	class SongInfo {
+	public class SongInfo {
 		/// <summary>
 		/// Gets the source of the media (usually a file system path or URI)
 		/// </summary>

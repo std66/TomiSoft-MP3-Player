@@ -2,12 +2,13 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using TomiSoft_MP3_Player;
 
-namespace TomiSoft_MP3_Player {
+namespace TomiSoft.MP3Player.Playlist {
 	/// <summary>
 	/// Represents a playlist.
 	/// </summary>
-	class Playlist : ObservableCollection<SongInfo> {
+	public class Playlist : ObservableCollection<SongInfo> {
 		private int currentlyPlaying;
 
 		/// <summary>
