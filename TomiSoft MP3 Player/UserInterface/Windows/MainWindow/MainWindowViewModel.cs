@@ -24,7 +24,7 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		public ImageSource AlbumImage {
 			get {
-				ImageSource DefaultImage = Properties.Resources.AbstractAlbumArt.ToImageSource();
+				ImageSource DefaultImage = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt.ToImageSource();
 
 				if (this.playbackManager != null && !(this.playbackManager is NullPlayback)) {
 					if (this.playbackManager.SongInfo.AlbumImage != null)

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TomiSoft_MP3_Player.Properties {
+namespace TomiSoft.MP3Player.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

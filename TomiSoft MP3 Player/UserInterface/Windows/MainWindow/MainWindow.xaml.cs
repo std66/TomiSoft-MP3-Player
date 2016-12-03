@@ -235,11 +235,11 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="Player">The IPlaybackManager instance which holds the song's information.</param>
 		private void ShowToast(IPlaybackManager Player) {
-			System.Drawing.Image AlbumImage = Properties.Resources.AbstractAlbumArt;
+			System.Drawing.Image AlbumImage = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt;
 			if (Player.SongInfo != null) {
 				AlbumImage = this.Player.SongInfo.AlbumImage;
 				if (AlbumImage == null)
-					AlbumImage = Properties.Resources.AbstractAlbumArt;
+					AlbumImage = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt;
 
 				Toast t = new Toast("TomiSoft MP3 Player") {
 					Title = this.Player.SongInfo.Title,
