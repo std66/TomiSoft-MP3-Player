@@ -5,6 +5,7 @@ using System.Linq;
 using TomiSoft.Music.Lyrics;
 using TomiSoft.MP3Player.Playback;
 using TomiSoft.MP3Player.Utils.Extensions;
+using System.Windows;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -18,6 +19,11 @@ namespace TomiSoft_MP3_Player {
 
 		private IPlaybackManager playbackManager;
 		private ILyricsReader lyricsReader;
+
+		/// <summary>
+		/// Gets the visibility value of the menu.
+		/// </summary>
+		public Visibility MenuVisibility { get; private set; } = Visibility.Collapsed;
 
 		/// <summary>
 		/// Gets the album image.
@@ -101,6 +107,11 @@ namespace TomiSoft_MP3_Player {
 
 		public MainWindowViewModel() {
 			this.NotifyAll();
+		}
+
+		public void ToggleMenu() {
+			this.MenuVisibility = this.MenuVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+			this.NotifyPropertyChanged("MenuVisibility");
 		}
 
 		/// <summary>

@@ -293,17 +293,16 @@ namespace TomiSoft_MP3_Player {
 		private void FileOpenButton_Click(object sender, RoutedEventArgs e) {
 			if (this.OpenFile()) {
 				this.PlayerOperaion(() => this.Player.Play());
+				this.viewModel.ToggleMenu();
 			}
 		}
-
-		private void Label_MouseUp(object sender, MouseButtonEventArgs e) {
-			this.Close();
+		
+		private void ExitClicked(object sender, MouseButtonEventArgs e) {
+			Environment.Exit(0);
 		}
 
-		private void Label_MouseMove(object sender, MouseEventArgs e) {
-			if (e.LeftButton == MouseButtonState.Pressed) {
-				
-			}
+		private void ToggleMenuVisibility(object sender, MouseButtonEventArgs e) {
+			this.viewModel.ToggleMenu();
 		}
 	}
 }

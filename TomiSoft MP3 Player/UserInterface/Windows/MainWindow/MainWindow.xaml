@@ -5,9 +5,21 @@
         Title="TomiSoft MP3 Player" SizeToContent="WidthAndHeight" Background="#FF3C3C3C" KeyUp="Window_KeyUp"
         ResizeMode="CanMinimize"
         AllowDrop="True"
-        Drop="Window_Drop">
+        Drop="Window_Drop"
+        MouseRightButtonUp="ToggleMenuVisibility">
     <Window.Resources>
-        <local:DoubleToTimeConverter x:Key="DoubleToTimeConverter" />
+        <!-- Hover effect style for the menu items -->
+        <Style x:Key="MenuLabelStyle" TargetType="Label">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="Transparent"/>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="Background" Value="DarkGray"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <Window.DataContext>
@@ -15,21 +27,8 @@
     </Window.DataContext>
 
     <Window.Triggers>
-        <EventTrigger RoutedEvent="Window.MouseEnter">
-            <BeginStoryboard>
-                <Storyboard>
-                    <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="FileOpenButton" From="0.0" To="1.0" Duration="0:0:0.2">
-                    </DoubleAnimation>
-                </Storyboard>
-            </BeginStoryboard>
-        </EventTrigger>
-        <EventTrigger RoutedEvent="Window.MouseLeave">
-            <BeginStoryboard>
-                <Storyboard>
-                    <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="FileOpenButton" From="1.0" To="0.0" Duration="0:0:0.2">
-                    </DoubleAnimation>
-                </Storyboard>
-            </BeginStoryboard>
+        <EventTrigger RoutedEvent="Window.MouseRightButtonUp">
+            
         </EventTrigger>
     </Window.Triggers>
 
@@ -40,7 +39,7 @@
             <RowDefinition Height="23*"/>
             <RowDefinition Height="99"/>
         </Grid.RowDefinitions>
-        
+
         <local:PlaybackControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="3" x:Name="PlaybackController">
             <local:PlaybackControl.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -50,7 +49,6 @@
             </local:PlaybackControl.Background>
         </local:PlaybackControl>
         <Image x:Name="albumArt" Margin="0,0,0,0" Source="{Binding AlbumImage}" Stretch="Uniform" Grid.Row="1"/>
-        <Button Content="&#x1f4c2;" Name="FileOpenButton" Opacity="0.0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="20" Height="20" Margin="240,6,0,0" Click="FileOpenButton_Click"/>
         <Label x:Name="lSongTitle" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  Foreground="#FFAAAAAA" Content="{Binding Title}">
             <Label.Effect>
                 <DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
@@ -63,5 +61,22 @@
                 <DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
             </Label.Effect>
         </Label>
+        
+        <!-- Menu -->
+        <StackPanel HorizontalAlignment="Left" Visibility="{Binding MenuVisibility, FallbackValue=Visibility.Collapsed}" Height="237" Grid.RowSpan="3" VerticalAlignment="Top" Width="235" Background="LightGray">
+            <Label Content="☰ MENÜ" FontWeight="Bold"/>
+
+            <StackPanel x:Name="MenuPanel">
+                <StackPanel.Resources>
+                    <Style BasedOn="{StaticResource MenuLabelStyle}" TargetType="Label"/>
+                </StackPanel.Resources>
+
+                <Label Content="Média megnyitása" MouseLeftButtonUp="FileOpenButton_Click"/>
+                <Label Content="Lejátszási lista" Visibility="Collapsed"/>
+                <Label Content="Dalszöveg" Visibility="Collapsed"/>
+                <Label Content="Beállítások" Visibility="Collapsed"/>
+                <Label Content="Kilépés" MouseLeftButtonUp="ExitClicked"/>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Window>
