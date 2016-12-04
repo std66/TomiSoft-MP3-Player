@@ -26,12 +26,6 @@
         <local:MainWindowViewModel/>
     </Window.DataContext>
 
-    <Window.Triggers>
-        <EventTrigger RoutedEvent="Window.MouseRightButtonUp">
-            
-        </EventTrigger>
-    </Window.Triggers>
-
     <Grid Height="336" Width="270" Name="UI_Player">
         <Grid.RowDefinitions>
             <RowDefinition Height="23*"/>
