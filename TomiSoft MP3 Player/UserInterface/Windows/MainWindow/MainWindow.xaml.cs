@@ -291,9 +291,10 @@ namespace TomiSoft_MP3_Player {
 		}
 
 		private void FileOpenButton_Click(object sender, RoutedEventArgs e) {
+			this.viewModel.ToggleMenu();
+
 			if (this.OpenFile()) {
 				this.PlayerOperaion(() => this.Player.Play());
-				this.viewModel.ToggleMenu();
 			}
 		}
 		
