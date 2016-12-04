@@ -11,10 +11,10 @@
     </UserControl.Resources>
     <Grid>
 
-        <Slider x:Name="UI_PlaybackPosition" VerticalAlignment="Top" Value="{Binding Position}" Margin="9,32,96,0" Maximum="{Binding Length, Mode=OneWay}" Height="18"/>
-        <Slider x:Name="UI_Volume" VerticalAlignment="Top" Value="{Binding Volume}" Minimum="0" Margin="0,32,8,0" Maximum="100" Height="18" HorizontalAlignment="Right" Width="73"/>
-        <ProgressBar x:Name="UI_LeftPeakMeter" VerticalAlignment="Bottom" Value="{Binding LeftPeak, Mode=OneWay}" Margin="5,0,5,13" Maximum="32768" Height="5" Foreground="White" Background="Black" BorderBrush="#FF535353"/>
-        <ProgressBar x:Name="UI_RightPeakMeter" VerticalAlignment="Bottom" Value="{Binding RightPeak, Mode=OneWay}" SmallChange="1" Margin="5,0,5,6" Maximum="32768" Height="5" Foreground="White" BorderBrush="#FF535353" Background="Black" BorderThickness="1"/>
+        <Slider x:Name="UI_PlaybackPosition" VerticalAlignment="Top" Value="{Binding Position, FallbackValue=0}" Margin="9,32,96,0" Maximum="{Binding Length, Mode=OneWay}" Height="18"/>
+        <Slider x:Name="UI_Volume" VerticalAlignment="Top" Value="{Binding Volume, FallbackValue=100}" Minimum="0" Margin="0,32,8,0" Maximum="100" Height="18" HorizontalAlignment="Right" Width="73"/>
+        <ProgressBar x:Name="UI_LeftPeakMeter" VerticalAlignment="Bottom" Value="{Binding LeftPeak, Mode=OneWay, FallbackValue=0}" Margin="5,0,5,13" Maximum="32768" Height="5" Foreground="White" Background="Black" BorderBrush="#FF535353"/>
+        <ProgressBar x:Name="UI_RightPeakMeter" VerticalAlignment="Bottom" Value="{Binding RightPeak, Mode=OneWay, FallbackValue=0}" SmallChange="1" Margin="5,0,5,6" Maximum="32768" Height="5" Foreground="White" BorderBrush="#FF535353" Background="Black" BorderThickness="1"/>
         <Button x:Name="UI_PlayButton" Width="23" VerticalAlignment="Top" Margin="47,7,0,0" Height="20" HorizontalAlignment="Left" Content="▶" Click="UI_PlayButton_Click"/>
         <Button x:Name="UI_PauseButton" Width="23" VerticalAlignment="Top" Margin="72,7,0,0" Height="20" HorizontalAlignment="Left" Content="⏸" Click="UI_PauseButton_Click"/>
         <Button x:Name="UI_StopButton" Width="23" VerticalAlignment="Top" Margin="97,7,0,0" Height="20" HorizontalAlignment="Left" Content="■" Click="UI_StopButton_Click"/>
