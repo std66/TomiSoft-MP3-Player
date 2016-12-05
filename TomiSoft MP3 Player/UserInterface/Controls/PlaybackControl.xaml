@@ -18,7 +18,7 @@
         <Button x:Name="UI_PlayButton" Width="23" VerticalAlignment="Top" Margin="47,7,0,0" Height="20" HorizontalAlignment="Left" Content="▶" Click="UI_PlayButton_Click"/>
         <Button x:Name="UI_PauseButton" Width="23" VerticalAlignment="Top" Margin="72,7,0,0" Height="20" HorizontalAlignment="Left" Content="⏸" Click="UI_PauseButton_Click"/>
         <Button x:Name="UI_StopButton" Width="23" VerticalAlignment="Top" Margin="97,7,0,0" Height="20" HorizontalAlignment="Left" Content="■" Click="UI_StopButton_Click"/>
-        <Button x:Name="UI_MuteButton" VerticalAlignment="Top" Margin="0,7,32,0" Height="20" Content="🔊" HorizontalAlignment="Right" Width="23"/>
+        <Button x:Name="UI_MuteButton" VerticalAlignment="Top" Margin="0,7,32,0" Height="20" Content="🔊" HorizontalAlignment="Right" Width="23" Click="UI_MuteButton_Click"/>
         <Label x:Name="UI_CurrentTime" Width="60" VerticalAlignment="Top" Margin="5,50,0,0" Height="25" HorizontalAlignment="Left" Foreground="#FF8D8D8D" Content="{Binding Position, Converter={StaticResource ResourceKey=DoubleToTimeConverter}, FallbackValue='00:00:00'}" Background="#00000000"/>
         <Label x:Name="UI_TotalTime" VerticalAlignment="Top" Margin="0,50,96,0" Height="25" HorizontalContentAlignment="Right" Foreground="#FF8D8D8D" Content="{Binding Length, Converter={StaticResource ResourceKey=DoubleToTimeConverter}, FallbackValue='00:00:00'}" BorderBrush="White" HorizontalAlignment="Right" Width="54" Background="#00000000"/>
 
