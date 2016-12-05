@@ -21,11 +21,6 @@ namespace TomiSoft_MP3_Player {
 		private ILyricsReader lyricsReader;
 
 		/// <summary>
-		/// Gets the visibility value of the menu.
-		/// </summary>
-		public Visibility MenuVisibility { get; private set; } = Visibility.Collapsed;
-
-		/// <summary>
 		/// Gets the album image.
 		/// </summary>
 		public ImageSource AlbumImage {
@@ -107,11 +102,6 @@ namespace TomiSoft_MP3_Player {
 
 		public MainWindowViewModel() {
 			this.NotifyAll();
-		}
-
-		public void ToggleMenu() {
-			this.MenuVisibility = this.MenuVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
-			this.NotifyPropertyChanged("MenuVisibility");
 		}
 
 		/// <summary>

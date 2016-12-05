@@ -11,6 +11,7 @@ using TomiSoft.MP3Player.Playback;
 using TomiSoft.MP3Player.Playlist;
 using TomiSoft.MP3Player.Utils;
 using TomiSoft.MP3Player.Utils.Windows;
+using System.Windows.Media.Animation;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -21,6 +22,7 @@ namespace TomiSoft_MP3_Player {
 		private Playlist Playlist = new Playlist();
 		private PlayerServer Server;
 		public MainWindowViewModel viewModel;
+		private bool MenuShowing = false;
 
 		public MainWindow() {
 			//If an instance is already running, send the file list to it.
@@ -291,7 +293,7 @@ namespace TomiSoft_MP3_Player {
 		}
 
 		private void FileOpenButton_Click(object sender, RoutedEventArgs e) {
-			this.viewModel.ToggleMenu();
+			this.ToggleMenu(Show: false);
 
 			if (this.OpenFile()) {
 				this.PlayerOperaion(() => this.Player.Play());
@@ -303,7 +305,23 @@ namespace TomiSoft_MP3_Player {
 		}
 
 		private void ToggleMenuVisibility(object sender, MouseButtonEventArgs e) {
-			this.viewModel.ToggleMenu();
+			bool ShowMenu = !this.MenuShowing;
+			this.ToggleMenu(ShowMenu);
+		}
+
+		/// <summary>
+		/// Changes the visibility of the menu.
+		/// </summary>
+		/// <param name="Show">Set to true if you want to show the menu, set to false to hide it</param>
+		private void ToggleMenu(bool Show) {
+			if (Show) {
+				(this.Resources["FadeInAnimation"] as Storyboard)?.Begin();
+			}
+			else {
+				(this.Resources["FadeOutAnimation"] as Storyboard)?.Begin();
+			}
+
+			this.MenuShowing = Show;
 		}
 	}
 }

@@ -8,6 +8,18 @@
         Drop="Window_Drop"
         MouseRightButtonUp="ToggleMenuVisibility">
     <Window.Resources>
+        <!-- Fade in animation for the menu -->
+        <Storyboard x:Key="FadeInAnimation">
+            <DoubleAnimation From="0" To="1" Storyboard.TargetName="Menu" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2"/>
+            <DoubleAnimation From="-235" To="0" Storyboard.TargetName="Menu" Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)" Duration="0:0:0.2"/>
+        </Storyboard>
+
+        <!-- Fade out animation for the menu -->
+        <Storyboard x:Key="FadeOutAnimation">
+            <DoubleAnimation From="1" To="0" Storyboard.TargetName="Menu" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2"/>
+            <DoubleAnimation From="0" To="-235" Storyboard.TargetName="Menu" Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)" Duration="0:0:0.2"/>
+        </Storyboard>
+
         <!-- Hover effect style for the menu items -->
         <Style x:Key="MenuLabelStyle" TargetType="Label">
             <Setter Property="Foreground" Value="Black"/>
@@ -57,7 +69,10 @@
         </Label>
         
         <!-- Menu -->
-        <StackPanel HorizontalAlignment="Left" Visibility="{Binding MenuVisibility, FallbackValue=Visibility.Collapsed}" Height="237" Grid.RowSpan="3" VerticalAlignment="Top" Width="235" Background="LightGray">
+        <StackPanel HorizontalAlignment="Left" Height="237" Grid.RowSpan="3" VerticalAlignment="Top" Width="235" Background="LightGray" Opacity="0" Name="Menu">
+            <StackPanel.RenderTransform>
+                <TranslateTransform X="-235"/>
+            </StackPanel.RenderTransform>
             <Label Content="☰ MENÜ" FontWeight="Bold"/>
 
             <StackPanel x:Name="MenuPanel">
