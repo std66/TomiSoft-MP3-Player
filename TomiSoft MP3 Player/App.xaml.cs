@@ -14,5 +14,11 @@ namespace TomiSoft_MP3_Player {
 			Trace.WriteLine("");
 			Trace.WriteLine($"New instance started at {DateTime.Now} (Is64BitProcess={Environment.Is64BitProcess})");
 		}
+
+		public static TomiSoft.MP3Player.Properties.Settings Config {
+			get {
+				return new TomiSoft.MP3Player.Properties.Settings();
+			}
+		}
 	}
 }

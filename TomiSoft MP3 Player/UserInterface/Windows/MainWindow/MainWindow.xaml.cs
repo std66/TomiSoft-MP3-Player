@@ -23,7 +23,7 @@ namespace TomiSoft_MP3_Player {
 		private PlayerServer Server;
 		public MainWindowViewModel viewModel;
 		private bool MenuShowing = false;
-
+		
 		public MainWindow() {
 			//If an instance is already running, send the file list to it.
 			//Otherwise, this is the only running instance, so we start a server to
@@ -237,6 +237,10 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="Player">The IPlaybackManager instance which holds the song's information.</param>
 		private void ShowToast(IPlaybackManager Player) {
+			//We don't need to display toast when it is disabled in the config
+			if (!App.Config.ToastOnSongOpen)
+				return;
+
 			System.Drawing.Image AlbumImage = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt;
 			if (Player.SongInfo != null) {
 				AlbumImage = this.Player.SongInfo.AlbumImage;
