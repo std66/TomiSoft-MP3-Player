@@ -43,7 +43,7 @@ namespace TomiSoft.MP3Player.Utils {
         public event EventHandler PreviousTrack;
 
         /// <summary>
-        /// Gets if all media keys are successfully registeres.
+        /// Gets if all media keys are successfully registered.
         /// </summary>
         public bool Registered {
             get;
@@ -51,7 +51,7 @@ namespace TomiSoft.MP3Player.Utils {
         }
 
         /// <summary>
-        /// Initializes a new instance of the PlaybackHotkeys class
+        /// Initializes a new instance of the PlaybackHotkeys class.
         /// </summary>
         /// <param name="HandlerWindow">The window that will handle the system messages</param>
         public PlaybackHotkeys(Window HandlerWindow) {
