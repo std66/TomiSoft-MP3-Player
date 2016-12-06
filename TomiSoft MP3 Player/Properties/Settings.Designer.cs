@@ -34,5 +34,17 @@ namespace TomiSoft.MP3Player.Properties {
                 this["ToastOnSongOpen"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ToastOnMediaKeysFault {
+            get {
+                return ((bool)(this["ToastOnMediaKeysFault"]));
+            }
+            set {
+                this["ToastOnMediaKeysFault"] = value;
+            }
+        }
     }
 }

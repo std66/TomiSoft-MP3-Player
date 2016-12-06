@@ -13,6 +13,7 @@ using TomiSoft.MP3Player.Utils;
 using TomiSoft.MP3Player.Utils.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Interop;
+using TomiSoft.MP3Player.Utils.Extensions;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -46,6 +47,7 @@ namespace TomiSoft_MP3_Player {
 			this.viewModel = new MainWindowViewModel();
 			this.DataContext = viewModel;
 			this.PreparePlaybackController();
+            this.Icon = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt.ToImageSource();
 
 			//Attaching a null-playback instance to display default informations.
 			Trace.TraceInformation("[Player startup] Attaching a NULL-playback manager");
@@ -80,21 +82,27 @@ namespace TomiSoft_MP3_Player {
             //Register hotkeys
             this.Hotkeys = new PlaybackHotkeys(this);
             if (!Hotkeys.Registered) {
-                Toast t = new Toast("TomiSoft MP3 Player") {
-                    Title = "Hoppá!",
-                    Content = "Úgy tűnik, hogy a billentyűzet médiabillentyűit már más program használja."
+                if (App.Config.ToastOnMediaKeysFault) {
+                    Toast t = new Toast("TomiSoft MP3 Player") {
+                        Title = "Hoppá!",
+                        Content = "Úgy tűnik, hogy a billentyűzet médiabillentyűit már más program használja.",
+                        Image = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt
+                    };
+
+                    t.Show();
+                }
+            }
+            else {
+                this.Hotkeys.Stop += (o, e) => this.Stop();
+                this.Hotkeys.NextTrack += (o, e) => this.PlayNext();
+                this.Hotkeys.PreviousTrack += (o, e) => this.PlayPrevious();
+                this.Hotkeys.PlayPause += (o, e) => {
+                    if (this.Player.IsPlaying)
+                        this.Pause();
+                    else
+                        this.Play();
                 };
             }
-
-            this.Hotkeys.Stop += (o, e) => this.Stop();
-            this.Hotkeys.NextTrack += (o, e) => this.PlayNext();
-            this.Hotkeys.PreviousTrack += (o, e) => this.PlayPrevious();
-            this.Hotkeys.PlayPause += (o, e) => {
-                if (this.Player.IsPlaying)
-                    this.Pause();
-                else
-                    this.Play();
-            };
         }
 
         /// <summary>
