@@ -78,10 +78,13 @@
     <Compile Include="Communication\PlayerServer.cs" />
     <Compile Include="UserInterface\Windows\MainWindow\MainWindowViewModel.cs" />
     <Compile Include="Utils\Extensions\MiscExtensions.cs" />
+    <Compile Include="Utils\PlaybackHotkeys.cs" />
     <Compile Include="Utils\SongInfo.cs" />
     <Compile Include="Utils\Extensions\StringRegexExtensions.cs" />
+    <Compile Include="Utils\Windows\Hotkeys.cs" />
     <Compile Include="Utils\Windows\Toast.cs" />
     <Compile Include="Utils\PlayerUtils.cs" />
+    <Compile Include="Utils\Windows\VirtualKey.cs" />
     <Page Include="UserInterface\Windows\MainWindow\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

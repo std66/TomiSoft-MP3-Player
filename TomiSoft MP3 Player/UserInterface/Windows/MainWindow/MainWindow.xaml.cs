@@ -12,6 +12,7 @@ using TomiSoft.MP3Player.Playlist;
 using TomiSoft.MP3Player.Utils;
 using TomiSoft.MP3Player.Utils.Windows;
 using System.Windows.Media.Animation;
+using System.Windows.Interop;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -21,6 +22,7 @@ namespace TomiSoft_MP3_Player {
 		private IPlaybackManager Player;
 		private Playlist Playlist = new Playlist();
 		private PlayerServer Server;
+        private PlaybackHotkeys Hotkeys;
 		public MainWindowViewModel viewModel;
 		private bool MenuShowing = false;
 		
@@ -59,18 +61,47 @@ namespace TomiSoft_MP3_Player {
 				Environment.Exit(1);
 			}
 
+            this.Loaded += RegisterHotKeys;
+
 			this.Closed += (o, e) => {
 				Trace.TraceInformation("[Player] Closing application...");
 				Trace.TraceInformation("[BASS] Free");
 				Bass.BASS_Free();
+                this.Hotkeys.Dispose();
 			};
 		}
 
-		/// <summary>
-		/// Sends the file list to the server then closes the application.
-		/// Currently only the first file is sent.
-		/// </summary>
-		private void SendFileListToServer() {
+        /// <summary>
+        /// This event handler method registers the hotkeys.
+        /// </summary>
+        /// <param name="sender">Always null</param>
+        /// <param name="ev">Empty EventArgs instance</param>
+        private void RegisterHotKeys(object sender, EventArgs ev) {
+            //Register hotkeys
+            this.Hotkeys = new PlaybackHotkeys(this);
+            if (!Hotkeys.Registered) {
+                Toast t = new Toast("TomiSoft MP3 Player") {
+                    Title = "Hoppá!",
+                    Content = "Úgy tűnik, hogy a billentyűzet médiabillentyűit már más program használja."
+                };
+            }
+
+            this.Hotkeys.Stop += (o, e) => this.Stop();
+            this.Hotkeys.NextTrack += (o, e) => this.PlayNext();
+            this.Hotkeys.PreviousTrack += (o, e) => this.PlayPrevious();
+            this.Hotkeys.PlayPause += (o, e) => {
+                if (this.Player.IsPlaying)
+                    this.Pause();
+                else
+                    this.Play();
+            };
+        }
+
+        /// <summary>
+        /// Sends the file list to the server then closes the application.
+        /// Currently only the first file is sent.
+        /// </summary>
+        private void SendFileListToServer() {
 			try {
 				using (PlayerClient Client = new PlayerClient()) {
 					string[] args = Environment.GetCommandLineArgs();
@@ -128,6 +159,19 @@ namespace TomiSoft_MP3_Player {
 				}
 			}
 		}
+
+        /// <summary>
+        /// Moves to the previous song and plays it.
+        /// </summary>
+        private void PlayPrevious() {
+            if (this.Playlist.MoveToPrevious()) {
+                this.PlayerOperaion(() => this.Player.Stop());
+
+                this.AttachPlayer(
+                    PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)
+                );
+            }
+        }
 
 		/// <summary>
 		/// Moves to the next song and plays it.
@@ -327,5 +371,11 @@ namespace TomiSoft_MP3_Player {
 
 			this.MenuShowing = Show;
 		}
-	}
+
+        protected override void OnSourceInitialized(EventArgs e) {
+            base.OnSourceInitialized(e);
+            HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
+            source.AddHook(this.Hotkeys.Hook);
+        }
+    }
 }
