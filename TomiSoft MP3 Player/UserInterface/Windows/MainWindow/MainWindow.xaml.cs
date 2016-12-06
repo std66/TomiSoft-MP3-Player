@@ -14,6 +14,7 @@ using TomiSoft.MP3Player.Utils.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Interop;
 using TomiSoft.MP3Player.Utils.Extensions;
+using System.Reflection;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -384,6 +385,23 @@ namespace TomiSoft_MP3_Player {
             base.OnSourceInitialized(e);
             HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
             source.AddHook(this.Hotkeys.Hook);
+        }
+
+        /// <summary>
+        /// This method is executed when the user clicks the "About"
+        /// in the menu. Closes the menu and shows the about window.
+        /// </summary>
+        /// <param name="sender">The "About" label's instance</param>
+        /// <param name="e">Event parameters</param>
+        private void AboutClicked(object sender, MouseButtonEventArgs e) {
+            this.ToggleMenu(Show: false);
+
+            MessageBox.Show(
+                caption: "Névjegy",
+                messageBoxText: $"TomiSoft MP3 Player\r\nVerzió: {App.Version}\r\n\r\nSinku Tamás\r\nhttps://github.com/std66/TomiSoft-MP3-Player",
+                button: MessageBoxButton.OK,
+                icon: MessageBoxImage.Information
+            );
         }
     }
 }

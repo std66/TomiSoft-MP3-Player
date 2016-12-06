@@ -84,6 +84,7 @@
                 <Label Content="Lejátszási lista" Visibility="Collapsed"/>
                 <Label Content="Dalszöveg" Visibility="Collapsed"/>
                 <Label Content="Beállítások" Visibility="Collapsed"/>
+                <Label Content="Névjegy" MouseLeftButtonUp="AboutClicked"/>
                 <Label Content="Kilépés" MouseLeftButtonUp="ExitClicked"/>
             </StackPanel>
         </StackPanel>
