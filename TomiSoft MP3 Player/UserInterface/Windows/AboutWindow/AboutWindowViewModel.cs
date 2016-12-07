@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Media;
 using TomiSoft.MP3Player.Playback;
 using TomiSoft.MP3Player.Utils.Extensions;
@@ -14,6 +15,8 @@ namespace TomiSoft.MP3Player.UserInterface.Windows.AboutWindow {
     /// Represents the data associated with the about window.
     /// </summary>
     internal class AboutWindowViewModel : INotifyPropertyChanged {
+        private ICommand AboutBassClickedCommand = new AboutBassCommand();
+
         /// <summary>
         /// This event is fired when a property has changed.
         /// </summary>
@@ -73,6 +76,15 @@ namespace TomiSoft.MP3Player.UserInterface.Windows.AboutWindow {
                     return "Ismeretlen";
 
                 return BassManager.BassVersion.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Gets the command for "About BASS" button.
+        /// </summary>
+        public ICommand AboutBassClicked {
+            get {
+                return this.AboutBassClickedCommand;
             }
         }
 

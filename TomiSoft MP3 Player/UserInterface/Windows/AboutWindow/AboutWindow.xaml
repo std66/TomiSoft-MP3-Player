@@ -33,6 +33,6 @@
         <Label Content="{Binding BassVersion}" HorizontalAlignment="Left" Margin="162,49,0,0" VerticalAlignment="Top"/>
 
         <Label Content="{Binding Website}" HorizontalAlignment="Left" Margin="8,117,0,0" VerticalAlignment="Top"/>
-        <Button Content="BASS.NET névjegye" HorizontalAlignment="Left" Margin="13,159,0,0" VerticalAlignment="Top" Width="116"/>
+        <Button Content="BASS.NET névjegye" HorizontalAlignment="Left" Margin="13,159,0,0" VerticalAlignment="Top" Width="116" Command="{Binding AboutBassClicked}"/>
     </Grid>
 </Window>
