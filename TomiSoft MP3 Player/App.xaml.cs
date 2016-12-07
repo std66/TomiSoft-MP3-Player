@@ -36,5 +36,32 @@ namespace TomiSoft_MP3_Player {
                 return Assembly.GetExecutingAssembly().GetName().Version;
             }
         }
+
+        /// <summary>
+        /// Gets the name of the application.
+        /// </summary>
+        public static string Name {
+            get {
+                return "TomiSoft MP3 Player";
+            }
+        }
+
+        /// <summary>
+        /// Gets the website of the application.
+        /// </summary>
+        public static Uri Website {
+            get {
+                return new Uri("https://github.com/std66/TomiSoft-MP3-Player");
+            }
+        }
+
+        /// <summary>
+        /// Gets the name of the application's author.
+        /// </summary>
+        public static string Author {
+            get {
+                return "Sinku Tamás";
+            }
+        }
 	}
 }

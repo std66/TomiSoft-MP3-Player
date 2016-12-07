@@ -1,0 +1,38 @@
+﻿<Window x:Class="TomiSoft.MP3Player.UserInterface.Windows.AboutWindow.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TomiSoft.MP3Player.UserInterface.Windows.AboutWindow"
+        mc:Ignorable="d"
+        Title="Névjegy" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize" Background="#FF3C3C3C" 
+        Height="218" Width="278" ShowInTaskbar="False">
+
+    <Window.DataContext>
+        <local:AboutWindowViewModel/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <Style TargetType="Label">
+            <Setter Property="Foreground" Value="LightGray"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Image x:Name="image" HorizontalAlignment="Left" Height="75" VerticalAlignment="Top" Width="75" Margin="13,13,0,0" Source="{Binding Icon}"/>
+        <Label Content="{Binding Name}" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="93,13,0,0"/>
+
+        <Label Content="Verzió:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="93,34,0,0"/>
+        <Label Content="{Binding Version, FallbackValue='Ismeretlen'}" Margin="133,34,56,129"/>
+
+        <Label Content="Készítette:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8,102,0,0"/>
+        <Label Content="{Binding Author}" HorizontalAlignment="Left" Margin="69,102,0,0" VerticalAlignment="Top"/>
+
+        <Label Content="BASS verzió:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="93,49,0,0"/>
+        <Label Content="{Binding BassVersion}" HorizontalAlignment="Left" Margin="162,49,0,0" VerticalAlignment="Top"/>
+
+        <Label Content="{Binding Website}" HorizontalAlignment="Left" Margin="8,117,0,0" VerticalAlignment="Top"/>
+        <Button Content="BASS.NET névjegye" HorizontalAlignment="Left" Margin="13,159,0,0" VerticalAlignment="Top" Width="116"/>
+    </Grid>
+</Window>

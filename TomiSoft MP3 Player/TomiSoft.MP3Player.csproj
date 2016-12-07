@@ -76,9 +76,10 @@
     <Compile Include="Playlist\Playlist.cs" />
     <Compile Include="Communication\PlayerClient.cs" />
     <Compile Include="Communication\PlayerServer.cs" />
-    <Compile Include="UserInterface\Windows\AboutWindow.xaml.cs">
+    <Compile Include="UserInterface\Windows\AboutWindow\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserInterface\Windows\AboutWindow\AboutWindowViewModel.cs" />
     <Compile Include="UserInterface\Windows\MainWindow\MainWindowViewModel.cs" />
     <Compile Include="Utils\Extensions\MiscExtensions.cs" />
     <Compile Include="Utils\PlaybackHotkeys.cs" />
@@ -88,7 +89,7 @@
     <Compile Include="Utils\Windows\Toast.cs" />
     <Compile Include="Utils\PlayerUtils.cs" />
     <Compile Include="Utils\Windows\VirtualKey.cs" />
-    <Page Include="UserInterface\Windows\AboutWindow.xaml">
+    <Page Include="UserInterface\Windows\AboutWindow\AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

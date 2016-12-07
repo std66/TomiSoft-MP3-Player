@@ -15,6 +15,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Interop;
 using TomiSoft.MP3Player.Utils.Extensions;
 using System.Reflection;
+using TomiSoft.MP3Player.UserInterface.Windows.AboutWindow;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -64,6 +65,14 @@ namespace TomiSoft_MP3_Player {
 				Environment.Exit(1);
 			}
 
+            //Initialize BASS output device.
+            Trace.TraceInformation("[Player startup] Initializing audio output device");
+            if (!BassManager.InitializeOutputDevice()) {
+                Trace.TraceError("[Player startup] Fatal error occured. Terminating application...");
+                PlayerUtils.ErrorMessageBox("TomiSoft MP3 Player", "Nem sikerült beállítani a hangkimenetet.");
+                Environment.Exit(1);
+            }
+
             this.Loaded += RegisterHotKeys;
 
 			this.Closed += (o, e) => {
@@ -72,6 +81,8 @@ namespace TomiSoft_MP3_Player {
 				Bass.BASS_Free();
                 this.Hotkeys.Dispose();
 			};
+
+            Trace.TraceInformation("[Player startup] Startup successful.");
 		}
 
         /// <summary>
@@ -396,12 +407,10 @@ namespace TomiSoft_MP3_Player {
         private void AboutClicked(object sender, MouseButtonEventArgs e) {
             this.ToggleMenu(Show: false);
 
-            MessageBox.Show(
-                caption: "Névjegy",
-                messageBoxText: $"TomiSoft MP3 Player\r\nVerzió: {App.Version}\r\n\r\nSinku Tamás\r\nhttps://github.com/std66/TomiSoft-MP3-Player",
-                button: MessageBoxButton.OK,
-                icon: MessageBoxImage.Information
-            );
+            AboutWindow wnd = new AboutWindow() {
+                Owner = this
+            };
+            wnd.ShowDialog();
         }
     }
 }
