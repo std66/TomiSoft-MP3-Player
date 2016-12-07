@@ -130,7 +130,7 @@ namespace TomiSoft.MP3Player.Utils {
                 }
                 else {
                     this.Registered = false;
-                    Trace.TraceWarning($"Failed to register the hotkey: RegistrationID={CurrentEntry.Key}, Key={CurrentEntry.Value}");
+                    Trace.TraceWarning($"[Hotkey] Failed to register the hotkey: RegistrationID={CurrentEntry.Key}, Key={CurrentEntry.Value}");
                 }
             }
         }
@@ -148,7 +148,7 @@ namespace TomiSoft.MP3Player.Utils {
                 );
 
                 if (!Unregistered) {
-                    Trace.TraceWarning($"Failed to unregister the hotkey: RegistrationID={Entry.Key}, Key={Entry.Value}");
+                    Trace.TraceWarning($"[Hotkey] Failed to unregister the hotkey: RegistrationID={Entry.Key}, Key={Entry.Value}");
                 }
             }
 

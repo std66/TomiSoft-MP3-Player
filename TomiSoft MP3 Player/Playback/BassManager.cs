@@ -13,6 +13,15 @@ namespace TomiSoft.MP3Player.Playback {
 	/// </summary>
 	static class BassManager {
 		private static List<string> SupportedExtensions = new List<string>();
+        private static Stack<KeyValuePair<string, int>> LoadedPlugins = new Stack<KeyValuePair<string, int>>();
+        private static readonly string[] Plugins = {
+            "basscd.dll",
+            "bassflac.dll",
+            "bassmidi.dll",
+            "basswma.dll",
+            "bass_aac.dll",
+            "bass_ac3.dll"
+        };
 
         /// <summary>
         /// Gets if BASS is loaded
@@ -69,7 +78,7 @@ namespace TomiSoft.MP3Player.Playback {
             #endregion
 
             string Directory = String.Format(
-				@"{0}\Bass\{1}\",
+				@"{0}Bass\{1}\",
 				AppDomain.CurrentDomain.BaseDirectory,
 				Environment.Is64BitProcess ? "x64" : "x86"
 			);
@@ -165,27 +174,72 @@ namespace TomiSoft.MP3Player.Playback {
 		/// </summary>
 		/// <param name="Directory">The directory that contains the plugin DLLs.</param>
 		private static void LoadBassPlugins(string Directory) {
-			DirectoryInfo DirInfo = new DirectoryInfo(Directory);
-
-			var Plugins = DirInfo.EnumerateFiles("bass*.dll").Where(x => !x.FullName.Contains("bass.dll"));
-
             AllPluginsLoaded = true;
-			foreach (var File in Plugins) {
-				int Result = Bass.BASS_PluginLoad(File.FullName);
+			foreach (var Filename in Plugins) {
+                #region Error checking
+                if (!File.Exists(Directory + Filename)) {
+                    Trace.TraceWarning($"[BASS init] Plugin file not found ({Directory + Filename})");
+                    continue;
+                }
+                #endregion
 
-				if (Result == 0) {
-					Trace.TraceInformation($"[BASS init] Plugin loaded: {File.Name}");
+                int Result = Bass.BASS_PluginLoad(Directory+Filename);
 
-					string PluginSupportedExtensions = Un4seen.Bass.Utils.BASSAddOnGetSupportedFileExtensions(File.FullName);
+				if (Result != 0) {
+					Trace.TraceInformation($"[BASS init] Plugin loaded: {Filename}");
+
+					string PluginSupportedExtensions = Un4seen.Bass.Utils.BASSAddOnGetSupportedFileExtensions(Filename);
 					SupportedExtensions.AddRange(
 						PluginSupportedExtensions.GetMatches(@"\W+([\w\d]+)").Select(x => x.ToLower())
 					);
+
+                    LoadedPlugins.Push(new KeyValuePair<string, int>(Filename, Result));
 				}
 				else {
-					Trace.TraceWarning($"[BASS init] Failed to load plugin: {File.Name} (Code {Result})");
+					Trace.TraceWarning($"[BASS init] Failed to load plugin: {Filename} (Code {Result}, BassError={Bass.BASS_ErrorGetCode().ToString()})");
                     AllPluginsLoaded = false;
 				}
 			}
 		}
+
+        /// <summary>
+        /// Releases BASS and all of its reaources.
+        /// </summary>
+        public static void Free() {
+            Trace.TraceInformation("[BASS cleanup] Releasing associated resources...");
+            
+            if (FreePlugins()) {
+                Trace.TraceInformation("[BASS cleanup] All plugins released successfully.");
+            }
+            else {
+                Trace.TraceWarning("[BASS cleanup] Failed to release all plugins.");
+            }
+            
+            if (Bass.BASS_Free()) {
+                Trace.TraceInformation("[BASS cleanup] BASS released successfully.");
+            }
+            else {
+                Trace.TraceWarning("[BASS cleanup] Could not release BASS.");
+            }
+        }
+
+        /// <summary>
+        /// Releases all previously loaded BASS plugins.
+        /// </summary>
+        /// <returns>True if all plugins were released successfully, false if not.</returns>
+        private static bool FreePlugins() {
+            bool Result = true;
+
+            while (LoadedPlugins.Count > 0) {
+                KeyValuePair<string, int> Plugin = LoadedPlugins.Pop();
+
+                if (!Bass.BASS_PluginFree(Plugin.Value)) {
+                    Trace.TraceWarning($"[BASS cleanup] Could not release plugin (Plugin: {Plugin.Key}, Handle: {Plugin.Value})");
+                    Result = false;
+                }
+            }
+
+            return Result;
+        }
 	}
 }

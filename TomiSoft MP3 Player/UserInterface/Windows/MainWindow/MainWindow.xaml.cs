@@ -77,8 +77,7 @@ namespace TomiSoft_MP3_Player {
 
 			this.Closed += (o, e) => {
 				Trace.TraceInformation("[Player] Closing application...");
-				Trace.TraceInformation("[BASS] Free");
-				Bass.BASS_Free();
+                BassManager.Free();
                 this.Hotkeys.Dispose();
 			};
 
