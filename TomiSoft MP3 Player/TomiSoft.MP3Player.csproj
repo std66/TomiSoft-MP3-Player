@@ -75,7 +75,6 @@
     <Compile Include="Playback\ISongInfo.cs" />
     <Compile Include="Playback\NullPlayback.cs" />
     <Compile Include="Playlist\Playlist.cs" />
-    <Compile Include="Communication\PlayerClient.cs" />
     <Compile Include="Communication\PlayerServer.cs" />
     <Compile Include="UserInterface\Windows\AboutWindow\AboutBassCommand.cs" />
     <Compile Include="UserInterface\Windows\AboutWindow\AboutWindow.xaml.cs">
@@ -200,6 +199,10 @@
     <None Include="Resources\default.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TomiSoft.MP3Player.Communication\TomiSoft.MP3Player.Communication.csproj">
+      <Project>{fab5119b-1065-45b0-9e71-83fba9ccb811}</Project>
+      <Name>TomiSoft.MP3Player.Communication</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TomiSoft.Music.Lyrics\TomiSoft.Music.Lyrics.csproj">
       <Project>{f482b663-df59-4160-8f82-d32641aafd60}</Project>
       <Name>TomiSoft.Music.Lyrics</Name>

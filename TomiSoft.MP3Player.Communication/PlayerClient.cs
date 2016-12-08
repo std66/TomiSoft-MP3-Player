@@ -45,15 +45,16 @@ namespace TomiSoft.MP3Player.Communication {
             }
         }
 
-		/// <summary>
-		/// Determines whether the server is running.
-		/// </summary>
-		/// <returns>True if the server is running, false if not.</returns>
-		public static bool IsServerRunning() {
+        /// <summary>
+        /// Determines whether the server is running.
+        /// </summary>
+        /// <param name="Port">The port number that the server is listening on</param>
+        /// <returns>True if the server is running, false if not.</returns>
+        public static bool IsServerRunning(int Port) {
 			bool Result = false;
 
 			try {
-				using (PlayerClient c = new PlayerClient()) {
+				using (PlayerClient c = new PlayerClient(Port)) {
 					Result = c.ServerReady;
 				}
 			}
@@ -68,9 +69,10 @@ namespace TomiSoft.MP3Player.Communication {
 		/// Initializes a new instance of the PlayerClient class. Connets to the already
 		/// running instance.
 		/// </summary>
+        /// <param name="Port">The port number that the server is listening on</param>
         /// <exception cref="SocketException">when some connection problems occur</exception>
-		public PlayerClient() {
-			this.Client = new TcpClient("localhost", 22613);
+		public PlayerClient(int Port) {
+			this.Client = new TcpClient("localhost", Port);
 			this.sw = new StreamWriter(this.Client.GetStream()) {
 				AutoFlush = true
 			};
@@ -125,8 +127,27 @@ namespace TomiSoft.MP3Player.Communication {
                 this.Send("Disconnect");
 
             this.Client.Close();
-            this.Client.Dispose();
 		}
+
+        /// <summary>
+        /// Gets the playback position and the length of the song in
+        /// seconds.
+        /// </summary>
+        /// <param name="Length">The variable to store the length of the song in seconds</param>
+        /// <returns>The playback position in seconds</returns>
+        public double PlaybackPosition(out double Length) {
+            this.Send("PlaybackPosition");
+            string[] Result = this.Read().Split(' ');
+
+            if (Result.Length == 2) {
+                Length = Convert.ToDouble(Result[1]);
+                return Convert.ToDouble(Result[0]);
+            }
+            else {
+                Length = 0;
+                return 0;
+            }
+        }
 
         /// <summary>
         /// Sends data to the server in a safe way.

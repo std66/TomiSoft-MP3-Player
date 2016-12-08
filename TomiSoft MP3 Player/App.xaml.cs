@@ -34,7 +34,7 @@ namespace TomiSoft_MP3_Player {
             //listen to the other instances.
             Trace.TraceInformation("[Player startup] Checking if an instance is already running...");
 
-            if (PlayerClient.IsServerRunning()) {
+            if (PlayerClient.IsServerRunning(App.Config.ServerPort)) {
                 Trace.TraceInformation("[Player startup] Found a running instance");
                 SendFileListToServer();
             }
@@ -49,7 +49,7 @@ namespace TomiSoft_MP3_Player {
         /// </summary>
         private static void SendFileListToServer() {
             try {
-                using (PlayerClient Client = new PlayerClient()) {
+                using (PlayerClient Client = new PlayerClient(App.Config.ServerPort)) {
                     string[] args = Environment.GetCommandLineArgs();
 
                     if (args.Length > 1)

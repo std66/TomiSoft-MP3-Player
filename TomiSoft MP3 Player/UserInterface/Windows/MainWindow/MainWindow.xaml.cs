@@ -150,6 +150,10 @@ namespace TomiSoft_MP3_Player {
                             this.PlayPrevious();
                             break;
 
+                        case "PlaybackPosition":
+                            wrt.WriteLine($"{this.Player.Position}/{this.Player.Length}");
+                            break;
+
                         case "ShowPlaylist":
                             int Index = 0;
                             foreach (SongInfo Song in this.Playlist) {
