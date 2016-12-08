@@ -37,12 +37,12 @@ namespace TomiSoft.MP3Player.Utils {
 		/// <summary>
 		/// Gets the year of release of the song.
 		/// </summary>
-		public int Year { get; private set; }
+		public int? Year { get; private set; }
 
 		/// <summary>
 		/// Gets the track number of the song in the album.
 		/// </summary>
-		public int TrackNo { get; private set; }
+		public int? TrackNo { get; private set; }
 
 		/// <summary>
 		/// Gets the length of the song (in bytes or seconds, see IsLengthInSeconds).
@@ -66,7 +66,7 @@ namespace TomiSoft.MP3Player.Utils {
 			}
 			else if (File.Exists(Source)) {
 				string Extension = PlayerUtils.GetFileExtension(Source);
-				if (BassManager.GetSupportedExtensions().Contains(Source)) {
+				if (BassManager.GetSupportedExtensions().Contains(Extension)) {
 					TAG_INFO info = BassTags.BASS_TAG_GetFromFile(Source);
 					this.MapTagInfo(info);
 				}
@@ -82,8 +82,12 @@ namespace TomiSoft.MP3Player.Utils {
 			this.Album = info.album;
 			this.Artist = info.artist;
 			this.AlbumArtist = info.albumartist;
-			this.TrackNo = Convert.ToInt32(info.track);
-			this.Year = Convert.ToInt32(info.year);
+
+            if (!String.IsNullOrWhiteSpace(info.track))
+			    this.TrackNo = Convert.ToInt32(info.track);
+
+            if (!String.IsNullOrWhiteSpace(info.year))
+			    this.Year = Convert.ToInt32(info.year);
 
 			this.IsLengthInSeconds = false;
 			this.Length = info.duration;

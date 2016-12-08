@@ -4,7 +4,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace TomiSoft.MP3Player.Utils.Extensions {
-	public static class MiscExtensions {
+    /// <summary>
+    /// Contains extension methods for images.
+    /// </summary>
+	public static class ImageExtensions {
 		/// <summary>
 		/// Creates an System.Windows.Media.ImageSource from the given System.Drawing.Image.
 		/// </summary>

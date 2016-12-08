@@ -83,7 +83,8 @@
     </Compile>
     <Compile Include="UserInterface\Windows\AboutWindow\AboutWindowViewModel.cs" />
     <Compile Include="UserInterface\Windows\MainWindow\MainWindowViewModel.cs" />
-    <Compile Include="Utils\Extensions\MiscExtensions.cs" />
+    <Compile Include="Utils\Extensions\ArrayExtensions.cs" />
+    <Compile Include="Utils\Extensions\ImageExtensions.cs" />
     <Compile Include="Utils\PlaybackHotkeys.cs" />
     <Compile Include="Utils\SongInfo.cs" />
     <Compile Include="Utils\Extensions\StringRegexExtensions.cs" />

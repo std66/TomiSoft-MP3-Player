@@ -114,23 +114,40 @@ namespace TomiSoft_MP3_Player {
                 this.Server.Dispose();
             };
 
-            Server.CommandReceived += (ClientStream, Command, Parameter) => {
-                Dispatcher.Invoke((Action<Stream, string, string>)delegate {
-                    StreamWriter wrt = new StreamWriter(ClientStream);
+            Server.CommandReceived += (ClientStream, Command, Parameters) => {
+                Dispatcher.Invoke((Action<Stream, string, string[]>)delegate {
+                    StreamWriter wrt = new StreamWriter(ClientStream) {
+                        AutoFlush = true
+                    };
 
-                    Trace.TraceInformation($"[Server] Command={Command}; Parameter={Parameter}");
+                    Trace.TraceInformation($"[Server] Command={Command}");
 
                     switch (Command) {
                         case "Play":
-                            this.OpenFile(Parameter);
-                            this.PlayerOperaion(() => this.Player.Play());
+                            this.OpenFiles(Parameters);
+                            break;
+
+                        case "PlayNext":
+                            this.PlayNext();
+                            break;
+
+                        case "PlayPrevious":
+                            this.PlayPrevious();
+                            break;
+
+                        case "ShowPlaylist":
+                            int Index = 0;
+                            foreach (SongInfo Song in this.Playlist) {
+                                wrt.WriteLine($"{Index};{Song.Artist};{Song.Title}");
+                                Index++;
+                            }
                             break;
 
                         default:
                             Trace.TraceWarning("[Server] Unrecognized command");
                             break;
                     }
-                }, ClientStream, Command, Parameter);
+                }, ClientStream, Command, Parameters);
             };
         }
 
@@ -153,6 +170,8 @@ namespace TomiSoft_MP3_Player {
                 this.AttachPlayer(
                     PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)
                 );
+
+                this.Play();
             }
         }
 
@@ -166,6 +185,8 @@ namespace TomiSoft_MP3_Player {
                 this.AttachPlayer(
                     PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)
                 );
+
+                this.Play();
             }
         }
 
@@ -209,6 +230,28 @@ namespace TomiSoft_MP3_Player {
                 MessageBox.Show(e.Message);
                 return false;
             }
+        }
+
+        private bool OpenFiles(string[] Filenames) {
+            try {
+                this.Playlist.Clear();
+                foreach (string Filename in Filenames)
+                    this.Playlist.Add(new SongInfo(Filename));
+
+                this.Playlist.MoveTo(0);
+
+                this.AttachPlayer(
+                    PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)
+                );
+
+                this.Play();
+            }
+            catch (Exception e) {
+                PlayerUtils.ErrorMessageBox(App.Name, e.Message);
+                return false;
+            }
+
+            return true;
         }
 
         private void OpenLyrics(string Filename) {

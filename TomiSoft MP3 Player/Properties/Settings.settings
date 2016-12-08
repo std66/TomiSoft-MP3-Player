@@ -8,5 +8,8 @@
     <Setting Name="ToastOnMediaKeysFault" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="ServerPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">22613</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
