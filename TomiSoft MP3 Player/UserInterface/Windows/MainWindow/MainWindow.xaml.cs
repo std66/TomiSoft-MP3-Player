@@ -4,7 +4,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Diagnostics;
-using Un4seen.Bass;
 using TomiSoft.Music.Lyrics.Lrc;
 using TomiSoft.MP3Player.Communication;
 using TomiSoft.MP3Player.Playback;
@@ -14,7 +13,6 @@ using TomiSoft.MP3Player.Utils.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Interop;
 using TomiSoft.MP3Player.Utils.Extensions;
-using System.Reflection;
 using TomiSoft.MP3Player.UserInterface.Windows.AboutWindow;
 
 namespace TomiSoft_MP3_Player {
@@ -63,14 +61,31 @@ namespace TomiSoft_MP3_Player {
             }
 
             this.Loaded += RegisterHotKeys;
+            this.Playlist.SelectedSongChanged += Playlist_SelectedSongChanged;
 
             this.Closed += (o, e) => {
                 Trace.TraceInformation("[Player] Closing application...");
                 BassManager.Free();
+                this.Playlist.SelectedSongChanged -= this.Playlist_SelectedSongChanged;
                 this.Hotkeys.Dispose();
+                this.Server.Dispose();
             };
 
             Trace.TraceInformation("[Player startup] Startup successful.");
+        }
+
+        private void Playlist_SelectedSongChanged(object sender, EventArgs e) {
+            this.Stop();
+
+            this.AttachPlayer(
+                PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)
+            );
+
+            this.Play();
+
+            //Load lyrics
+            string LyricsFile = Path.ChangeExtension(this.Playlist.CurrentSongInfo.Source, "lrc");
+            this.OpenLyrics(LyricsFile);
         }
 
         /// <summary>
@@ -164,30 +179,14 @@ namespace TomiSoft_MP3_Player {
         /// Moves to the previous song and plays it.
         /// </summary>
         private void PlayPrevious() {
-            if (this.Playlist.MoveToPrevious()) {
-                this.PlayerOperaion(() => this.Player.Stop());
-
-                this.AttachPlayer(
-                    PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)
-                );
-
-                this.Play();
-            }
+            this.Playlist.MoveToPrevious();
         }
 
         /// <summary>
         /// Moves to the next song and plays it.
         /// </summary>
         private void PlayNext() {
-            if (this.Playlist.MoveToNext()) {
-                this.PlayerOperaion(() => this.Player.Stop());
-
-                this.AttachPlayer(
-                    PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)
-                );
-
-                this.Play();
-            }
+            this.Playlist.MoveToNext();
         }
 
         /// <summary>
@@ -215,15 +214,8 @@ namespace TomiSoft_MP3_Player {
             try {
                 this.Playlist.Clear();
                 this.Playlist.Add(new SongInfo(Filename));
-
-                this.AttachPlayer(
-                    PlaybackFactory.LoadFile(Filename)
-                );
-
-                //Load lyrics
-                string LyricsFile = Path.ChangeExtension(Filename, "lrc");
-                this.OpenLyrics(LyricsFile);
-
+                this.Playlist.MoveTo(0);
+                
                 return true;
             }
             catch (Exception e) {
@@ -239,12 +231,6 @@ namespace TomiSoft_MP3_Player {
                     this.Playlist.Add(new SongInfo(Filename));
 
                 this.Playlist.MoveTo(0);
-
-                this.AttachPlayer(
-                    PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)
-                );
-
-                this.Play();
             }
             catch (Exception e) {
                 PlayerUtils.ErrorMessageBox(App.Name, e.Message);
@@ -360,21 +346,25 @@ namespace TomiSoft_MP3_Player {
         private void Window_Drop(object sender, DragEventArgs e) {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
                 string[] Files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                if (this.OpenFile(Files[0])) {
-                    this.Play();
+                this.Playlist.Clear();
+
+                foreach (string File in Files) {
+                    this.Playlist.Add(new SongInfo(File));
                 }
+
+                if (this.Playlist.Count > 0)
+                    this.Playlist.MoveTo(0);
             }
         }
 
         private void FileOpenButton_Click(object sender, RoutedEventArgs e) {
             this.ToggleMenu(Show: false);
 
-            if (this.OpenFile()) {
-                this.PlayerOperaion(() => this.Player.Play());
-            }
+            this.OpenFile();
         }
 
         private void ExitClicked(object sender, MouseButtonEventArgs e) {
+            this.Close();
             Environment.Exit(0);
         }
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -108,6 +110,7 @@ namespace TomiSoft.MP3Player.Communication {
                 }
                 catch (ObjectDisposedException) { }
                 catch (IOException) { }
+                catch (ThreadInterruptedException) { }
             }
 
             Client.Close();

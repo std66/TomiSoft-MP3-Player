@@ -10,6 +10,7 @@ namespace TomiSoft.MP3Player.Playlist {
 	/// </summary>
 	public class Playlist : ObservableCollection<SongInfo> {
 		private int currentlyPlaying;
+        public event EventHandler SelectedSongChanged;
 
 		/// <summary>
 		/// Gets the total length of all songs in the playlist.
@@ -35,7 +36,9 @@ namespace TomiSoft.MP3Player.Playlist {
 				this.currentlyPlaying = value;
 				this.NotifyPropertyChange("CurrentlyPlaying");
 				this.NotifyPropertyChange("CurrentSongInfo");
-			}
+
+                this.SelectedSongChanged?.Invoke(this, EventArgs.Empty);
+            }
 		}
 
 		/// <summary>
