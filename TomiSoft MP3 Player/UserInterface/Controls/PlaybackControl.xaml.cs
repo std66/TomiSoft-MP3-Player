@@ -15,6 +15,8 @@ namespace TomiSoft_MP3_Player {
 		public event Action Play;
 		public event Action Pause;
 		public event Action<long> PositionChanged;
+        public event Action PreviousSong;
+        public event Action NextSong;
 
 		private int VolumeBeforeMute = 100;
 
@@ -74,5 +76,13 @@ namespace TomiSoft_MP3_Player {
 				this.player.Volume = this.VolumeBeforeMute;
 			}
 		}
-	}
+
+        private void UI_PreviousSong_Click(object sender, RoutedEventArgs e) {
+            this.PreviousSong?.Invoke();
+        }
+
+        private void UI_NextSong_Click(object sender, RoutedEventArgs e) {
+            this.NextSong?.Invoke();
+        }
+    }
 }
