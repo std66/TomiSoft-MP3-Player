@@ -13,15 +13,37 @@ namespace TomiSoft.MP3Player.Communication {
 		private StreamWriter sw;
 		private StreamReader sr;
 
+        private bool keepAlive = false;
+
 		/// <summary>
 		/// Gets whether the server is ready to accept commands.
 		/// </summary>
 		public bool ServerReady {
 			get {
-				this.sw.WriteLine("IsRunning;");
+				this.Send("IsRunning");
 				return (this.sr.ReadLine().Contains("true"));
 			}
 		}
+
+        /// <summary>
+        /// Gets the name of the server.
+        /// </summary>
+        public string Name {
+            get {
+                this.Send("Name");
+                return this.Read();
+            }
+        }
+
+        /// <summary>
+        /// Gets the version of the server.
+        /// </summary>
+        public Version Version {
+            get {
+                this.Send("Version");
+                return new Version(this.Read());
+            }
+        }
 
 		/// <summary>
 		/// Determines whether the server is running.
@@ -46,6 +68,7 @@ namespace TomiSoft.MP3Player.Communication {
 		/// Initializes a new instance of the PlayerClient class. Connets to the already
 		/// running instance.
 		/// </summary>
+        /// <exception cref="SocketException">when some connection problems occur</exception>
 		public PlayerClient() {
 			this.Client = new TcpClient("localhost", 22613);
 			this.sw = new StreamWriter(this.Client.GetStream()) {
@@ -59,14 +82,70 @@ namespace TomiSoft.MP3Player.Communication {
 		/// </summary>
 		/// <param name="Filename">The file's full path to play</param>
 		public void Play(string Filename) {
-			this.sw.WriteLine(String.Format("Play;{0}", Filename));
-		}
+			this.Send($"Play;{Filename}");
+        }
 
+        /// <summary>
+        /// Sends the command to the server to play the specified files.
+        /// </summary>
+        /// <param name="Filenames">The array of the files</param>
+        public void Play(string[] Filenames) {
+            this.Send($"Play;{String.Join(";", Filenames)}");
+        }
+
+        /// <summary>
+        /// Sends the command to the server to play the next song in
+        /// the playlist.
+        /// </summary>
+        public void PlayNext() {
+            this.Send("PlayNext");
+        }
+
+        /// <summary>
+        /// Sends the command to the server to play the previous song
+        /// in the playlist.
+        /// </summary>
+        public void PlayPrevious() {
+            this.Send("PlayPrevious");
+        }
+
+        /// <summary>
+        /// Sends a command to the server to keep alive the connection.
+        /// </summary>
+        public void KeepAlive() {
+            this.Send("KeepAlive");
+            this.keepAlive = true;
+        }
+        
 		/// <summary>
 		/// Closes the connection to the server.
 		/// </summary>
 		public void Dispose() {
-			this.Client.Close();
+            if (this.keepAlive)
+                this.Send("Disconnect");
+
+            this.Client.Close();
+            this.Client.Dispose();
 		}
+
+        /// <summary>
+        /// Sends data to the server in a safe way.
+        /// </summary>
+        /// <param name="Data">The data to send</param>
+        private void Send(string Data) {
+            if (this.Client.Connected && this.sw.BaseStream.CanWrite)
+                this.sw.WriteLine(Data);
+        }
+
+        /// <summary>
+        /// Reads data from the server in a safe way.
+        /// </summary>
+        /// <returns>The data read from the server</returns>
+        private string Read() {
+            if (this.Client.Connected && this.sr.BaseStream.CanRead)
+                return sr.ReadLine();
+
+            return String.Empty;
+        }
 	}
 }
