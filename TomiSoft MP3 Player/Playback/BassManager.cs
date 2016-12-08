@@ -11,9 +11,20 @@ namespace TomiSoft.MP3Player.Playback {
 	/// <summary>
 	/// This class manages the BASS library.
 	/// </summary>
-	static class BassManager {
-		private static List<string> SupportedExtensions = new List<string>();
-        private static Stack<KeyValuePair<string, int>> LoadedPlugins = new Stack<KeyValuePair<string, int>>();
+	public static class BassManager {
+        /// <summary>
+        /// Stores the supported extensions by BASS and its plugins.
+        /// </summary>
+		private static readonly List<string> SupportedExtensions = new List<string>();
+
+        /// <summary>
+        /// Stores the loaded BASS plugins' name and the associated handle to it.
+        /// </summary>
+        private static readonly Stack<KeyValuePair<string, int>> LoadedPlugins = new Stack<KeyValuePair<string, int>>();
+
+        /// <summary>
+        /// Stores the BASS plugins' file names that should be bundled with the application.
+        /// </summary>
         private static readonly string[] Plugins = {
             "basscd.dll",
             "bassflac.dll",

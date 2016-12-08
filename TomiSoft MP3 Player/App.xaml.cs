@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System;
 using System.Reflection;
+using TomiSoft.MP3Player.Communication;
+using TomiSoft.MP3Player.Utils;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -17,6 +19,48 @@ namespace TomiSoft_MP3_Player {
 
 			Trace.WriteLine("");
 			Trace.WriteLine($"New instance started at {DateTime.Now} (Is64BitProcess={Environment.Is64BitProcess}, Version={Version})");
+
+            CheckIfAlreadyRunning();
+        }
+        
+        /// <summary>
+        /// Checks if an instance of the application is already running. If yes,
+        /// sends the command line arguments to it and then terminates this
+        /// instance.
+        /// </summary>
+        private static void CheckIfAlreadyRunning() {
+            //If an instance is already running, send the file list to it.
+            //Otherwise, this is the only running instance, so we start a server to
+            //listen to the other instances.
+            Trace.TraceInformation("[Player startup] Checking if an instance is already running...");
+
+            if (PlayerClient.IsServerRunning()) {
+                Trace.TraceInformation("[Player startup] Found a running instance");
+                SendFileListToServer();
+            }
+            else {
+                Trace.TraceInformation("[Player startup] No other instances are running.");
+            }
+        }
+
+        /// <summary>
+        /// Sends the file list to the server then closes the application.
+        /// Currently only the first file is sent.
+        /// </summary>
+        private static void SendFileListToServer() {
+            try {
+                using (PlayerClient Client = new PlayerClient()) {
+                    string[] args = Environment.GetCommandLineArgs();
+
+                    if (args.Length > 1)
+                        Client.Play(args[1]);
+                }
+            }
+            catch (Exception e) {
+                PlayerUtils.ErrorMessageBox("TomiSoft MP3 Player", e.Message);
+            }
+
+            Environment.Exit(0);
         }
 
         /// <summary>
