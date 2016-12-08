@@ -20,6 +20,15 @@ namespace TomiSoft_MP3_Player {
 		private IPlaybackManager playbackManager;
 		private ILyricsReader lyricsReader;
 
+        /// <summary>
+        /// Gets the name of the application
+        /// </summary>
+        public string ApplicationName {
+            get {
+                return App.Name;
+            }
+        }
+
 		/// <summary>
 		/// Gets the album image.
 		/// </summary>

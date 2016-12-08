@@ -57,7 +57,7 @@ namespace TomiSoft_MP3_Player {
                 }
             }
             catch (Exception e) {
-                PlayerUtils.ErrorMessageBox("TomiSoft MP3 Player", e.Message);
+                PlayerUtils.ErrorMessageBox(App.Name, e.Message);
             }
 
             Environment.Exit(0);

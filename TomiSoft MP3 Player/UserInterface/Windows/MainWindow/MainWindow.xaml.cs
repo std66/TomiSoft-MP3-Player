@@ -50,7 +50,7 @@ namespace TomiSoft_MP3_Player {
             Trace.TraceInformation("[Player startup] Initializing BASS library...");
             if (!BassManager.Load()) {
                 Trace.TraceError("[Player startup] Fatal error occured. Terminating application...");
-                PlayerUtils.ErrorMessageBox("TomiSoft MP3 Player", "Nem sikerült betölteni a BASS-t.");
+                PlayerUtils.ErrorMessageBox(App.Name, "Nem sikerült betölteni a BASS-t.");
                 Environment.Exit(1);
             }
 
@@ -58,7 +58,7 @@ namespace TomiSoft_MP3_Player {
             Trace.TraceInformation("[Player startup] Initializing audio output device");
             if (!BassManager.InitializeOutputDevice()) {
                 Trace.TraceError("[Player startup] Fatal error occured. Terminating application...");
-                PlayerUtils.ErrorMessageBox("TomiSoft MP3 Player", "Nem sikerült beállítani a hangkimenetet.");
+                PlayerUtils.ErrorMessageBox(App.Name, "Nem sikerült beállítani a hangkimenetet.");
                 Environment.Exit(1);
             }
 
@@ -83,7 +83,7 @@ namespace TomiSoft_MP3_Player {
             this.Hotkeys = new PlaybackHotkeys(this);
             if (!Hotkeys.Registered) {
                 if (App.Config.ToastOnMediaKeysFault) {
-                    Toast t = new Toast("TomiSoft MP3 Player") {
+                    Toast t = new Toast(App.Name) {
                         Title = "Hoppá!",
                         Content = "Úgy tűnik, hogy a billentyűzet médiabillentyűit már más program használja.",
                         Image = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt
@@ -124,11 +124,6 @@ namespace TomiSoft_MP3_Player {
                         case "Play":
                             this.OpenFile(Parameter);
                             this.PlayerOperaion(() => this.Player.Play());
-                            break;
-
-                        case "IsRunning":
-                            wrt.WriteLine("true");
-                            wrt.Flush();
                             break;
 
                         default:
@@ -279,7 +274,7 @@ namespace TomiSoft_MP3_Player {
                 if (AlbumImage == null)
                     AlbumImage = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt;
 
-                Toast t = new Toast("TomiSoft MP3 Player") {
+                Toast t = new Toast(App.Name) {
                     Title = this.Player.SongInfo.Title,
                     Content = this.Player.SongInfo.Artist,
                     Image = AlbumImage
