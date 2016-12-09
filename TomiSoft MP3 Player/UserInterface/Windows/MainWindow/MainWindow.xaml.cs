@@ -74,8 +74,23 @@ namespace TomiSoft_MP3_Player {
             Trace.TraceInformation("[Player startup] Startup successful.");
         }
 
+        /// <summary>
+        /// This method is executed when the selected song in playlist is
+        /// changed.
+        /// </summary>
+        /// <param name="sender">The Playlist instance</param>
+        /// <param name="e">Event parameters</param>
         private void Playlist_SelectedSongChanged(object sender, EventArgs e) {
             this.Stop();
+
+            #region Error checking
+            //If the playlist is empty, we need to attach a NULL-playback
+            //manager and prevent any other actions.
+            if (this.Playlist.CurrentSongInfo == null) {
+                this.AttachPlayer(PlaybackFactory.NullPlayback(this.Player.Volume));
+                return;
+            }
+            #endregion
 
             this.AttachPlayer(
                 PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)

@@ -22,7 +22,8 @@ namespace TomiSoft.MP3Player.Playlist {
 		}
 
 		/// <summary>
-		/// Gets the index of the currently playing song.
+		/// Gets the index of the currently playing song. Returns 0 also if
+        /// the playlist is empty.
 		/// </summary>
 		public int CurrentlyPlaying { 
 			get {
@@ -30,7 +31,7 @@ namespace TomiSoft.MP3Player.Playlist {
 			}
 			private set {
 				if (value < 0 || (value >= this.Count && this.Count > 0)) {
-					throw new ArgumentOutOfRangeException("value");
+					throw new ArgumentOutOfRangeException(nameof(value));
 				}
 
 				this.currentlyPlaying = value;
@@ -43,10 +44,14 @@ namespace TomiSoft.MP3Player.Playlist {
 
 		/// <summary>
 		/// Gets the SongInfo instance of the currently playing song.
+        /// Returns null if the playlist is empty.
 		/// </summary>
 		public SongInfo CurrentSongInfo {
 			get {
-				return this[currentlyPlaying];
+                if (this.currentlyPlaying < this.Count)
+                    return this[currentlyPlaying];
+
+                return null;
 			}
 		}
 
@@ -58,10 +63,20 @@ namespace TomiSoft.MP3Player.Playlist {
 			this.CollectionChanged += PlaylistChanged;
 		}
 
+        /// <summary>
+        /// This method is executed after the collection changed.
+        /// </summary>
+        /// <param name="sender">The Playlist instance</param>
+        /// <param name="e">Event parameters</param>
 		private void PlaylistChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (this.Count < this.CurrentlyPlaying) {
-				this.CurrentlyPlaying = this.Count - 1;
-			}
+                int NewValue = this.Count - 1;
+
+                if (NewValue < 0)
+                    NewValue = 0;
+
+                this.CurrentlyPlaying = NewValue;
+            }
 		}
 
 		/// <summary>
