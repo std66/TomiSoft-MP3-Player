@@ -111,14 +111,13 @@ namespace TomiSoft.MP3Player.Playlist {
 		/// <param name="SongIndex">The index of the song.</param>
 		/// <returns>True if the song is set, false if not.</returns>
 		public bool MoveTo(int SongIndex) {
-			bool Result = false;
-			try {
-				this.CurrentlyPlaying = SongIndex;
-				Result = true;
-			}
-			catch (ArgumentOutOfRangeException) { }
-
-			return Result;
+            if (SongIndex >= 0 && SongIndex < this.Count) {
+                this.CurrentlyPlaying = SongIndex;
+                return true;
+            }
+            else {
+                return false;
+            }
 		}
 
 		/// <summary>
@@ -137,10 +136,10 @@ namespace TomiSoft.MP3Player.Playlist {
 			return CurrentlyPlaying > 0;
 		}
 
-		private void NotifyChanges() {
-			this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-		}
-
+        /// <summary>
+        /// Sends notification about a property change.
+        /// </summary>
+        /// <param name="PropertyName">The name of the property that changed</param>
 		private void NotifyPropertyChange(string PropertyName) {
 			this.OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(PropertyName));
 		}
