@@ -137,7 +137,7 @@ namespace TomiSoft.MP3Player.Communication {
         /// <returns>The playback position in seconds</returns>
         public double PlaybackPosition(out double Length) {
             this.Send("PlaybackPosition");
-            string[] Result = this.Read().Split(' ');
+            string[] Result = this.Read().Split('/');
 
             if (Result.Length == 2) {
                 Length = Convert.ToDouble(Result[1]);
