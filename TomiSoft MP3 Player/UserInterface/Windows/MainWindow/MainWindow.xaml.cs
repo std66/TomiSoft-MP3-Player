@@ -289,8 +289,10 @@ namespace TomiSoft_MP3_Player {
         /// </summary>
         /// <param name="Player">The playback handler to attach.</param>
         private void AttachPlayer(IPlaybackManager Player) {
+            #region Error checking
             if (Player == null)
-                throw new ArgumentNullException("Player");
+                return;
+            #endregion
 
             int PreviousVolume = 100;
 

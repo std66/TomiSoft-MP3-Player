@@ -4,7 +4,7 @@ namespace TomiSoft.MP3Player.Playback {
 	/// <summary>
 	/// Provides a file playback method using BASS.
 	/// </summary>
-	public class LocalAudioFilePlayback : BassPlaybackAbstract {
+	internal class LocalAudioFilePlayback : BassPlaybackAbstract {
 		/// <summary>
 		/// Initializes a new instance of LocalAudioFilePlayback using
 		/// the given filename.

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Windows.Threading;
 using Un4seen.Bass;
 
@@ -8,19 +10,19 @@ namespace TomiSoft.MP3Player.Playback {
 	/// Provides basic functionality for playback handlers that uses
 	/// BASS to play the media.
 	/// </summary>
-	public abstract class BassPlaybackAbstract : IPlaybackManager {
+	internal abstract class BassPlaybackAbstract : IPlaybackManager {
 		private bool playing;
 		private int channelID;
 		private DispatcherTimer PlaybackTimer;
 		protected ISongInfo songInfo;
 
 		/// <summary>
-		/// Occurs when a property is changed.
+		/// Occures when a property is changed.
 		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		/// <summary>
-		/// Occurs when the song is ended.
+		/// Occures when the song is ended.
 		/// </summary>
 		public event Action SongEnded;
 
@@ -148,10 +150,12 @@ namespace TomiSoft.MP3Player.Playback {
 		/// Initializes a new instance of BassPlaybackAbstract using the given channel ID.
 		/// </summary>
 		/// <param name="ChannelID">The channel ID provided by BASS.</param>
+        /// <exception cref="IOException">when BASS can't open the file</exception>
 		public BassPlaybackAbstract(int ChannelID) {
 			#region Error checking
 			if (ChannelID == 0) {
-				throw new Exception("Nem sikerült megnyitni a fájlt: " + Bass.BASS_ErrorGetCode());
+                Trace.TraceWarning($"[BASS] Could not open file (ErrorCode={Bass.BASS_ErrorGetCode()})");
+				throw new IOException("Nem sikerült megnyitni a fájlt: " + Bass.BASS_ErrorGetCode());
 			}
 			#endregion
 
@@ -160,23 +164,29 @@ namespace TomiSoft.MP3Player.Playback {
 			this.PlaybackTimer = new DispatcherTimer() {
 				Interval = TimeSpan.FromSeconds(0.02)
 			};
-			this.PlaybackTimer.Tick += (o, e) => {
-				if (Position >= Length) {
-					this.Stop();
-
-					this.SongEnded?.Invoke();
-				}
-
-				this.NotifyAll();
-			};
+            this.PlaybackTimer.Tick += TimerTick;
 
 			this.IsPlaying = false;
 		}
 
-		/// <summary>
-		/// Plays the stream.
-		/// </summary>
-		public void Play() {
+        /// <summary>
+        /// This method is executed when the PlaybackTimer ticks.
+        /// </summary>
+        /// <param name="sender">The DispatcherTimer instance</param>
+        /// <param name="e">Event parameters</param>
+        private void TimerTick(object sender, EventArgs e) {
+            if (Position >= Length) {
+                this.Stop();
+                this.SongEnded?.Invoke();
+            }
+
+            this.NotifyAll();
+        }
+        
+        /// <summary>
+        /// Plays the stream.
+        /// </summary>
+        public void Play() {
 			if (Bass.BASS_ChannelPlay(this.ChannelID, false)) {
 				this.IsPlaying = true;
 			}
@@ -211,7 +221,10 @@ namespace TomiSoft.MP3Player.Playback {
 				this.Stop();
 			}
 
-			Bass.BASS_StreamFree(this.ChannelID);
+            if (!Bass.BASS_StreamFree(this.ChannelID))
+                Trace.TraceWarning($"[BASS] Could not release stream: (ErrorCode={Bass.BASS_ErrorGetCode()})");
+
+            this.PlaybackTimer.Tick -= TimerTick;
 		}
 
 		/// <summary>

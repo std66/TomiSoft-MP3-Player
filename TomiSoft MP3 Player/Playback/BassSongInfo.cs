@@ -5,7 +5,7 @@ namespace TomiSoft.MP3Player.Playback {
 	/// <summary>
 	/// Provides information of a song using BassTag plugin.
 	/// </summary>
-	public class BassSongInfo : ISongInfo {
+	internal class BassSongInfo : ISongInfo {
 		private TAG_INFO tagInfo;
 
 		public string Album {

@@ -4,7 +4,7 @@ namespace TomiSoft.MP3Player.Playback {
 	/// <summary>
 	/// Represents a playback method that does nothing.
 	/// </summary>
-	public class NullPlayback : IPlaybackManager {
+	internal class NullPlayback : IPlaybackManager {
 		/// <summary>
 		/// Gets or sets the playback position. Always returns 0.
 		/// Setting this value has no effect at all.
