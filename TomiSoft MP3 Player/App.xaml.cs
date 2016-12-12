@@ -45,7 +45,6 @@ namespace TomiSoft_MP3_Player {
 
         /// <summary>
         /// Sends the file list to the server then closes the application.
-        /// Currently only the first file is sent.
         /// </summary>
         private static void SendFileListToServer() {
             try {
@@ -53,7 +52,7 @@ namespace TomiSoft_MP3_Player {
                     string[] args = Environment.GetCommandLineArgs();
 
                     if (args.Length > 1)
-                        Client.Play(args[1]);
+                        Client.Play(args);
                 }
             }
             catch (Exception e) {

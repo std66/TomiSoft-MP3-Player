@@ -14,423 +14,450 @@ using System.Windows.Media.Animation;
 using System.Windows.Interop;
 using TomiSoft.MP3Player.Utils.Extensions;
 using TomiSoft.MP3Player.UserInterface.Windows.AboutWindow;
+using System.Linq;
 
 namespace TomiSoft_MP3_Player {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window {
-        private IPlaybackManager Player;
-        private Playlist Playlist = new Playlist();
-        private PlayerServer Server;
-        private PlaybackHotkeys Hotkeys;
-        public MainWindowViewModel viewModel;
-        private bool MenuShowing = false;
+	/// <summary>
+	/// Interaction logic for MainWindow.xaml
+	/// </summary>
+	public partial class MainWindow : Window {
+		private IPlaybackManager Player;
+		private Playlist Playlist = new Playlist();
+		private PlayerServer Server;
+		private PlaybackHotkeys Hotkeys;
+		public MainWindowViewModel viewModel;
+		private bool MenuShowing = false;
 
-        public MainWindow() {
-            this.StartServer();
-            
-            Trace.TraceInformation("[Player startup] Preparing main window to display...");
+		public MainWindow() {
+			this.StartServer();
 
-            InitializeComponent();
-            this.viewModel = new MainWindowViewModel();
-            this.DataContext = viewModel;
-            this.PreparePlaybackController();
-            this.Icon = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt.ToImageSource();
+			Trace.TraceInformation("[Player startup] Preparing main window to display...");
 
-            //Attaching a null-playback instance to display default informations.
-            Trace.TraceInformation("[Player startup] Attaching a NULL-playback manager");
-            this.AttachPlayer(
-                PlaybackFactory.NullPlayback(100)
-            );
+			InitializeComponent();
+			this.viewModel = new MainWindowViewModel();
+			this.DataContext = viewModel;
+			this.PreparePlaybackController();
+			this.Icon = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt.ToImageSource();
 
-            //Load BASS with its all plugins.
-            Trace.TraceInformation("[Player startup] Initializing BASS library...");
-            if (!BassManager.Load()) {
-                Trace.TraceError("[Player startup] Fatal error occured. Terminating application...");
-                PlayerUtils.ErrorMessageBox(App.Name, "Nem sikerült betölteni a BASS-t.");
-                Environment.Exit(1);
-            }
+			//Attaching a null-playback instance to display default informations.
+			Trace.TraceInformation("[Player startup] Attaching a NULL-playback manager");
+			this.AttachPlayer(
+				PlaybackFactory.NullPlayback(100)
+			);
 
-            //Initialize BASS output device.
-            Trace.TraceInformation("[Player startup] Initializing audio output device");
-            if (!BassManager.InitializeOutputDevice()) {
-                Trace.TraceError("[Player startup] Fatal error occured. Terminating application...");
-                PlayerUtils.ErrorMessageBox(App.Name, "Nem sikerült beállítani a hangkimenetet.");
-                Environment.Exit(1);
-            }
+			//Load BASS with its all plugins.
+			Trace.TraceInformation("[Player startup] Initializing BASS library...");
+			if (!BassManager.Load()) {
+				Trace.TraceError("[Player startup] Fatal error occured. Terminating application...");
+				PlayerUtils.ErrorMessageBox(App.Name, "Nem sikerült betölteni a BASS-t.");
+				Environment.Exit(1);
+			}
 
-            this.Loaded += RegisterHotKeys;
-            this.Playlist.SelectedSongChanged += Playlist_SelectedSongChanged;
+			//Initialize BASS output device.
+			Trace.TraceInformation("[Player startup] Initializing audio output device");
+			if (!BassManager.InitializeOutputDevice()) {
+				Trace.TraceError("[Player startup] Fatal error occured. Terminating application...");
+				PlayerUtils.ErrorMessageBox(App.Name, "Nem sikerült beállítani a hangkimenetet.");
+				Environment.Exit(1);
+			}
 
-            this.Closed += (o, e) => {
-                Trace.TraceInformation("[Player] Closing application...");
-                BassManager.Free();
-                this.Playlist.SelectedSongChanged -= this.Playlist_SelectedSongChanged;
-                this.Hotkeys.Dispose();
-                this.Server.Dispose();
-            };
+			this.Loaded += RegisterHotKeys;
+			this.Playlist.SelectedSongChanged += Playlist_SelectedSongChanged;
+			this.Closed += WindowClosed;
 
-            Trace.TraceInformation("[Player startup] Startup successful.");
-        }
+			Trace.TraceInformation("[Player startup] Startup successful.");
 
-        /// <summary>
-        /// This method is executed when the selected song in playlist is
-        /// changed.
-        /// </summary>
-        /// <param name="sender">The Playlist instance</param>
-        /// <param name="e">Event parameters</param>
-        private void Playlist_SelectedSongChanged(object sender, EventArgs e) {
-            this.Stop();
+			this.ProcessCommandLine();
+		}
 
-            #region Error checking
-            //If the playlist is empty, we need to attach a NULL-playback
-            //manager and prevent any other actions.
-            if (this.Playlist.CurrentSongInfo == null) {
-                this.AttachPlayer(PlaybackFactory.NullPlayback(this.Player.Volume));
-                return;
-            }
-            #endregion
+		/// <summary>
+		/// This method is executed after the window is closed.
+		/// </summary>
+		/// <param name="sender">An object's instance</param>
+		/// <param name="e">Event parameters</param>
+		private void WindowClosed(object sender, EventArgs e) {
+			Trace.TraceInformation("[Player] Closing application...");
 
-            this.AttachPlayer(
-                PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)
-            );
+			BassManager.Free();
+			this.Playlist.SelectedSongChanged -= this.Playlist_SelectedSongChanged;
+			this.Closed -= this.WindowClosed;
+			this.Loaded -= RegisterHotKeys;
 
-            this.Play();
+			this.Hotkeys.Dispose();
+			this.Server.Dispose();
+		}
 
-            //Load lyrics
-            string LyricsFile = Path.ChangeExtension(this.Playlist.CurrentSongInfo.Source, "lrc");
-            this.OpenLyrics(LyricsFile);
-        }
+		/// <summary>
+		/// Adds all files to the playlist that is given as command-line
+		/// arguments and starts playing the first one.
+		/// </summary>
+		private void ProcessCommandLine() {
+			string[] args = Environment.GetCommandLineArgs();
+			foreach (string Filename in args) {
+				if (PlaybackFactory.IsSupportedMedia(Filename))
+					this.Playlist.Add(new SongInfo(Filename));
+			}
 
-        /// <summary>
-        /// This event handler method registers the hotkeys.
-        /// </summary>
-        /// <param name="sender">Always null</param>
-        /// <param name="ev">Empty EventArgs instance</param>
-        private void RegisterHotKeys(object sender, EventArgs ev) {
-            //Register hotkeys
-            this.Hotkeys = new PlaybackHotkeys(this);
-            if (!Hotkeys.Registered) {
-                if (App.Config.ToastOnMediaKeysFault) {
-                    Toast t = new Toast(App.Name) {
-                        Title = "Hoppá!",
-                        Content = "Úgy tűnik, hogy a billentyűzet médiabillentyűit már más program használja.",
-                        Image = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt
-                    };
+			this.Playlist.MoveTo(0);
+		}
 
-                    t.Show();
-                }
-            }
-            else {
-                this.Hotkeys.Stop += (o, e) => this.Stop();
-                this.Hotkeys.NextTrack += (o, e) => this.PlayNext();
-                this.Hotkeys.PreviousTrack += (o, e) => this.PlayPrevious();
-                this.Hotkeys.PlayPause += (o, e) => {
-                    if (this.Player.IsPlaying)
-                        this.Pause();
-                    else
-                        this.Play();
-                };
-            }
-        }
-        
-        /// <summary>
-        /// Starts a TCP server to listen to specific commands.
-        /// </summary>
-        private void StartServer() {
-            this.Server = new PlayerServer();
-            this.Closed += (o, e) => {
-                this.Server.Dispose();
-            };
+		/// <summary>
+		/// This method is executed when the selected song in playlist is
+		/// changed.
+		/// </summary>
+		/// <param name="sender">The Playlist instance</param>
+		/// <param name="e">Event parameters</param>
+		private void Playlist_SelectedSongChanged(object sender, EventArgs e) {
+			this.Stop();
 
-            Server.CommandReceived += (ClientStream, Command, Parameters) => {
-                Dispatcher.Invoke((Action<Stream, string, string[]>)delegate {
-                    StreamWriter wrt = new StreamWriter(ClientStream) {
-                        AutoFlush = true
-                    };
+			#region Error checking
+			//If the playlist is empty, we need to attach a NULL-playback
+			//manager and prevent any other actions.
+			if (this.Playlist.CurrentSongInfo == null) {
+				this.AttachPlayer(PlaybackFactory.NullPlayback(this.Player.Volume));
+				return;
+			}
+			#endregion
 
-                    Trace.TraceInformation($"[Server] Command={Command}");
+			this.AttachPlayer(
+				PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)
+			);
 
-                    switch (Command) {
-                        case "Play":
-                            this.OpenFiles(Parameters);
-                            break;
+			this.Play();
 
-                        case "PlayNext":
-                            this.PlayNext();
-                            break;
+			//Load lyrics
+			string LyricsFile = Path.ChangeExtension(this.Playlist.CurrentSongInfo.Source, "lrc");
+			this.OpenLyrics(LyricsFile);
+		}
 
-                        case "PlayPrevious":
-                            this.PlayPrevious();
-                            break;
+		/// <summary>
+		/// This event handler method registers the hotkeys.
+		/// </summary>
+		/// <param name="sender">Always null</param>
+		/// <param name="ev">Empty EventArgs instance</param>
+		private void RegisterHotKeys(object sender, EventArgs ev) {
+			//Register hotkeys
+			this.Hotkeys = new PlaybackHotkeys(this);
+			if (!Hotkeys.Registered) {
+				if (App.Config.ToastOnMediaKeysFault) {
+					Toast t = new Toast(App.Name) {
+						Title = "Hoppá!",
+						Content = "Úgy tűnik, hogy a billentyűzet médiabillentyűit már más program használja.",
+						Image = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt
+					};
 
-                        case "PlaybackPosition":
-                            wrt.WriteLine($"{this.Player.Position}/{this.Player.Length}");
-                            break;
+					t.Show();
+				}
+			}
+			else {
+				this.Hotkeys.Stop += (o, e) => this.Stop();
+				this.Hotkeys.NextTrack += (o, e) => this.PlayNext();
+				this.Hotkeys.PreviousTrack += (o, e) => this.PlayPrevious();
+				this.Hotkeys.PlayPause += (o, e) => {
+					if (this.Player.IsPlaying)
+						this.Pause();
+					else
+						this.Play();
+				};
+			}
+		}
 
-                        case "ShowPlaylist":
-                            int Index = 0;
-                            foreach (SongInfo Song in this.Playlist) {
-                                wrt.WriteLine($"{Index};{Song.Artist};{Song.Title}");
-                                Index++;
-                            }
-                            break;
+		/// <summary>
+		/// Starts a TCP server to listen to specific commands.
+		/// </summary>
+		private void StartServer() {
+			this.Server = new PlayerServer();
+			this.Closed += (o, e) => {
+				this.Server.Dispose();
+			};
 
-                        default:
-                            Trace.TraceWarning("[Server] Unrecognized command");
-                            break;
-                    }
-                }, ClientStream, Command, Parameters);
-            };
-        }
+			Server.CommandReceived += (ClientStream, Command, Parameters) => {
+				Dispatcher.Invoke((Action<Stream, string, string[]>)delegate {
+					StreamWriter wrt = new StreamWriter(ClientStream) {
+						AutoFlush = true
+					};
 
-        private void Window_KeyUp(object sender, KeyEventArgs e) {
-            //When CTRL+O is pressed, a file open dialog appears that lets the user to load a file.
-            if (e.Key == Key.O && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) {
-                if (this.OpenFile()) {
-                    this.PlayerOperaion(() => this.Player.Play());
-                }
-            }
-        }
+					Trace.TraceInformation($"[Server] Command={Command}");
 
-        /// <summary>
-        /// Moves to the previous song and plays it.
-        /// </summary>
-        private void PlayPrevious() {
-            this.Playlist.MoveToPrevious();
-        }
+					switch (Command) {
+						case "Play":
+							this.OpenFiles(Parameters);
+							break;
 
-        /// <summary>
-        /// Moves to the next song and plays it.
-        /// </summary>
-        private void PlayNext() {
-            this.Playlist.MoveToNext();
-        }
+						case "PlayNext":
+							this.PlayNext();
+							break;
 
-        /// <summary>
-        /// Asks the user to open a file using a file open dialog.
-        /// </summary>
-        /// <returns>True if the file is opened, false if not.</returns>
-        private bool OpenFile() {
-            OpenFileDialog dlg = new OpenFileDialog();
-            bool? DialogResult = dlg.ShowDialog();
-            if (DialogResult.HasValue && DialogResult.Value == true) {
-                return this.OpenFile(dlg.FileName);
-            }
-            else {
-                return false;
-            }
-        }
+						case "PlayPrevious":
+							this.PlayPrevious();
+							break;
 
-        /// <summary>
-        /// Clears the current playlist, then adds the given file to it. Also,
-        /// tries to load the lyrics file if exists.
-        /// </summary>
-        /// <param name="Filename">The file's name to load.</param>
-        /// <returns>True if the file is loaded, false if not.</returns>
-        private bool OpenFile(string Filename) {
-            try {
-                this.Playlist.Clear();
-                this.Playlist.Add(new SongInfo(Filename));
-                this.Playlist.MoveTo(0);
-                
-                return true;
-            }
-            catch (Exception e) {
-                MessageBox.Show(e.Message);
-                return false;
-            }
-        }
+						case "PlaybackPosition":
+							wrt.WriteLine($"{this.Player.Position}/{this.Player.Length}");
+							break;
 
-        private bool OpenFiles(string[] Filenames) {
-            try {
-                this.Playlist.Clear();
-                foreach (string Filename in Filenames)
-                    this.Playlist.Add(new SongInfo(Filename));
+						case "ShowPlaylist":
+							int Index = 0;
+							foreach (SongInfo Song in this.Playlist) {
+								wrt.WriteLine($"{Index};{Song.Artist};{Song.Title}");
+								Index++;
+							}
+							break;
 
-                this.Playlist.MoveTo(0);
-            }
-            catch (Exception e) {
-                PlayerUtils.ErrorMessageBox(App.Name, e.Message);
-                return false;
-            }
+						default:
+							Trace.TraceWarning("[Server] Unrecognized command");
+							break;
+					}
+				}, ClientStream, Command, Parameters);
+			};
+		}
 
-            return true;
-        }
+		private void Window_KeyUp(object sender, KeyEventArgs e) {
+			//When CTRL+O is pressed, a file open dialog appears that lets the user to load a file.
+			if (e.Key == Key.O && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) {
+				if (this.OpenFile()) {
+					this.PlayerOperaion(() => this.Player.Play());
+				}
+			}
+		}
 
-        private void OpenLyrics(string Filename) {
-            if (File.Exists(Filename)) {
-                this.viewModel.LyricsReader = new LrcReader(Filename);
-            }
-            else {
-                this.viewModel.LyricsReader = null;
-            }
-        }
+		/// <summary>
+		/// Moves to the previous song and plays it.
+		/// </summary>
+		private void PlayPrevious() {
+			this.Playlist.MoveToPrevious();
+		}
 
-        /// <summary>
-        /// Registers the events of the playback controller.
-        /// </summary>
-        private void PreparePlaybackController() {
-            PlaybackController.Play += this.Play;
-            PlaybackController.Pause += this.Pause;
-            PlaybackController.Stop += this.Stop;
+		/// <summary>
+		/// Moves to the next song and plays it.
+		/// </summary>
+		private void PlayNext() {
+			this.Playlist.MoveToNext();
+		}
 
-            PlaybackController.NextSong += this.PlayNext;
-            PlaybackController.PreviousSong += this.PlayPrevious;
+		/// <summary>
+		/// Asks the user to open a file using a file open dialog.
+		/// </summary>
+		/// <returns>True if the file is opened, false if not.</returns>
+		private bool OpenFile() {
+			OpenFileDialog dlg = new OpenFileDialog();
+			bool? DialogResult = dlg.ShowDialog();
+			if (DialogResult.HasValue && DialogResult.Value == true) {
+				return this.OpenFile(dlg.FileName);
+			}
+			else {
+				return false;
+			}
+		}
 
-            PlaybackController.PositionChanged += (value) => {
-                this.PlayerOperaion(() => this.Player.Position = value);
-            };
-        }
+		/// <summary>
+		/// Clears the current playlist, then adds the given file to it. Also,
+		/// tries to load the lyrics file if exists.
+		/// </summary>
+		/// <param name="Filename">The file's name to load.</param>
+		/// <returns>True if the file is loaded, false if not.</returns>
+		private bool OpenFile(string Filename) {
+			try {
+				this.Playlist.Clear();
+				this.Playlist.Add(new SongInfo(Filename));
+				this.Playlist.MoveTo(0);
 
-        /// <summary>
-        /// Attaches and configures a new playback handler.
-        /// </summary>
-        /// <param name="Player">The playback handler to attach.</param>
-        private void AttachPlayer(IPlaybackManager Player) {
-            #region Error checking
-            if (Player == null)
-                return;
-            #endregion
+				return true;
+			}
+			catch (Exception e) {
+				MessageBox.Show(e.Message);
+				return false;
+			}
+		}
 
-            int PreviousVolume = 100;
+		private bool OpenFiles(string[] Filenames) {
+			try {
+				this.Playlist.Clear();
+				foreach (string Filename in Filenames)
+					this.Playlist.Add(new SongInfo(Filename));
 
-            if (this.Player != null) {
-                PreviousVolume = this.Player.Volume;
-                this.Player.Dispose();
-            }
+				this.Playlist.MoveTo(0);
+			}
+			catch (Exception e) {
+				PlayerUtils.ErrorMessageBox(App.Name, e.Message);
+				return false;
+			}
 
-            this.Player = Player;
-            this.viewModel.PlaybackManager = Player;
-            this.Player.Volume = PreviousVolume;
-            PlaybackController.Player = this.Player;
+			return true;
+		}
 
-            this.Player.SongEnded += this.PlayNext;
+		private void OpenLyrics(string Filename) {
+			if (File.Exists(Filename)) {
+				this.viewModel.LyricsReader = new LrcReader(Filename);
+			}
+			else {
+				this.viewModel.LyricsReader = null;
+			}
+		}
 
-            //Send toast notification
-            ShowToast(Player);
-        }
+		/// <summary>
+		/// Registers the events of the playback controller.
+		/// </summary>
+		private void PreparePlaybackController() {
+			PlaybackController.Play += this.Play;
+			PlaybackController.Pause += this.Pause;
+			PlaybackController.Stop += this.Stop;
 
-        /// <summary>
-        /// Shows toast notification.
-        /// </summary>
-        /// <param name="Player">The IPlaybackManager instance which holds the song's information.</param>
-        private void ShowToast(IPlaybackManager Player) {
-            //We don't need to display toast when it is disabled in the config
-            if (!App.Config.ToastOnSongOpen)
-                return;
+			PlaybackController.NextSong += this.PlayNext;
+			PlaybackController.PreviousSong += this.PlayPrevious;
 
-            System.Drawing.Image AlbumImage = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt;
-            if (Player.SongInfo != null) {
-                AlbumImage = this.Player.SongInfo.AlbumImage;
-                if (AlbumImage == null)
-                    AlbumImage = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt;
+			PlaybackController.PositionChanged += (value) => {
+				this.PlayerOperaion(() => this.Player.Position = value);
+			};
+		}
 
-                Toast t = new Toast(App.Name) {
-                    Title = this.Player.SongInfo.Title,
-                    Content = this.Player.SongInfo.Artist,
-                    Image = AlbumImage
-                };
-                t.Show();
-            }
-        }
+		/// <summary>
+		/// Attaches and configures a new playback handler.
+		/// </summary>
+		/// <param name="Player">The playback handler to attach.</param>
+		private void AttachPlayer(IPlaybackManager Player) {
+			#region Error checking
+			if (Player == null)
+				return;
+			#endregion
 
-        /// <summary>
-        /// Provides a safe way to control the playback handler.
-        /// </summary>
-        /// <param name="Operaion">The function to execute.</param>
-        private void PlayerOperaion(Action Operaion) {
-            if (this.Player != null && Operaion != null) {
-                Operaion();
-            }
-        }
+			int PreviousVolume = 100;
 
-        /// <summary>
-        /// Plays the current song.
-        /// </summary>
-        public void Play() {
-            this.PlayerOperaion(() => this.Player.Play());
-        }
+			if (this.Player != null) {
+				PreviousVolume = this.Player.Volume;
+				this.Player.Dispose();
+			}
 
-        /// <summary>
-        /// Stops the current song.
-        /// </summary>
-        public void Stop() {
-            this.PlayerOperaion(() => this.Player.Stop());
-        }
+			this.Player = Player;
+			this.viewModel.PlaybackManager = Player;
+			this.Player.Volume = PreviousVolume;
+			PlaybackController.Player = this.Player;
 
-        /// <summary>
-        /// Pauses the current song.
-        /// </summary>
-        public void Pause() {
-            this.PlayerOperaion(() => this.Player.Pause());
-        }
+			this.Player.SongEnded += this.PlayNext;
 
-        private void Window_Drop(object sender, DragEventArgs e) {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
-                string[] Files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                this.Playlist.Clear();
+			//Send toast notification
+			ShowToast(Player);
+		}
 
-                foreach (string File in Files) {
-                    this.Playlist.Add(new SongInfo(File));
-                }
+		/// <summary>
+		/// Shows toast notification.
+		/// </summary>
+		/// <param name="Player">The IPlaybackManager instance which holds the song's information.</param>
+		private void ShowToast(IPlaybackManager Player) {
+			//We don't need to display toast when it is disabled in the config
+			if (!App.Config.ToastOnSongOpen)
+				return;
 
-                if (this.Playlist.Count > 0)
-                    this.Playlist.MoveTo(0);
-            }
-        }
+			System.Drawing.Image AlbumImage = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt;
+			if (Player.SongInfo != null) {
+				AlbumImage = this.Player.SongInfo.AlbumImage;
+				if (AlbumImage == null)
+					AlbumImage = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt;
 
-        private void FileOpenButton_Click(object sender, RoutedEventArgs e) {
-            this.ToggleMenu(Show: false);
+				Toast t = new Toast(App.Name) {
+					Title = this.Player.SongInfo.Title,
+					Content = this.Player.SongInfo.Artist,
+					Image = AlbumImage
+				};
+				t.Show();
+			}
+		}
 
-            this.OpenFile();
-        }
+		/// <summary>
+		/// Provides a safe way to control the playback handler.
+		/// </summary>
+		/// <param name="Operaion">The function to execute.</param>
+		private void PlayerOperaion(Action Operaion) {
+			if (this.Player != null && Operaion != null) {
+				Operaion();
+			}
+		}
 
-        private void ExitClicked(object sender, MouseButtonEventArgs e) {
-            this.Close();
-            Environment.Exit(0);
-        }
+		/// <summary>
+		/// Plays the current song.
+		/// </summary>
+		public void Play() {
+			this.PlayerOperaion(() => this.Player.Play());
+		}
 
-        private void ToggleMenuVisibility(object sender, MouseButtonEventArgs e) {
-            bool ShowMenu = !this.MenuShowing;
-            this.ToggleMenu(ShowMenu);
-        }
+		/// <summary>
+		/// Stops the current song.
+		/// </summary>
+		public void Stop() {
+			this.PlayerOperaion(() => this.Player.Stop());
+		}
 
-        /// <summary>
-        /// Changes the visibility of the menu.
-        /// </summary>
-        /// <param name="Show">Set to true if you want to show the menu, set to false to hide it</param>
-        private void ToggleMenu(bool Show) {
-            if (Show) {
-                (this.Resources["FadeInAnimation"] as Storyboard)?.Begin();
-            }
-            else {
-                (this.Resources["FadeOutAnimation"] as Storyboard)?.Begin();
-            }
+		/// <summary>
+		/// Pauses the current song.
+		/// </summary>
+		public void Pause() {
+			this.PlayerOperaion(() => this.Player.Pause());
+		}
 
-            this.MenuShowing = Show;
-        }
+		private void Window_Drop(object sender, DragEventArgs e) {
+			if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
+				string[] Files = (string[])e.Data.GetData(DataFormats.FileDrop);
+				this.Playlist.Clear();
 
-        protected override void OnSourceInitialized(EventArgs e) {
-            base.OnSourceInitialized(e);
-            HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
-            source.AddHook(this.Hotkeys.Hook);
-        }
+				foreach (string File in Files) {
+					this.Playlist.Add(new SongInfo(File));
+				}
 
-        /// <summary>
-        /// This method is executed when the user clicks the "About"
-        /// in the menu. Closes the menu and shows the about window.
-        /// </summary>
-        /// <param name="sender">The "About" label's instance</param>
-        /// <param name="e">Event parameters</param>
-        private void AboutClicked(object sender, MouseButtonEventArgs e) {
-            this.ToggleMenu(Show: false);
+				if (this.Playlist.Count > 0)
+					this.Playlist.MoveTo(0);
+			}
+		}
 
-            AboutWindow wnd = new AboutWindow() {
-                Owner = this
-            };
-            wnd.ShowDialog();
-        }
-    }
+		private void FileOpenButton_Click(object sender, RoutedEventArgs e) {
+			this.ToggleMenu(Show: false);
+
+			this.OpenFile();
+		}
+
+		private void ExitClicked(object sender, MouseButtonEventArgs e) {
+			this.Close();
+			Environment.Exit(0);
+		}
+
+		private void ToggleMenuVisibility(object sender, MouseButtonEventArgs e) {
+			bool ShowMenu = !this.MenuShowing;
+			this.ToggleMenu(ShowMenu);
+		}
+
+		/// <summary>
+		/// Changes the visibility of the menu.
+		/// </summary>
+		/// <param name="Show">Set to true if you want to show the menu, set to false to hide it</param>
+		private void ToggleMenu(bool Show) {
+			if (Show) {
+				(this.Resources["FadeInAnimation"] as Storyboard)?.Begin();
+			}
+			else {
+				(this.Resources["FadeOutAnimation"] as Storyboard)?.Begin();
+			}
+
+			this.MenuShowing = Show;
+		}
+
+		protected override void OnSourceInitialized(EventArgs e) {
+			base.OnSourceInitialized(e);
+			HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
+			source.AddHook(this.Hotkeys.Hook);
+		}
+
+		/// <summary>
+		/// This method is executed when the user clicks the "About"
+		/// in the menu. Closes the menu and shows the about window.
+		/// </summary>
+		/// <param name="sender">The "About" label's instance</param>
+		/// <param name="e">Event parameters</param>
+		private void AboutClicked(object sender, MouseButtonEventArgs e) {
+			this.ToggleMenu(Show: false);
+
+			AboutWindow wnd = new AboutWindow() {
+				Owner = this
+			};
+			wnd.ShowDialog();
+		}
+	}
 }
