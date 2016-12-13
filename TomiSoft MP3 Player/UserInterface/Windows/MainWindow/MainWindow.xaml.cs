@@ -270,6 +270,12 @@ namespace TomiSoft_MP3_Player {
 			}
 		}
 
+		/// <summary>
+		/// Adds multiple files to the playlist and starts
+		/// playing the first of them.
+		/// </summary>
+		/// <param name="Filenames">An array containing the files' path</param>
+		/// <returns>True if all files are opened successfully, false if not</returns>
 		private bool OpenFiles(string[] Filenames) {
 			try {
 				this.Playlist.Clear();
@@ -286,6 +292,10 @@ namespace TomiSoft_MP3_Player {
 			return true;
 		}
 
+		/// <summary>
+		/// Opens the given lyrics file.
+		/// </summary>
+		/// <param name="Filename">The file to open</param>
 		private void OpenLyrics(string Filename) {
 			if (File.Exists(Filename)) {
 				this.viewModel.LyricsReader = new LrcReader(Filename);
@@ -394,6 +404,12 @@ namespace TomiSoft_MP3_Player {
 			this.PlayerOperaion(() => this.Player.Pause());
 		}
 
+		/// <summary>
+		/// This method is executed when one or more files were
+		/// dropped to the window.
+		/// </summary>
+		/// <param name="sender">The sender object's instance</param>
+		/// <param name="e">Event parameters</param>
 		private void Window_Drop(object sender, DragEventArgs e) {
 			if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
 				string[] Files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -408,17 +424,35 @@ namespace TomiSoft_MP3_Player {
 			}
 		}
 
+		/// <summary>
+		/// This method is executed when the File menu item was clicked.
+		/// Displays an open file dialog that helps the user
+		/// to open files.
+		/// </summary>
+		/// <param name="sender">The sender object's instance</param>
+		/// <param name="e">Event parameters</param>
 		private void FileOpenButton_Click(object sender, RoutedEventArgs e) {
 			this.ToggleMenu(Show: false);
 
 			this.OpenFile();
 		}
 
+		/// <summary>
+		/// This method is executed when the exit menu item was clicked.
+		/// Closes the application.
+		/// </summary>
+		/// <param name="sender">The sender object's instance</param>
+		/// <param name="e">Event parameters</param>
 		private void ExitClicked(object sender, MouseButtonEventArgs e) {
 			this.Close();
-			Environment.Exit(0);
 		}
 
+		/// <summary>
+		/// This method is executed when the mouse right button is pressed.
+		/// Toggles the visibility of the menu.
+		/// </summary>
+		/// <param name="sender">The sender object's instance</param>
+		/// <param name="e">Event parameters</param>
 		private void ToggleMenuVisibility(object sender, MouseButtonEventArgs e) {
 			bool ShowMenu = !this.MenuShowing;
 			this.ToggleMenu(ShowMenu);
