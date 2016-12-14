@@ -32,8 +32,8 @@ namespace TomiSoft_MP3_Player {
 				#endregion
 
 				#region Cleanup
-				if (this.player != null) {
-					this.player?.Dispose();
+				if (this.DataContext != null) {
+					(this.DataContext as IDisposable)?.Dispose();
 				}
 				#endregion
 
