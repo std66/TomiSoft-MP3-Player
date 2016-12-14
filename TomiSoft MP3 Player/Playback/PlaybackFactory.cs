@@ -22,6 +22,13 @@ namespace TomiSoft.MP3Player.Playback {
 		public static IPlaybackManager LoadFile(string Filename) {
 			string Extension = PlayerUtils.GetFileExtension(Filename);
 
+			//If the file is an audio CD track:
+			if (Extension == "cda") {
+				lastInstance = new AudioCdPlayback(Filename);
+				return lastInstance;
+			}
+
+			//In case of any file supported by BASS:
 			if (BassManager.GetSupportedExtensions().Contains(Extension)) {
 				lastInstance = new LocalAudioFilePlayback(Filename);
 				return lastInstance;

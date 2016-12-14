@@ -10,7 +10,7 @@ namespace TomiSoft.MP3Player.Playback {
 	/// Provides basic functionality for playback handlers that uses
 	/// BASS to play the media.
 	/// </summary>
-	internal abstract class BassPlaybackAbstract : IPlaybackManager {
+	internal abstract class BassPlaybackAbstract : IPlaybackManager, IAudioPeakMeter {
 		private bool playing;
 		private int channelID;
 		private DispatcherTimer PlaybackTimer;

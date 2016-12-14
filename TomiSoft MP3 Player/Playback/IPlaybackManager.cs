@@ -27,16 +27,6 @@ namespace TomiSoft.MP3Player.Playback {
 		bool IsPlaying { get; }
 		
 		/// <summary>
-		/// Gets the current left peak level.
-		/// </summary>
-		int LeftPeak { get; }
-
-		/// <summary>
-		/// Gets the current right peak level.
-		/// </summary>
-		int RightPeak { get; }
-		
-		/// <summary>
 		/// Gets or sets the playback volume.
 		/// </summary>
 		int Volume { get; set; }

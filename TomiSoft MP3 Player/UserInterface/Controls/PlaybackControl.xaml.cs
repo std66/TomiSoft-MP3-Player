@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TomiSoft.MP3Player.Playback;
+using TomiSoft.MP3Player.UserInterface.Controls;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -25,11 +26,19 @@ namespace TomiSoft_MP3_Player {
 				return this.player;
 			}
 			set {
+				#region Error checking
 				if (value == null)
 					throw new ArgumentNullException("value");
+				#endregion
+
+				#region Cleanup
+				if (this.player != null) {
+					this.player?.Dispose();
+				}
+				#endregion
 
 				this.player = value;
-				this.DataContext = this.player;
+				this.DataContext = new PlaybackControlViewModel(value);
 
 				this.Player.PropertyChanged += (o, e) => {
 					if (e.PropertyName == "IsPlaying") {
