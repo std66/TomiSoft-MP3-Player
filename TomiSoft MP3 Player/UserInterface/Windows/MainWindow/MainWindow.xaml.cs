@@ -236,14 +236,19 @@ namespace TomiSoft_MP3_Player {
 		}
 
 		/// <summary>
-		/// Asks the user to open a file using a file open dialog.
+		/// Asks the user to open one or more files using a file open dialog.
 		/// </summary>
-		/// <returns>True if the file is opened, false if not.</returns>
+		/// <returns>True if the files are opened, false if not.</returns>
 		private bool OpenFile() {
-			OpenFileDialog dlg = new OpenFileDialog();
+			OpenFileDialog dlg = new OpenFileDialog() {
+				Filter = $"Minden támogatott fájl|{String.Join(";", BassManager.GetSupportedExtensions().Select(x => "*."+x))}",
+				Multiselect = true
+			};
+
 			bool? DialogResult = dlg.ShowDialog();
+
 			if (DialogResult.HasValue && DialogResult.Value == true) {
-				return this.OpenFile(dlg.FileName);
+				return this.OpenFiles(dlg.FileNames);
 			}
 			else {
 				return false;
@@ -265,7 +270,14 @@ namespace TomiSoft_MP3_Player {
 				return true;
 			}
 			catch (Exception e) {
-				MessageBox.Show(e.Message);
+				Trace.TraceWarning("Could not open file: " + e.Message);
+
+				new Toast(App.Name) {
+					Title = "Hoppá...",
+					Content = "Valami miatt nem sikerült a fájlt megnyitni.",
+					Image = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt
+				}.Show();
+
 				return false;
 			}
 		}
@@ -285,7 +297,14 @@ namespace TomiSoft_MP3_Player {
 				this.Playlist.MoveTo(0);
 			}
 			catch (Exception e) {
-				PlayerUtils.ErrorMessageBox(App.Name, e.Message);
+				Trace.TraceWarning("Could not open file: " + e.Message);
+
+				new Toast(App.Name) {
+					Title = "Hoppá...",
+					Content = "Valami miatt nem sikerült a fájlokat megnyitni.",
+					Image = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt
+				}.Show();
+				
 				return false;
 			}
 
