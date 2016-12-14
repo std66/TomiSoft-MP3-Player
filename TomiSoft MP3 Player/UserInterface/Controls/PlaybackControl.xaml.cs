@@ -11,11 +11,7 @@ namespace TomiSoft_MP3_Player {
 	/// </summary>
 	public partial class PlaybackControl : UserControl {
 		private IPlaybackManager player;
-
-		public event Action Stop;
-		public event Action Play;
-		public event Action Pause;
-		public event Action<long> PositionChanged;
+		
         public event Action PreviousSong;
         public event Action NextSong;
 
@@ -59,21 +55,22 @@ namespace TomiSoft_MP3_Player {
 		}
 
 		private void UI_StopButton_Click(object sender, RoutedEventArgs e) {
-			this.Stop?.Invoke();
+			this.player?.Stop();
 		}
 
 		private void UI_PauseButton_Click(object sender, RoutedEventArgs e) {
-			this.Pause?.Invoke();
+			this.player?.Pause();
 
 			UI_StopButton.IsEnabled = true;
 		}
 
 		private void UI_PlayButton_Click(object sender, RoutedEventArgs e) {
-			this.Play?.Invoke();
+			this.Player?.Play();
 		}
 
 		private void UI_PlaybackPosition_MouseUp(object sender, MouseButtonEventArgs e) {
-			this.PositionChanged?.Invoke((long)UI_PlaybackPosition.Value);
+			if (this.player != null)
+				this.player.Position = (long)UI_PlaybackPosition.Value;
 		}
 
 		private void UI_MuteButton_Click(object sender, RoutedEventArgs e) {

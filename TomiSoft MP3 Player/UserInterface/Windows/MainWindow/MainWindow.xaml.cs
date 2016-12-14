@@ -309,16 +309,8 @@ namespace TomiSoft_MP3_Player {
 		/// Registers the events of the playback controller.
 		/// </summary>
 		private void PreparePlaybackController() {
-			PlaybackController.Play += this.Play;
-			PlaybackController.Pause += this.Pause;
-			PlaybackController.Stop += this.Stop;
-
 			PlaybackController.NextSong += this.PlayNext;
 			PlaybackController.PreviousSong += this.PlayPrevious;
-
-			PlaybackController.PositionChanged += (value) => {
-				this.PlayerOperaion(() => this.Player.Position = value);
-			};
 		}
 
 		/// <summary>

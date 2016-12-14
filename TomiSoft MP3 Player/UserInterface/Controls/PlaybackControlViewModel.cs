@@ -31,10 +31,6 @@ namespace TomiSoft.MP3Player.UserInterface.Controls {
 
 		private void PlaybackManager_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			this.NotifyPropertyChanged($"PlaybackManager.{e.PropertyName}");
-
-			if (this.PeakMeter != null) {
-				this.NotifyPropertyChanged($"PeakMeter.{e.PropertyName}");
-			}
 		}
 
 		private void NotifyPropertyChanged(string PropertyName) {
