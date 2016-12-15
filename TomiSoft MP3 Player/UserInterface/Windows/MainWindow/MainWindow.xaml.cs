@@ -108,7 +108,7 @@ namespace TomiSoft_MP3_Player {
 		/// <param name="sender">The Playlist instance</param>
 		/// <param name="e">Event parameters</param>
 		private void Playlist_SelectedSongChanged(object sender, EventArgs e) {
-			this.Stop();
+			this.Player?.Stop();
 
 			#region Error checking
 			//If the playlist is empty, we need to attach a NULL-playback
@@ -123,7 +123,7 @@ namespace TomiSoft_MP3_Player {
 				PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)
 			);
 
-			this.Play();
+			this.Player?.Play();
 
 			//Load lyrics
 			string LyricsFile = Path.ChangeExtension(this.Playlist.CurrentSongInfo.Source, "lrc");
@@ -150,14 +150,14 @@ namespace TomiSoft_MP3_Player {
 				}
 			}
 			else {
-				this.Hotkeys.Stop += (o, e) => this.Stop();
+				this.Hotkeys.Stop += (o, e) => this.Player?.Stop();
 				this.Hotkeys.NextTrack += (o, e) => this.PlayNext();
 				this.Hotkeys.PreviousTrack += (o, e) => this.PlayPrevious();
 				this.Hotkeys.PlayPause += (o, e) => {
 					if (this.Player.IsPlaying)
-						this.Pause();
+						this.Player?.Pause();
 					else
-						this.Play();
+						this.Player?.Play();
 				};
 			}
 		}
@@ -216,7 +216,7 @@ namespace TomiSoft_MP3_Player {
 			//When CTRL+O is pressed, a file open dialog appears that lets the user to load a file.
 			if (e.Key == Key.O && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) {
 				if (this.OpenFile()) {
-					this.PlayerOperaion(() => this.Player.Play());
+					this.Player?.Play();
 				}
 			}
 		}
@@ -346,6 +346,7 @@ namespace TomiSoft_MP3_Player {
 
 			if (this.Player != null) {
 				PreviousVolume = this.Player.Volume;
+				this.Player.SongEnded -= this.PlayNext;
 				this.Player.Dispose();
 			}
 
@@ -382,37 +383,6 @@ namespace TomiSoft_MP3_Player {
 				};
 				t.Show();
 			}
-		}
-
-		/// <summary>
-		/// Provides a safe way to control the playback handler.
-		/// </summary>
-		/// <param name="Operaion">The function to execute.</param>
-		private void PlayerOperaion(Action Operaion) {
-			if (this.Player != null && Operaion != null) {
-				Operaion();
-			}
-		}
-
-		/// <summary>
-		/// Plays the current song.
-		/// </summary>
-		public void Play() {
-			this.PlayerOperaion(() => this.Player.Play());
-		}
-
-		/// <summary>
-		/// Stops the current song.
-		/// </summary>
-		public void Stop() {
-			this.PlayerOperaion(() => this.Player.Stop());
-		}
-
-		/// <summary>
-		/// Pauses the current song.
-		/// </summary>
-		public void Pause() {
-			this.PlayerOperaion(() => this.Player.Pause());
 		}
 
 		/// <summary>
