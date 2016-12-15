@@ -15,6 +15,7 @@ using System.Windows.Interop;
 using TomiSoft.MP3Player.Utils.Extensions;
 using TomiSoft.MP3Player.UserInterface.Windows.AboutWindow;
 using System.Linq;
+using TomiSoft.MP3Player.MediaInformation;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -95,7 +96,7 @@ namespace TomiSoft_MP3_Player {
 			string[] args = Environment.GetCommandLineArgs();
 			foreach (string Filename in args) {
 				if (PlaybackFactory.IsSupportedMedia(Filename))
-					this.Playlist.Add(new SongInfo(Filename));
+					this.Playlist.Add(new BassSongInfo(Filename));
 			}
 
 			this.Playlist.MoveTo(0);
@@ -198,7 +199,7 @@ namespace TomiSoft_MP3_Player {
 
 						case "ShowPlaylist":
 							int Index = 0;
-							foreach (SongInfo Song in this.Playlist) {
+							foreach (ISongInfo Song in this.Playlist) {
 								wrt.WriteLine($"{Index};{Song.Artist};{Song.Title}");
 								Index++;
 							}
@@ -264,7 +265,7 @@ namespace TomiSoft_MP3_Player {
 		private bool OpenFile(string Filename) {
 			try {
 				this.Playlist.Clear();
-				this.Playlist.Add(new SongInfo(Filename));
+				this.Playlist.Add(new BassSongInfo(Filename));
 				this.Playlist.MoveTo(0);
 
 				return true;
@@ -292,7 +293,7 @@ namespace TomiSoft_MP3_Player {
 			try {
 				this.Playlist.Clear();
 				foreach (string Filename in Filenames)
-					this.Playlist.Add(new SongInfo(Filename));
+					this.Playlist.Add(new BassSongInfo(Filename));
 
 				this.Playlist.MoveTo(0);
 			}
@@ -397,7 +398,7 @@ namespace TomiSoft_MP3_Player {
 				this.Playlist.Clear();
 
 				foreach (string File in Files) {
-					this.Playlist.Add(new SongInfo(File));
+					this.Playlist.Add(new BassSongInfo(File));
 				}
 
 				if (this.Playlist.Count > 0)

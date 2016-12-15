@@ -1,11 +1,11 @@
 ﻿using System.Drawing;
 using Un4seen.Bass.AddOn.Tags;
 
-namespace TomiSoft.MP3Player.Playback {
+namespace TomiSoft.MP3Player.MediaInformation {
 	/// <summary>
 	/// Provides information of a song using BassTag plugin.
 	/// </summary>
-	internal class BassSongInfo : ISongInfo {
+	public class BassSongInfo : ISongInfo {
 		private TAG_INFO tagInfo;
 
 		public string Album {
@@ -29,6 +29,25 @@ namespace TomiSoft.MP3Player.Playback {
 		public string Title {
 			get {
 				return tagInfo.title;
+			}
+		}
+
+		public double Length {
+			get {
+				return this.tagInfo.duration;
+			}
+		}
+
+		public bool IsLengthInSeconds {
+			get {
+				return true;
+			}
+		}
+
+
+		public string Source {
+			get {
+				return this.tagInfo.filename;
 			}
 		}
 

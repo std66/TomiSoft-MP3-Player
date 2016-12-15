@@ -2,13 +2,13 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using TomiSoft.MP3Player.Utils;
+using TomiSoft.MP3Player.MediaInformation;
 
 namespace TomiSoft.MP3Player.Playlist {
 	/// <summary>
 	/// Represents a playlist.
 	/// </summary>
-	public class Playlist : ObservableCollection<SongInfo> {
+	public class Playlist : ObservableCollection<ISongInfo> {
 		private int currentlyPlaying;
         public event EventHandler SelectedSongChanged;
 
@@ -46,7 +46,7 @@ namespace TomiSoft.MP3Player.Playlist {
 		/// Gets the SongInfo instance of the currently playing song.
         /// Returns null if the playlist is empty.
 		/// </summary>
-		public SongInfo CurrentSongInfo {
+		public ISongInfo CurrentSongInfo {
 			get {
                 if (this.currentlyPlaying < this.Count)
                     return this[currentlyPlaying];

@@ -1,4 +1,5 @@
 ﻿using System;
+using TomiSoft.MP3Player.MediaInformation;
 
 namespace TomiSoft.MP3Player.Playback {
 	/// <summary>

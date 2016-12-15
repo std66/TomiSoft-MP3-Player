@@ -1,4 +1,5 @@
-﻿using Un4seen.Bass;
+﻿using TomiSoft.MP3Player.MediaInformation;
+using Un4seen.Bass;
 
 namespace TomiSoft.MP3Player.Playback {
 	/// <summary>

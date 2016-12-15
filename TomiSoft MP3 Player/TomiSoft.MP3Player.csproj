@@ -74,8 +74,8 @@
     <Compile Include="UserInterface\Controls\PlaybackControl.xaml.cs">
       <DependentUpon>PlaybackControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Playback\BassSongInfo.cs" />
-    <Compile Include="Playback\ISongInfo.cs" />
+    <Compile Include="MediaInformation\BassSongInfo.cs" />
+    <Compile Include="MediaInformation\ISongInfo.cs" />
     <Compile Include="Playback\NullPlayback.cs" />
     <Compile Include="Playlist\Playlist.cs" />
     <Compile Include="Communication\PlayerServer.cs" />
@@ -88,7 +88,6 @@
     <Compile Include="Utils\Extensions\ArrayExtensions.cs" />
     <Compile Include="Utils\Extensions\ImageExtensions.cs" />
     <Compile Include="Utils\PlaybackHotkeys.cs" />
-    <Compile Include="Utils\SongInfo.cs" />
     <Compile Include="Utils\Extensions\StringRegexExtensions.cs" />
     <Compile Include="Utils\Windows\Hotkeys.cs" />
     <Compile Include="Utils\Windows\Toast.cs" />
