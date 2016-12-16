@@ -1,4 +1,5 @@
-﻿using Un4seen.Bass.AddOn.Cd;
+﻿using TomiSoft.MP3Player.MediaInformation;
+using Un4seen.Bass.AddOn.Cd;
 
 namespace TomiSoft.MP3Player.Playback {
 	/// <summary>
@@ -12,7 +13,7 @@ namespace TomiSoft.MP3Player.Playback {
 		/// <param name="Filename">The CDA file to open</param>
 		public AudioCdPlayback(string Filename)
 			: base(BassCd.BASS_CD_StreamCreateFile(Filename, Un4seen.Bass.BASSFlag.BASS_DEFAULT)) {
-			
+			this.songInfo = new BassSongInfo(ChannelID);
 		}
 	}
 }

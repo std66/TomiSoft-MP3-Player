@@ -96,6 +96,7 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		/// </summary>
 		/// <param name="ChannelID">The BASS handle of the channel</param>
 		public BassSongInfo(int ChannelID) : this() {
+			this.tagInfo = new TAG_INFO();
 			BassTags.BASS_TAG_GetFromFile(ChannelID, this.tagInfo);
 		}
 	}
