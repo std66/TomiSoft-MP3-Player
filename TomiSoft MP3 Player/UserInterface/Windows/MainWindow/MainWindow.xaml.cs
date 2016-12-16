@@ -120,9 +120,23 @@ namespace TomiSoft_MP3_Player {
 			}
 			#endregion
 
-			this.AttachPlayer(
-				PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source)
-			);
+			IPlaybackManager NewPlaybackManager = null;
+			try {
+				NewPlaybackManager = PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source);
+			}
+			catch (Exception ex) {
+				if (ex is IOException || ex is NotSupportedException) {
+					new Toast(App.Name) {
+						Title = "Hoppá...",
+						Content = "Ezt a fájlt nem tudjuk megnyitni.",
+						Image = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt
+					}.Show();
+				}
+
+				return;
+			}
+
+			this.AttachPlayer(NewPlaybackManager);
 
 			this.Player?.Play();
 

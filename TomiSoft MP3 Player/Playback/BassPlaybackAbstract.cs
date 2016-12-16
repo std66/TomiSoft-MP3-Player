@@ -168,6 +168,8 @@ namespace TomiSoft.MP3Player.Playback {
             this.PlaybackTimer.Tick += TimerTick;
 
 			this.IsPlaying = false;
+
+			this.songInfo = new BassSongInfo(this.ChannelID);
 		}
 
         /// <summary>

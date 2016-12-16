@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using TomiSoft.MP3Player.Utils;
@@ -21,19 +22,14 @@ namespace TomiSoft.MP3Player.Playback {
 		/// <exception cref="NotSupportedException">when Filename is not supported by any playback methods</exception>
 		public static IPlaybackManager LoadFile(string Filename) {
 			string Extension = PlayerUtils.GetFileExtension(Filename);
-
-			//If the file is an audio CD track:
-			if (Extension == "cda") {
-				lastInstance = new AudioCdPlayback(Filename);
-				return lastInstance;
-			}
-
+			
 			//In case of any file supported by BASS:
 			if (BassManager.GetSupportedExtensions().Contains(Extension)) {
 				lastInstance = new LocalAudioFilePlayback(Filename);
 				return lastInstance;
 			}
 
+			Trace.TraceWarning($"[Playback] Unsupported file: {Filename}");
 			throw new NotSupportedException("Nem támogatott fájlformátum");
 		}
 

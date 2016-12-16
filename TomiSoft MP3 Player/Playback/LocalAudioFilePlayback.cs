@@ -13,7 +13,7 @@ namespace TomiSoft.MP3Player.Playback {
 		/// <param name="Filename">The file to play.</param>
 		public LocalAudioFilePlayback(string Filename)
 			:base(Bass.BASS_StreamCreateFile(Filename, 0, 0, BASSFlag.BASS_DEFAULT)){
-			this.songInfo = new BassSongInfo(Filename);
+			
 		}
 
 	}
