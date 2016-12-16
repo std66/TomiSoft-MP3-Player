@@ -381,23 +381,24 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="Player">The IPlaybackManager instance which holds the song's information.</param>
 		private void ShowToast(IPlaybackManager Player) {
+			#region Error checking
+			if (Player == null || Player.SongInfo == null)
+				return;
+			#endregion
+
 			//We don't need to display toast when it is disabled in the config
 			if (!App.Config.ToastOnSongOpen)
 				return;
 
 			System.Drawing.Image AlbumImage = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt;
-			if (Player.SongInfo != null) {
+			if (this.Player.SongInfo.AlbumImage != null)
 				AlbumImage = this.Player.SongInfo.AlbumImage;
-				if (AlbumImage == null)
-					AlbumImage = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt;
 
-				Toast t = new Toast(App.Name) {
-					Title = this.Player.SongInfo.Title,
-					Content = this.Player.SongInfo.Artist,
-					Image = AlbumImage
-				};
-				t.Show();
-			}
+			new Toast(App.Name) {
+				Title = this.Player.SongInfo.Title,
+				Content = this.Player.SongInfo.Artist,
+				Image = AlbumImage
+			}.Show();
 		}
 
 		/// <summary>
