@@ -52,9 +52,8 @@ namespace TomiSoft_MP3_Player {
 			get {
 				if (this.playbackManager == null || this.playbackManager is NullPlayback)
 					return "Nincs zene betöltve";
-
-				string t = this.playbackManager.SongInfo.Title;
-				return String.IsNullOrWhiteSpace(t) ? "Nincs cím" : t;
+				
+				return this.playbackManager.SongInfo.Title ?? "Ismeretlen szám";
 			}
 		}
 

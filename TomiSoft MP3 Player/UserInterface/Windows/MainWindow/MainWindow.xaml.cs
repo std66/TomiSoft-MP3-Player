@@ -395,8 +395,8 @@ namespace TomiSoft_MP3_Player {
 				AlbumImage = this.Player.SongInfo.AlbumImage;
 
 			new Toast(App.Name) {
-				Title = this.Player.SongInfo.Title,
-				Content = this.Player.SongInfo.Artist,
+				Title = this.Player.SongInfo.Title ?? "Ismeretlen szám",
+				Content = this.Player.SongInfo.Artist ?? "Ismeretlen előadó",
 				Image = AlbumImage
 			}.Show();
 		}

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using Un4seen.Bass.AddOn.Tags;
 
 namespace TomiSoft.MP3Player.MediaInformation {
@@ -16,7 +17,7 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		/// </summary>
 		public string Album {
 			get {
-				return tagInfo.album;
+				return String.IsNullOrWhiteSpace(tagInfo.album) ? null : tagInfo.album;
 			}
 		}
 
@@ -35,7 +36,7 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		/// </summary>
 		public string Artist {
 			get {
-				return tagInfo.artist;
+				return String.IsNullOrWhiteSpace(tagInfo.artist) ? null : tagInfo.artist;
 			}
 		}
 
@@ -44,7 +45,7 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		/// </summary>
 		public string Title {
 			get {
-				return tagInfo.title;
+				return String.IsNullOrWhiteSpace(tagInfo.title) ? null : tagInfo.title;
 			}
 		}
 
