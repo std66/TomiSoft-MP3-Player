@@ -15,12 +15,11 @@ namespace TomiSoft.Music.Lyrics {
 		/// Determines the type of a lyrics file and parses its contents.
 		/// </summary>
 		/// <param name="Filename">The file's path to load.</param>
-		/// <returns>An ILyricsReader instance if the file is a valid lyrics file or null if the file is not supported.</returns>
-		/// <exception cref="FileNotFoundException">when the given file is not exists</exception>
+		/// <returns>An ILyricsReader instance if the file is a valid lyrics file or null if the file is not supported or not exists.</returns>
 		public static ILyricsReader LoadFile(string Filename) {
 			#region Error checking
 			if (!File.Exists(Filename))
-				throw new FileNotFoundException($"The file does not exists: {Filename}");
+				return null;
 			#endregion
 
 			foreach (IFileFormatChecker Validator in GetValidators(Filename)) {

@@ -4,7 +4,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Diagnostics;
-using TomiSoft.Music.Lyrics.Lrc;
 using TomiSoft.MP3Player.Communication;
 using TomiSoft.MP3Player.Playback;
 using TomiSoft.MP3Player.Playlist;
@@ -332,12 +331,7 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="Filename">The file to open</param>
 		private void OpenLyrics(string Filename) {
-			try {
-				this.viewModel.LyricsReader = LyricsLoader.LoadFile(Filename);
-			}
-			catch (FileNotFoundException) {
-				Trace.TraceWarning($"Lyrics file does not exists: {Filename}");
-			}
+			this.viewModel.LyricsReader = LyricsLoader.LoadFile(Filename);
 		}
 
 		/// <summary>
