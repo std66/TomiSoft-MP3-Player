@@ -20,7 +20,7 @@ namespace TomiSoft.MP3Player.Communication {
 		/// </summary>
 		public bool ServerReady {
 			get {
-				this.Send("IsRunning");
+				this.Send("Software.IsRunning");
 				return (this.sr.ReadLine().Contains("true"));
 			}
 		}
@@ -30,7 +30,7 @@ namespace TomiSoft.MP3Player.Communication {
         /// </summary>
         public string Name {
             get {
-                this.Send("Name");
+                this.Send("Software.Name");
                 return this.Read();
             }
         }
@@ -40,7 +40,7 @@ namespace TomiSoft.MP3Player.Communication {
         /// </summary>
         public Version Version {
             get {
-                this.Send("Version");
+                this.Send("Software.Version");
                 return new Version(this.Read());
             }
         }
@@ -84,7 +84,7 @@ namespace TomiSoft.MP3Player.Communication {
 		/// </summary>
 		/// <param name="Filename">The file's full path to play</param>
 		public void Play(string Filename) {
-			this.Send($"Play;{Filename}");
+			this.Send($"Player.Play;{Filename}");
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace TomiSoft.MP3Player.Communication {
         /// </summary>
         /// <param name="Filenames">The array of the files</param>
         public void Play(string[] Filenames) {
-            this.Send($"Play;{String.Join(";", Filenames)}");
+            this.Send($"Player.Play;{String.Join(";", Filenames)}");
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace TomiSoft.MP3Player.Communication {
         /// the playlist.
         /// </summary>
         public void PlayNext() {
-            this.Send("PlayNext");
+            this.Send("Player.PlayNext");
         }
 
         /// <summary>
@@ -108,14 +108,14 @@ namespace TomiSoft.MP3Player.Communication {
         /// in the playlist.
         /// </summary>
         public void PlayPrevious() {
-            this.Send("PlayPrevious");
+            this.Send("Player.PlayPrevious");
         }
 
         /// <summary>
         /// Sends a command to the server to keep alive the connection.
         /// </summary>
         public void KeepAlive() {
-            this.Send("KeepAlive");
+            this.Send("Connection.KeepAlive");
             this.keepAlive = true;
         }
         
@@ -124,7 +124,7 @@ namespace TomiSoft.MP3Player.Communication {
 		/// </summary>
 		public void Dispose() {
             if (this.keepAlive)
-                this.Send("Disconnect");
+                this.Send("Connection.Disconnect");
 
             this.Client.Close();
 		}
@@ -136,7 +136,7 @@ namespace TomiSoft.MP3Player.Communication {
         /// <param name="Length">The variable to store the length of the song in seconds</param>
         /// <returns>The playback position in seconds</returns>
         public double PlaybackPosition(out double Length) {
-            this.Send("PlaybackPosition");
+            this.Send("Player.PlaybackPosition");
             string[] Result = this.Read().Split('/');
 
             if (Result.Length == 2) {

@@ -133,27 +133,27 @@ namespace TomiSoft.MP3Player.Communication {
             };
 
             switch (Command) {
-                case "IsRunning":
+                case "Software.IsRunning":
                     CommandHandled = true;
                     wrt.WriteLine("true");
                     break;
 
-                case "Version":
+                case "Software.Version":
                     CommandHandled = true;
                     wrt.WriteLine(App.Version.ToString());
                     break;
 
-                case "Name":
+                case "Software.Name":
                     CommandHandled = true;
                     wrt.WriteLine(App.Name);
                     break;
 
-                case "KeepAlive":
+                case "Connection.KeepAlive":
                     CommandHandled = true;
                     KeepAlive = true;
                     break;
 
-                case "Disconnect":
+                case "Connection.Disconnect":
                     CommandHandled = true;
                     wrt.Dispose();
                     break;

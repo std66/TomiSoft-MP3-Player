@@ -107,6 +107,10 @@ namespace TomiSoft.Music.Lyrics.Xml {
 			this.TranslationID = this.DefaultTranslationID;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the XmlLyricsReader class. Loads the given lyrics file.
+		/// </summary>
+		/// <param name="Stream">A Stream that represents the file.</param>
 		public XmlLyricsReader(System.IO.Stream Stream) {
 			this.doc = XDocument.Load(Stream);
 			this.TranslationID = this.DefaultTranslationID;

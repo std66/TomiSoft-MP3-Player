@@ -141,8 +141,12 @@ namespace TomiSoft_MP3_Player {
 			this.Player?.Play();
 
 			//Load lyrics
-			string LyricsFile = Path.ChangeExtension(this.Playlist.CurrentSongInfo.Source, "lrc");
-			this.OpenLyrics(LyricsFile);
+			string[] LyricsExtensions = { "lrc", "xml" };
+			foreach (var Extension in LyricsExtensions) {
+				string LyricsFile = Path.ChangeExtension(this.Playlist.CurrentSongInfo.Source, Extension);
+				if (this.OpenLyrics(LyricsFile))
+					break;
+			}
 		}
 
 		/// <summary>
@@ -195,27 +199,43 @@ namespace TomiSoft_MP3_Player {
 					Trace.TraceInformation($"[Server] Command={Command}");
 
 					switch (Command) {
-						case "Play":
+						case "Player.Play":
 							this.OpenFiles(Parameters);
 							break;
 
-						case "PlayNext":
+						case "Player.PlayNext":
 							this.PlayNext();
 							break;
 
-						case "PlayPrevious":
+						case "Player.PlayPrevious":
 							this.PlayPrevious();
 							break;
 
-						case "PlaybackPosition":
+						case "Player.PlaybackPosition":
 							wrt.WriteLine($"{this.Player.Position}/{this.Player.Length}");
 							break;
 
-						case "ShowPlaylist":
+						case "Playlist.ShowPlaylist":
 							int Index = 0;
 							foreach (ISongInfo Song in this.Playlist) {
 								wrt.WriteLine($"{Index};{Song.Artist};{Song.Title}");
 								Index++;
+							}
+							break;
+
+						case "Lyrics.ShowTranslations":
+							if (this.viewModel.LyricsReader != null) {
+								foreach (var Translation in this.viewModel.LyricsReader.Translations) {
+									wrt.WriteLine($"{Translation.Key};{Translation.Value}");
+								}
+							}
+							break;
+
+						case "Lyrics.UseTranslation":
+							if (this.viewModel.LyricsReader != null) {
+								if (this.viewModel.LyricsReader.Translations.ContainsKey(Parameters.FirstOrDefault())) {
+									this.viewModel.LyricsReader.TranslationID = Parameters.FirstOrDefault();
+								}
 							}
 							break;
 
@@ -330,8 +350,10 @@ namespace TomiSoft_MP3_Player {
 		/// Opens the given lyrics file.
 		/// </summary>
 		/// <param name="Filename">The file to open</param>
-		private void OpenLyrics(string Filename) {
+		/// <returns>True if the file is loaded, false if not</returns>
+		private bool OpenLyrics(string Filename) {
 			this.viewModel.LyricsReader = LyricsLoader.LoadFile(Filename);
+			return this.viewModel.LyricsReader != null;
 		}
 
 		/// <summary>

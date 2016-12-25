@@ -129,7 +129,7 @@ namespace TomiSoft_MP3_Player {
 
 				case "Position":
 					if (this.lyricsReader != null) {
-						this.Lyrics = this.lyricsReader.GetLyricsLine(Playback.Position).First();
+						this.Lyrics = this.lyricsReader.GetLyricsLine(Playback.Position).FirstOrDefault();
 						this.NotifyPropertyChanged("Lyrics");
 					}
 					break;

@@ -45,11 +45,13 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		/// </summary>
 		/// <param name="Filename">The file's full path which is checked</param>
 		public XmlFileFormatChecker(string Filename) {
+			this.Filename = Filename;
+
 			try {
 				XDocument doc = XDocument.Load(Filename);
 				this.IsValid = true;
 			}
-			catch {
+			catch (Exception e) {
 				this.IsValid = false;
 			}
 		}
