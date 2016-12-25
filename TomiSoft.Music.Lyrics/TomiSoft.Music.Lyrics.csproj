@@ -50,6 +50,7 @@
     <Compile Include="LyricsLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringRegexExtensions.cs" />
+    <Compile Include="Xml\XmlFileFormatChecker.cs" />
     <Compile Include="Xml\XmlLyricsReader.cs" />
     <Compile Include="Xml\XmlLyricsWriter.cs" />
   </ItemGroup>

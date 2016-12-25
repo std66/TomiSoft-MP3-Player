@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace TomiSoft.Music.Lyrics.Lrc {
 	/// <summary>
@@ -40,7 +36,11 @@ namespace TomiSoft.Music.Lyrics.Lrc {
 			this.filename = Filename;
 		}
 
-
+		/// <summary>
+		/// Gets an instance of the LrcReader class.
+		/// </summary>
+		/// <returns>An LrcReader instance that parses the validated lyrics file</returns>
+		/// <exception cref="InvalidOperationException">when the file is not a valid lyrics file</exception>
 		public ILyricsReader GetLyricsReader() {
 			#region Error checking
 			if (!this.validFile)

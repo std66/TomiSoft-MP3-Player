@@ -37,7 +37,8 @@ namespace TomiSoft.Music.Lyrics {
 		/// <returns>A sequence that contains all the possible lyrics file validators</returns>
 		private static IEnumerable<IFileFormatChecker> GetValidators(string Filename) {
 			return new IFileFormatChecker[] {
-				new Lrc.LrcFileFormatChecker(Filename)
+				new Lrc.LrcFileFormatChecker(Filename),
+				new Xml.XmlFileFormatChecker(Filename)
 			};
 		}
 	}
