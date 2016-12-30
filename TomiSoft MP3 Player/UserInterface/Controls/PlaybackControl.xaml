@@ -8,21 +8,54 @@
              d:DesignHeight="93.999" d:DesignWidth="267">
     <UserControl.Resources>
         <local:DoubleToTimeConverter x:Key="DoubleToTimeConverter" />
-    </UserControl.Resources>
+
+		<BitmapImage x:Key="PlayIcon" UriSource="/Resources/play.png"/>
+		<BitmapImage x:Key="PauseIcon" UriSource="/Resources/pause.png"/>
+		<BitmapImage x:Key="StopIcon" UriSource="/Resources/stop.png"/>
+		<BitmapImage x:Key="PreviousIcon" UriSource="/Resources/previous.png"/>
+		<BitmapImage x:Key="NextIcon" UriSource="/Resources/next.png"/>
+	</UserControl.Resources>
     <Grid>
 
+		<!-- Playback position and volume control sliders -->
         <Slider x:Name="UI_PlaybackPosition" VerticalAlignment="Top" Value="{Binding PlaybackManager.Position, FallbackValue=0}" Margin="9,32,96,0" Maximum="{Binding PlaybackManager.Length, Mode=OneWay}" Height="18"/>
         <Slider x:Name="UI_Volume" VerticalAlignment="Top" Value="{Binding PlaybackManager.Volume, FallbackValue=100}" Minimum="0" Margin="0,32,8,0" Maximum="100" Height="18" HorizontalAlignment="Right" Width="73"/>
-        <ProgressBar x:Name="UI_LeftPeakMeter" VerticalAlignment="Bottom" Value="{Binding PeakMeter.LeftPeak, Mode=OneWay, FallbackValue=0}" Margin="5,0,5,13" Maximum="32768" Height="5" Foreground="White" Background="Black" BorderBrush="#FF535353"/>
+        
+		<!-- VU meter -->
+		<ProgressBar x:Name="UI_LeftPeakMeter" VerticalAlignment="Bottom" Value="{Binding PeakMeter.LeftPeak, Mode=OneWay, FallbackValue=0}" Margin="5,0,5,13" Maximum="32768" Height="5" Foreground="White" Background="Black" BorderBrush="#FF535353"/>
         <ProgressBar x:Name="UI_RightPeakMeter" VerticalAlignment="Bottom" Value="{Binding PeakMeter.RightPeak, Mode=OneWay, FallbackValue=0}" SmallChange="1" Margin="5,0,5,6" Maximum="32768" Height="5" Foreground="White" BorderBrush="#FF535353" Background="Black" BorderThickness="1"/>
-        <Button x:Name="UI_PlayButton" Width="23" VerticalAlignment="Top" Margin="21,7,0,0" Height="20" HorizontalAlignment="Left" Content="▶" Click="UI_PlayButton_Click"/>
-        <Button x:Name="UI_PauseButton" Width="23" VerticalAlignment="Top" Margin="46,7,0,0" Height="20" HorizontalAlignment="Left" Content="⏸" Click="UI_PauseButton_Click"/>
-        <Button x:Name="UI_StopButton" Width="23" VerticalAlignment="Top" Margin="71,7,0,0" Height="20" HorizontalAlignment="Left" Content="■" Click="UI_StopButton_Click"/>
-        <Button x:Name="UI_MuteButton" VerticalAlignment="Top" Margin="0,7,32,0" Height="20" Content="🔊" HorizontalAlignment="Right" Width="23" Click="UI_MuteButton_Click"/>
+		
+		<Button x:Name="UI_PlayButton" Width="23" VerticalAlignment="Top" Margin="21,7,0,0" Height="20" HorizontalAlignment="Left" Click="UI_PlayButton_Click">
+			<Button.Content>
+				<Image Source="{StaticResource PlayIcon}" Margin="2,2,2,2"/>
+			</Button.Content>
+		</Button>
+		<Button x:Name="UI_PauseButton" Width="23" VerticalAlignment="Top" Margin="46,7,0,0" Height="20" HorizontalAlignment="Left" Click="UI_PauseButton_Click">
+			<Button.Content>
+				<Image Source="{StaticResource PauseIcon}" Margin="3,3,3,3"/>
+			</Button.Content>
+		</Button>
+		<Button x:Name="UI_StopButton" Width="23" VerticalAlignment="Top" Margin="71,7,0,0" Height="20" HorizontalAlignment="Left" Click="UI_StopButton_Click">
+			<Button.Content>
+				<Image Source="{StaticResource StopIcon}" Margin="3,3,3,3"/>
+			</Button.Content>
+		</Button>
+
+		<Button x:Name="UI_MuteButton" VerticalAlignment="Top" Margin="0,7,32,0" Height="20" Content="🔊" HorizontalAlignment="Right" Width="23" Click="UI_MuteButton_Click"/>
         <Label x:Name="UI_CurrentTime" Width="60" VerticalAlignment="Top" Margin="5,50,0,0" Height="25" HorizontalAlignment="Left" Foreground="#FF8D8D8D" Content="{Binding PlaybackManager.Position, Converter={StaticResource ResourceKey=DoubleToTimeConverter}, FallbackValue='00:00:00'}" Background="#00000000"/>
         <Label x:Name="UI_TotalTime" VerticalAlignment="Top" Margin="0,50,96,0" Height="25" HorizontalContentAlignment="Right" Foreground="#FF8D8D8D" Content="{Binding PlaybackManager.Length, Converter={StaticResource ResourceKey=DoubleToTimeConverter}, FallbackValue='00:00:00'}" BorderBrush="White" HorizontalAlignment="Right" Width="54" Background="#00000000"/>
-        <Button x:Name="UI_PreviousSong" Width="23" VerticalAlignment="Top" Margin="109,7,0,0" Height="20" HorizontalAlignment="Left" Content="⏮" Click="UI_PreviousSong_Click"/>
-        <Button x:Name="UI_NextSong" Width="23" VerticalAlignment="Top" Margin="134,7,0,0" Height="20" HorizontalAlignment="Left" Content="⏭" Click="UI_NextSong_Click"/>
 
-    </Grid>
+		<!-- Playlist previous and next buttons -->
+		<Button x:Name="UI_PreviousSong" Width="23" VerticalAlignment="Top" Margin="109,7,0,0" Height="20" HorizontalAlignment="Left" Click="UI_PreviousSong_Click">
+			<Button.Content>
+				<Image Source="{StaticResource PreviousIcon}" Margin="2,2,2,2"/>
+			</Button.Content>
+		</Button>
+		<Button x:Name="UI_NextSong" Width="23" VerticalAlignment="Top" Margin="134,7,0,0" Height="20" HorizontalAlignment="Left" Click="UI_NextSong_Click">
+			<Button.Content>
+				<Image Source="{StaticResource NextIcon}" Margin="2,2,2,2"/>
+			</Button.Content>
+		</Button>
+
+	</Grid>
 </UserControl>
