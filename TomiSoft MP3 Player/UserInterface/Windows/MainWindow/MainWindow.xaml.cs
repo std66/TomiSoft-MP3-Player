@@ -433,7 +433,8 @@ namespace TomiSoft_MP3_Player {
 				this.Playlist.Clear();
 
 				foreach (string File in Files) {
-					this.Playlist.Add(new BassSongInfo(File));
+                    if (BassManager.IsSupportedFile(File))
+					    this.Playlist.Add(new BassSongInfo(File));
 				}
 
 				if (this.Playlist.Count > 0)

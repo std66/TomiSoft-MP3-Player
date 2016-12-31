@@ -146,6 +146,24 @@ namespace TomiSoft.MP3Player.Playback {
 			return SupportedExtensions;
 		}
 
+        /// <summary>
+        /// Determines whether the given file is supported by BASS.
+        /// </summary>
+        /// <param name="Filename">The path of the file to check</param>
+        /// <returns>
+        /// True if the file is supported. False is returned if not, or BASS is not loaded yet, or the
+        /// given file does not exists.
+        /// </returns>
+        public static bool IsSupportedFile(string Filename) {
+            #region Error checking
+            if (!BassLoaded || !File.Exists(Filename))
+                return false;
+            #endregion
+
+            string Extension = new FileInfo(Filename).Extension.Substring(1).ToLower();
+            return SupportedExtensions.Contains(Extension);
+        }
+
 		/// <summary>
 		/// Loads BASS library from the given directory.
 		/// </summary>
