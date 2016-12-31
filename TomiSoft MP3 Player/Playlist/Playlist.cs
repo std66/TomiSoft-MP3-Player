@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using TomiSoft.MP3Player.MediaInformation;
 
@@ -77,6 +78,9 @@ namespace TomiSoft.MP3Player.Playlist {
 
                 this.CurrentlyPlaying = NewValue;
             }
+
+            this.NotifyPropertyChange(nameof(this.Count));
+            this.NotifyPropertyChange(nameof(this.TotalLength));
 		}
 
 		/// <summary>
@@ -141,7 +145,7 @@ namespace TomiSoft.MP3Player.Playlist {
         /// </summary>
         /// <param name="PropertyName">The name of the property that changed</param>
 		private void NotifyPropertyChange(string PropertyName) {
-			this.OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(PropertyName));
+            this.OnPropertyChanged(new PropertyChangedEventArgs(PropertyName));
 		}
-	}
+    }
 }

@@ -35,7 +35,10 @@ namespace TomiSoft_MP3_Player {
 			Trace.TraceInformation("[Player startup] Preparing main window to display...");
 
 			InitializeComponent();
-			this.viewModel = new MainWindowViewModel();
+            this.viewModel = new MainWindowViewModel() {
+                Playlist = this.Playlist
+            };
+
 			this.DataContext = viewModel;
 			this.PreparePlaybackController();
 			this.Icon = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt.ToImageSource();
@@ -452,16 +455,6 @@ namespace TomiSoft_MP3_Player {
 		}
 
 		/// <summary>
-		/// This method is executed when the exit menu item was clicked.
-		/// Closes the application.
-		/// </summary>
-		/// <param name="sender">The sender object's instance</param>
-		/// <param name="e">Event parameters</param>
-		private void ExitClicked(object sender, MouseButtonEventArgs e) {
-			this.Close();
-		}
-
-		/// <summary>
 		/// This method is executed when the mouse right button is pressed.
 		/// Toggles the visibility of the menu.
 		/// </summary>
@@ -507,5 +500,17 @@ namespace TomiSoft_MP3_Player {
 			};
 			wnd.ShowDialog();
 		}
-	}
+
+        /// <summary>
+        /// This method is executed when an item in the playlist is double clicked.
+        /// </summary>
+        /// <param name="sender">The sender object's instance</param>
+        /// <param name="e">Event parameters</param>
+        private void lvPlaylist_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+            if (lvPlaylist.SelectedIndex != -1) {
+                this.Playlist.MoveTo(lvPlaylist.SelectedIndex);
+                this.ToggleMenu(Show: false);
+            }
+        }
+    }
 }

@@ -3,18 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:local="clr-namespace:TomiSoft_MP3_Player" x:Class="TomiSoft_MP3_Player.PlaybackControl" 
              mc:Ignorable="d" 
              d:DesignHeight="93.999" d:DesignWidth="267">
     <UserControl.Resources>
         <local:DoubleToTimeConverter x:Key="DoubleToTimeConverter" />
-
-		<BitmapImage x:Key="PlayIcon" UriSource="/Resources/play.png"/>
-		<BitmapImage x:Key="PauseIcon" UriSource="/Resources/pause.png"/>
-		<BitmapImage x:Key="StopIcon" UriSource="/Resources/stop.png"/>
-		<BitmapImage x:Key="PreviousIcon" UriSource="/Resources/previous.png"/>
-		<BitmapImage x:Key="NextIcon" UriSource="/Resources/next.png"/>
-	</UserControl.Resources>
+    </UserControl.Resources>
     <Grid>
 
 		<!-- Playback position and volume control sliders -->
@@ -27,34 +22,39 @@
 		
 		<Button x:Name="UI_PlayButton" Width="23" VerticalAlignment="Top" Margin="21,7,0,0" Height="20" HorizontalAlignment="Left" Click="UI_PlayButton_Click">
 			<Button.Content>
-				<Image Source="{StaticResource PlayIcon}" Margin="2,2,2,2"/>
-			</Button.Content>
+                <fa:ImageAwesome Icon="Play" Margin="3"/>
+            </Button.Content>
 		</Button>
 		<Button x:Name="UI_PauseButton" Width="23" VerticalAlignment="Top" Margin="46,7,0,0" Height="20" HorizontalAlignment="Left" Click="UI_PauseButton_Click">
 			<Button.Content>
-				<Image Source="{StaticResource PauseIcon}" Margin="3,3,3,3"/>
-			</Button.Content>
+                <fa:ImageAwesome Icon="Pause" Margin="3"/>
+            </Button.Content>
 		</Button>
 		<Button x:Name="UI_StopButton" Width="23" VerticalAlignment="Top" Margin="71,7,0,0" Height="20" HorizontalAlignment="Left" Click="UI_StopButton_Click">
 			<Button.Content>
-				<Image Source="{StaticResource StopIcon}" Margin="3,3,3,3"/>
-			</Button.Content>
+                <fa:ImageAwesome Icon="Stop" Margin="3"/>
+            </Button.Content>
 		</Button>
 
-		<Button x:Name="UI_MuteButton" VerticalAlignment="Top" Margin="0,7,32,0" Height="20" Content="🔊" HorizontalAlignment="Right" Width="23" Click="UI_MuteButton_Click"/>
+        <Button x:Name="UI_MuteButton" VerticalAlignment="Top" Margin="0,7,32,0" Height="20" HorizontalAlignment="Right" Width="23" Click="UI_MuteButton_Click">
+            <Button.Content>
+                <fa:ImageAwesome Icon="VolumeUp" Margin="3"/>
+            </Button.Content>
+        </Button>
+
         <Label x:Name="UI_CurrentTime" Width="60" VerticalAlignment="Top" Margin="5,50,0,0" Height="25" HorizontalAlignment="Left" Foreground="#FF8D8D8D" Content="{Binding PlaybackManager.Position, Converter={StaticResource ResourceKey=DoubleToTimeConverter}, FallbackValue='00:00:00'}" Background="#00000000"/>
         <Label x:Name="UI_TotalTime" VerticalAlignment="Top" Margin="0,50,96,0" Height="25" HorizontalContentAlignment="Right" Foreground="#FF8D8D8D" Content="{Binding PlaybackManager.Length, Converter={StaticResource ResourceKey=DoubleToTimeConverter}, FallbackValue='00:00:00'}" BorderBrush="White" HorizontalAlignment="Right" Width="54" Background="#00000000"/>
 
 		<!-- Playlist previous and next buttons -->
 		<Button x:Name="UI_PreviousSong" Width="23" VerticalAlignment="Top" Margin="109,7,0,0" Height="20" HorizontalAlignment="Left" Click="UI_PreviousSong_Click">
 			<Button.Content>
-				<Image Source="{StaticResource PreviousIcon}" Margin="2,2,2,2"/>
-			</Button.Content>
+                <fa:ImageAwesome Icon="StepBackward" Margin="3"/>
+            </Button.Content>
 		</Button>
 		<Button x:Name="UI_NextSong" Width="23" VerticalAlignment="Top" Margin="134,7,0,0" Height="20" HorizontalAlignment="Left" Click="UI_NextSong_Click">
 			<Button.Content>
-				<Image Source="{StaticResource NextIcon}" Margin="2,2,2,2"/>
-			</Button.Content>
+                <fa:ImageAwesome Icon="StepForward" Margin="3"/>
+            </Button.Content>
 		</Button>
 
 	</Grid>

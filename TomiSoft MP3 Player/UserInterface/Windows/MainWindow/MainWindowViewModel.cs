@@ -6,6 +6,8 @@ using TomiSoft.Music.Lyrics;
 using TomiSoft.MP3Player.Playback;
 using TomiSoft.MP3Player.Utils.Extensions;
 using System.Windows;
+using TomiSoft.MP3Player.Playlist;
+using System.Collections.Specialized;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -19,6 +21,7 @@ namespace TomiSoft_MP3_Player {
 
 		private IPlaybackManager playbackManager;
 		private ILyricsReader lyricsReader;
+        private Playlist playlist;
 
         /// <summary>
         /// Gets the name of the application
@@ -69,22 +72,48 @@ namespace TomiSoft_MP3_Player {
 		/// Gets or sets the IPlaybackManager instance where the song's informations are
 		/// taken from.
 		/// </summary>
+        /// <exception cref="ArgumentNullException">when the assigned value is null</exception>
 		public IPlaybackManager PlaybackManager {
 			get {
 				return this.playbackManager;
 			}
 			set {
-				if (this.playbackManager != null)
+                #region Error checking
+                if (value == null)
+                    throw new ArgumentNullException("PlaybackManager");
+                #endregion
+
+                if (this.playbackManager != null)
 					this.playbackManager.PropertyChanged -= this.PlaybackStateChanged;
-
-				if (value == null)
-					throw new ArgumentNullException("PlaybackManager");
-
+                
 				this.playbackManager = value;
 				this.playbackManager.PropertyChanged += this.PlaybackStateChanged;
 				this.NotifyAll();
 			}
 		}
+
+        /// <summary>
+        /// Gets or sets the playlist instance.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">when the assigned value is null</exception>
+        public Playlist Playlist {
+            get {
+                return this.playlist;
+            }
+            set {
+                #region Error checking
+                if (value == null)
+                    throw new ArgumentNullException(nameof(value));
+                #endregion
+
+                if (this.playlist != null)
+                    this.playlist.CollectionChanged -= this.PlaylistChanged;
+
+                this.playlist = value;
+                this.playlist.CollectionChanged += this.PlaylistChanged;
+                this.NotifyPropertyChanged(nameof(Playlist));
+            }
+        }
 
 		/// <summary>
 		/// Gets or sets the ILyricsReader instance which is used for displaying lyrics.
@@ -112,10 +141,20 @@ namespace TomiSoft_MP3_Player {
 			this.NotifyAll();
 		}
 
+        /// <summary>
+        /// Event handler for Playlist.CollectionChanged.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlaylistChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            this.NotifyPropertyChanged(nameof(this.Playlist));
+        }
+
 		/// <summary>
 		/// Event handler for IPlaybackManager.PropertyChanged.
 		/// </summary>
-		/// <param name="PlaybackPropertyName">The property's name that has changed.</param>
+		/// <param name="sender">The sender object's instance</param>
+        /// <param name="e">Event parameters</param>
 		private void PlaybackStateChanged(object sender, PropertyChangedEventArgs e) {
 			IPlaybackManager Playback = (IPlaybackManager)sender;
 
