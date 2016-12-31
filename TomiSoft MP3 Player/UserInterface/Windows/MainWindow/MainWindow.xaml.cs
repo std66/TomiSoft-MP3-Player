@@ -35,9 +35,9 @@ namespace TomiSoft_MP3_Player {
 			Trace.TraceInformation("[Player startup] Preparing main window to display...");
 
 			InitializeComponent();
-            this.viewModel = new MainWindowViewModel() {
-                Playlist = this.Playlist
-            };
+			this.viewModel = new MainWindowViewModel() {
+				Playlist = this.Playlist
+			};
 
 			this.DataContext = viewModel;
 			this.PreparePlaybackController();
@@ -279,7 +279,7 @@ namespace TomiSoft_MP3_Player {
 		/// <returns>True if the files are opened, false if not.</returns>
 		private bool OpenFile() {
 			OpenFileDialog dlg = new OpenFileDialog() {
-				Filter = $"Minden támogatott fájl|{String.Join(";", BassManager.GetSupportedExtensions().Select(x => "*."+x))}",
+				Filter = $"Minden támogatott fájl|{String.Join(";", BassManager.GetSupportedExtensions().Select(x => "*." + x))}",
 				Multiselect = true
 			};
 
@@ -300,9 +300,16 @@ namespace TomiSoft_MP3_Player {
 		/// <param name="Filename">The file's name to load.</param>
 		/// <returns>True if the file is loaded, false if not.</returns>
 		private bool OpenFile(string Filename) {
+			#region Error checking
+			if (!BassManager.IsSupportedFile(Filename))
+				return false;
+			#endregion
+
 			try {
+				ISongInfo SongInfo = new BassSongInfo(Filename);
+
 				this.Playlist.Clear();
-				this.Playlist.Add(new BassSongInfo(Filename));
+				this.Playlist.Add(SongInfo);
 				this.Playlist.MoveTo(0);
 
 				return true;
@@ -327,9 +334,16 @@ namespace TomiSoft_MP3_Player {
 		/// <param name="Filenames">An array containing the files' path</param>
 		/// <returns>True if all files are opened successfully, false if not</returns>
 		private bool OpenFiles(string[] Filenames) {
+			var SupportedFiles = Filenames.Where(x => BassManager.IsSupportedFile(x));
+
+			#region Error checking
+			if (SupportedFiles.Count() == 0)
+				return false;
+			#endregion
+
 			try {
 				this.Playlist.Clear();
-				foreach (string Filename in Filenames)
+				foreach (string Filename in SupportedFiles)
 					this.Playlist.Add(new BassSongInfo(Filename));
 
 				this.Playlist.MoveTo(0);
@@ -342,7 +356,7 @@ namespace TomiSoft_MP3_Player {
 					Content = "Valami miatt nem sikerült a fájlokat megnyitni.",
 					Image = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt
 				}.Show();
-				
+
 				return false;
 			}
 
@@ -433,8 +447,8 @@ namespace TomiSoft_MP3_Player {
 				this.Playlist.Clear();
 
 				foreach (string File in Files) {
-                    if (BassManager.IsSupportedFile(File))
-					    this.Playlist.Add(new BassSongInfo(File));
+					if (BassManager.IsSupportedFile(File))
+						this.Playlist.Add(new BassSongInfo(File));
 				}
 
 				if (this.Playlist.Count > 0)
@@ -502,16 +516,16 @@ namespace TomiSoft_MP3_Player {
 			wnd.ShowDialog();
 		}
 
-        /// <summary>
-        /// This method is executed when an item in the playlist is double clicked.
-        /// </summary>
-        /// <param name="sender">The sender object's instance</param>
-        /// <param name="e">Event parameters</param>
-        private void lvPlaylist_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-            if (lvPlaylist.SelectedIndex != -1) {
-                this.Playlist.MoveTo(lvPlaylist.SelectedIndex);
-                this.ToggleMenu(Show: false);
-            }
-        }
-    }
+		/// <summary>
+		/// This method is executed when an item in the playlist is double clicked.
+		/// </summary>
+		/// <param name="sender">The sender object's instance</param>
+		/// <param name="e">Event parameters</param>
+		private void lvPlaylist_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+			if (lvPlaylist.SelectedIndex != -1) {
+				this.Playlist.MoveTo(lvPlaylist.SelectedIndex);
+				this.ToggleMenu(Show: false);
+			}
+		}
+	}
 }
