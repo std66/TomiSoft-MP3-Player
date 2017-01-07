@@ -2,7 +2,6 @@
 using Windows.Data.Xml.Dom;
 using System.Drawing;
 using System.IO;
-using System.Diagnostics;
 
 namespace TomiSoft.MP3Player.Utils.Windows {
 	/// <summary>
