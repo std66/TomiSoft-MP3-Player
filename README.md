@@ -14,7 +14,7 @@ Notes:
 
 System requirements:
 --------------------
-  - Microsoft Windows 10 Version 1607 or newer operating system
+  - Microsoft Windows 8.1 or newer operating system
   - Microsoft .NET Framework 4.6.1
   
 Author:
