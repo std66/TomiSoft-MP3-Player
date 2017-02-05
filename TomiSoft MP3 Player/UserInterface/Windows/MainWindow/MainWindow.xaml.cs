@@ -16,6 +16,7 @@ using TomiSoft.MP3Player.UserInterface.Windows.AboutWindow;
 using System.Linq;
 using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.Music.Lyrics;
+using TomiSoft.MP3Player.Lyrics;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -143,13 +144,8 @@ namespace TomiSoft_MP3_Player {
 
 			this.Player?.Play();
 
-			//Load lyrics
-			string[] LyricsExtensions = { "lrc", "xml" };
-			foreach (var Extension in LyricsExtensions) {
-				string LyricsFile = Path.ChangeExtension(this.Playlist.CurrentSongInfo.Source, Extension);
-				if (this.OpenLyrics(LyricsFile))
-					break;
-			}
+            //Load lyrics
+            this.OpenLyricsAsync(this.Playlist.CurrentSongInfo);
 		}
 
 		/// <summary>
@@ -364,13 +360,11 @@ namespace TomiSoft_MP3_Player {
 		}
 
 		/// <summary>
-		/// Opens the given lyrics file.
+		/// Searches for a matching lyrics file and loads it.
 		/// </summary>
-		/// <param name="Filename">The file to open</param>
-		/// <returns>True if the file is loaded, false if not</returns>
-		private bool OpenLyrics(string Filename) {
-			this.viewModel.LyricsReader = LyricsLoader.LoadFile(Filename);
-			return this.viewModel.LyricsReader != null;
+		/// <param name="SongInfo">The ISongInfo instance that holds informations about the song.</param>
+		private async void OpenLyricsAsync(ISongInfo SongInfo) {
+            this.viewModel.LyricsReader = await LyricsProvider.FindLyricsAsync(SongInfo);
 		}
 
 		/// <summary>

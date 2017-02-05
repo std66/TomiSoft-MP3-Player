@@ -126,6 +126,7 @@ namespace TomiSoft_MP3_Player {
 				if (value == null) {
 					this.Lyrics = "Nem találtunk dalszöveget.";
 					this.lyricsReader = null;
+
 					this.NotifyPropertyChanged("Lyrics");
 					this.NotifyPropertyChanged("LyricsReader");
 					return;

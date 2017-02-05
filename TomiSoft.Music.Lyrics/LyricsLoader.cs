@@ -1,16 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TomiSoft.Music.Lyrics {
-	/// <summary>
-	/// This class can be used to load a lyrics file by determining
-	/// its type.
-	/// </summary>
-	public class LyricsLoader {
+    /// <summary>
+    /// This class can be used to load a lyrics file by determining
+    /// its type.
+    /// </summary>
+    public class LyricsLoader {
+        /// <summary>
+        /// Gets all the supported file extensions (without the prepending dot, in lowercase).
+        /// </summary>
+        public static IEnumerable<string> SupportedExtensions {
+            get {
+                return new string[] {
+                    "lrc",
+                    "xml"
+                };
+            }
+        }
+
 		/// <summary>
 		/// Determines the type of a lyrics file and parses its contents.
 		/// </summary>
@@ -29,6 +38,27 @@ namespace TomiSoft.Music.Lyrics {
 
 			return null;
 		}
+
+        /// <summary>
+        /// Gets the path to all the lyrics files that possibly found in the specified directory
+        /// </summary>
+        /// <param name="Dir">The directory in which the files are searched.</param>
+        /// <returns>
+        /// A sequence of file paths.
+        /// An empty sequence is returned if the specified directory does not exists.
+        /// </returns>
+        public static IEnumerable<string> FindAllLyricsFiles(string Dir) {
+            #region Error checking
+            if (!Directory.Exists(Dir))
+                return new string[0];
+            #endregion
+
+            return Directory.GetFiles(Dir).Where(
+                x => LyricsLoader.SupportedExtensions.Contains(
+                    new FileInfo(x).Extension.Substring(1)
+                )
+            );
+        }
 
 		/// <summary>
 		/// Gets all possible validators for the file.

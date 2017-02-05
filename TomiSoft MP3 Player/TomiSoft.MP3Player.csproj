@@ -70,6 +70,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Lyrics\FileLyricsProvider.cs" />
+    <Compile Include="Lyrics\ILyricsProvider.cs" />
+    <Compile Include="Lyrics\InternetLyricsProvider.cs" />
+    <Compile Include="Lyrics\LyricsProvider.cs" />
     <Compile Include="Playback\IAudioPeakMeter.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="UserInterface\Controls\PlaybackControlViewModel.cs" />
