@@ -38,10 +38,16 @@ namespace TomiSoft.MP3Player.Lyrics {
                 Client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
 
                 string Data = $"title={UrlEncode(SongInfo.Title)}&artist={UrlEncode(SongInfo.Artist)}";
-                string Response = Client.UploadString(
-                    "http://tomisoft.site90.net/lyrics/api.getlrc.php?get_lyrics=true",
-                    Data
-                );
+                string Response;
+                try {
+                    Response = Client.UploadString(
+                        "http://tomisoft.site90.net/lyrics/api.getlrc.php?get_lyrics=true",
+                        Data
+                    );
+                }
+                catch (WebException) {
+                    return null;
+                }
 
                 if (Response != "NOTFOUND") {
                     try {
@@ -50,7 +56,9 @@ namespace TomiSoft.MP3Player.Lyrics {
 
                         return LyricsLoader.LoadFile(Filename);
                     }
-                    catch { }
+                    catch (IOException) {
+                        return null;
+                    }
                 }
             }
             
