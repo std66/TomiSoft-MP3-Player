@@ -12,7 +12,7 @@ namespace TomiSoft.MP3Player.Lyrics {
         /// </summary>
         private static readonly ILyricsProvider[] Providers = {
             new FileLyricsProvider(),
-            new InternetLyricsProvider()
+            new TomiSoftLyricsProvider()
         };
 
         /// <summary>
