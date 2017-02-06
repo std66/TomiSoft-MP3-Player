@@ -10,7 +10,7 @@ namespace TomiSoft.MP3Player.Lyrics {
     /// <summary>
     /// A lyrics provider that downloads the lyrics from http://tomisoft.site90.net.
     /// </summary>
-    class TomiSoftLyricsProvider : ILyricsProvider {
+    internal class TomiSoftLyricsProvider : ILyricsProvider {
         /// <summary>
         /// Finds a lyrics file asynchronously using the informations provided by an
         /// ISongInfo instance.
@@ -44,10 +44,13 @@ namespace TomiSoft.MP3Player.Lyrics {
                 );
 
                 if (Response != "NOTFOUND") {
-                    string Filename = Path.GetTempFileName();
-                    File.WriteAllText(Filename, Response);
+                    try {
+                        string Filename = Path.GetTempFileName();
+                        File.WriteAllText(Filename, Response);
 
-                    return LyricsLoader.LoadFile(Filename);
+                        return LyricsLoader.LoadFile(Filename);
+                    }
+                    catch { }
                 }
             }
             

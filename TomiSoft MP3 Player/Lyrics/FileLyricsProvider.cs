@@ -7,7 +7,7 @@ namespace TomiSoft.MP3Player.Lyrics {
     /// <summary>
     /// Represents a lyrics provider that loads the lyrics from a local file.
     /// </summary>
-    public class FileLyricsProvider : ILyricsProvider {
+    internal class FileLyricsProvider : ILyricsProvider {
         /// <summary>
         /// Finds a lyrics file asynchronously using the informations provided by an
         /// ISongInfo instance.
