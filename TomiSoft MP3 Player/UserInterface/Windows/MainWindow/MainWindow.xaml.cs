@@ -364,6 +364,7 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="SongInfo">The ISongInfo instance that holds informations about the song.</param>
 		private async void OpenLyricsAsync(ISongInfo SongInfo) {
+            this.viewModel.Lyrics = "Dalszöveget keresünk...";
             this.viewModel.LyricsReader = await LyricsProvider.FindLyricsAsync(SongInfo);
 		}
 

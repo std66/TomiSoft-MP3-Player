@@ -59,7 +59,7 @@ namespace TomiSoft.MP3Player.Playback {
 			}
 			set {
 				if (value < 0 || value > 100)
-					throw new Exception("A hangerő 0 és 100 közti érték lehet.");
+					throw new ArgumentOutOfRangeException("A hangerő 0 és 100 közti érték lehet.");
 
 				Bass.BASS_ChannelSetAttribute(this.channelID, BASSAttribute.BASS_ATTRIB_VOL, (float)value / 100);
 			}

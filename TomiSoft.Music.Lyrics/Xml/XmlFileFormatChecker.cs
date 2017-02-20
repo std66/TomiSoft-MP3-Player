@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Xml.Linq;
 
 namespace TomiSoft.Music.Lyrics.Xml {
@@ -29,15 +30,23 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		/// <summary>
 		/// Gets an instance of the XmlLyricsReader class.
 		/// </summary>
-		/// <returns>An XmlLyricsReader instance that parses the validated lyrics file</returns>
+		/// <returns>
+        /// An XmlLyricsReader instance that parses the validated lyrics file.
+        /// Null is returned when there was a problem while opening the file.
+        /// </returns>
 		/// <exception cref="InvalidOperationException">when the file is not a valid lyrics file</exception>
 		public ILyricsReader GetLyricsReader() {
 			#region Error checking
 			if (!this.IsValid)
 				throw new InvalidOperationException($"The file is not a valid XML lyrics file: {this.Filename}");
-			#endregion
+            #endregion
 
-			return new XmlLyricsReader(this.Filename);
+            try {
+                return new XmlLyricsReader(this.Filename);
+            }
+            catch (IOException) {
+                return null;
+            }
 		}
 
 		/// <summary>

@@ -17,18 +17,7 @@ namespace TomiSoft.MP3Player.Lyrics {
         /// </summary>
         /// <param name="SongInfo">An ISongInfo instance that holds informations about a song.</param>
         /// <returns>A Task for an ILyricsReader instance if the lyrics is found or null otherwise.</returns>
-        public Task<ILyricsReader> FindLyricsAsync(ISongInfo SongInfo) {
-            return Task.Run(
-                () => this.Search(SongInfo)
-            );
-        }
-
-        /// <summary>
-        /// Searches a lyrics on the internet.
-        /// </summary>
-        /// <param name="SongInfo">An ISongInfo instance that holds informations about a song.</param>
-        /// <returns>An ILyricsReader instance if the lyrics is found or null otherwise.</returns>
-        private ILyricsReader Search(ISongInfo SongInfo) {
+        public async Task<ILyricsReader> FindLyricsAsync(ISongInfo SongInfo) {
             #region Error checking
             if (SongInfo == null)
                 return null;
@@ -40,7 +29,7 @@ namespace TomiSoft.MP3Player.Lyrics {
                 string Data = $"title={UrlEncode(SongInfo.Title)}&artist={UrlEncode(SongInfo.Artist)}";
                 string Response;
                 try {
-                    Response = Client.UploadString(
+                    Response = await Client.UploadStringTaskAsync(
                         "http://tomisoft.site90.net/lyrics/api.getlrc.php?get_lyrics=true",
                         Data
                     );
@@ -50,19 +39,37 @@ namespace TomiSoft.MP3Player.Lyrics {
                 }
 
                 if (Response != "NOTFOUND") {
-                    try {
-                        string Filename = Path.GetTempFileName();
-                        File.WriteAllText(Filename, Response);
-
+                    string Filename = Path.GetTempFileName();
+                        
+                    if (await CreateFileAsync(Filename, Response))
                         return LyricsLoader.LoadFile(Filename);
-                    }
-                    catch (IOException) {
-                        return null;
-                    }
                 }
             }
-            
+
             return null;
+        }
+
+        /// <summary>
+        /// Creates a file and writes the specified content to it asynchronously.
+        /// </summary>
+        /// <param name="Filename">The file's path to create</param>
+        /// <param name="Contents">The contents to be written into thee file</param>
+        /// <returns>True if the file was successfully created, false if not.</returns>
+        private async Task<bool> CreateFileAsync(string Filename, string Contents) {
+            bool Result = false;
+
+            try {
+                using (StreamWriter sr = new StreamWriter(File.OpenWrite(Filename))) {
+                    await sr.WriteAsync(Contents);
+                }
+
+                Result = true;
+            }
+            catch (IOException) {
+                Result = false;
+            }
+
+            return Result;
         }
 
         /// <summary>

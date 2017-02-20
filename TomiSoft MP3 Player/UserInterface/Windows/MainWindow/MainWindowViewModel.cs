@@ -22,6 +22,7 @@ namespace TomiSoft_MP3_Player {
 		private IPlaybackManager playbackManager;
 		private ILyricsReader lyricsReader;
         private Playlist playlist;
+        private string lyrics;
 
         /// <summary>
         /// Gets the name of the application
@@ -64,8 +65,13 @@ namespace TomiSoft_MP3_Player {
 		/// Gets or sets the current line of lyrics.
 		/// </summary>
 		public string Lyrics {
-			get;
-			set;
+			get {
+                return this.lyrics;
+            }
+			set {
+                this.lyrics = value;
+                this.NotifyPropertyChanged(nameof(Lyrics));
+            }
 		}
 
 		/// <summary>

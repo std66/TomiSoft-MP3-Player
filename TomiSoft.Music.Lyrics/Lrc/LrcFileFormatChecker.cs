@@ -39,15 +39,23 @@ namespace TomiSoft.Music.Lyrics.Lrc {
 		/// <summary>
 		/// Gets an instance of the LrcReader class.
 		/// </summary>
-		/// <returns>An LrcReader instance that parses the validated lyrics file</returns>
+		/// <returns>
+        /// An LrcReader instance that parses the validated lyrics file.
+        /// Null is returned when there was a problem while opening the file.
+        /// </returns>
 		/// <exception cref="InvalidOperationException">when the file is not a valid lyrics file</exception>
 		public ILyricsReader GetLyricsReader() {
 			#region Error checking
 			if (!this.validFile)
 				throw new InvalidOperationException($"The file is not a valid LRC file: {this.filename}");
-			#endregion
+            #endregion
 
-			return new LrcReader(this.filename);
+            try {
+                return new LrcReader(this.filename);
+            }
+            catch (IOException) {
+                return null;
+            }
 		}
 		
 		/// <summary>
