@@ -210,14 +210,20 @@ namespace TomiSoft_MP3_Player {
 							this.PlayPrevious();
 							break;
 
+                        case "Player.PeakLevel":
+                            IAudioPeakMeter Meter = this.Player as IAudioPeakMeter;
+                            wrt.WriteLine($"{Meter?.LeftPeak ?? 0}/{Meter?.RightPeak ?? 0}");
+                            break;
+
 						case "Player.PlaybackPosition":
 							wrt.WriteLine($"{this.Player.Position}/{this.Player.Length}");
 							break;
 
 						case "Playlist.ShowPlaylist":
 							int Index = 0;
+                            wrt.WriteLine(this.Playlist.Count);
 							foreach (ISongInfo Song in this.Playlist) {
-								wrt.WriteLine($"{Index};{Song.Artist};{Song.Title}");
+								wrt.WriteLine($"<i>{Index}</i><a>{Song.Artist}</a><t>{Song.Title}</t>");
 								Index++;
 							}
 							break;

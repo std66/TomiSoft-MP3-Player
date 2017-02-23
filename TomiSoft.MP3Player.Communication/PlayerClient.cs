@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
+using System.Text;
+using System.Xml.Linq;
 
 namespace TomiSoft.MP3Player.Communication {
 	/// <summary>
@@ -147,6 +151,58 @@ namespace TomiSoft.MP3Player.Communication {
                 Length = 0;
                 return 0;
             }
+        }
+
+        /// <summary>
+        /// Gets the current peak level.
+        /// </summary>
+        /// <param name="LeftPeak">The variable to store the left peak level</param>
+        /// <param name="RightPeak">The variable to store the right peak level</param>
+        /// <returns>The maximum value of the peak level</returns>
+        public int PeakLevel(out int LeftPeak, out int RightPeak) {
+            this.Send("Player.PeakLevel");
+            string[] Result = this.Read().Split('/');
+
+            LeftPeak = Convert.ToInt32(Result[0]);
+            RightPeak = Convert.ToInt32(Result[0]);
+
+            return 32768;
+        }
+
+        /// <summary>
+        /// Gets a sequence that represents the current playlist.
+        /// The key is the artist of the song and the value
+        /// is it's title.
+        /// </summary>
+        /// <returns>A sequence that represents the playlist.</returns>
+        public IEnumerable<KeyValuePair<string, string>> Playlist() {
+            XDocument doc = XDocument.Parse(this.GetPlaylistAsXml());
+
+            return from c in doc.Descendants("song")
+                   select new KeyValuePair<string, string>(
+                       key: c.Element("a").Value,
+                       value: c.Element("t").Value
+                   );
+        }
+
+        /// <summary>
+        /// Gets the current playlist in XML format.
+        /// </summary>
+        /// <returns>The XML document that represents the playlist.</returns>
+        public string GetPlaylistAsXml() {
+            this.Send("Player.ShowPlaylist");
+            int Count = Convert.ToInt32(this.Read());
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+            sb.Append("<playlist>");
+            for (int i = 0; i < Count; i++) {
+                string CurrentMedia = this.Read();
+                sb.Append($"<song>{CurrentMedia}</song>");
+            }
+            sb.Append("</playlist>");
+
+            return sb.ToString();
         }
 
         /// <summary>
