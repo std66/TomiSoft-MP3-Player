@@ -144,8 +144,8 @@ namespace TomiSoft_MP3_Player {
 
 			this.Player?.Play();
 
-            //Load lyrics
-            this.OpenLyricsAsync(this.Playlist.CurrentSongInfo);
+			//Load lyrics
+			this.OpenLyricsAsync(this.Playlist.CurrentSongInfo);
 		}
 
 		/// <summary>
@@ -210,10 +210,10 @@ namespace TomiSoft_MP3_Player {
 							this.PlayPrevious();
 							break;
 
-                        case "Player.PeakLevel":
-                            IAudioPeakMeter Meter = this.Player as IAudioPeakMeter;
-                            wrt.WriteLine($"{Meter?.LeftPeak ?? 0}/{Meter?.RightPeak ?? 0}");
-                            break;
+						case "Player.PeakLevel":
+							IAudioPeakMeter Meter = this.Player as IAudioPeakMeter;
+							wrt.WriteLine($"{Meter?.LeftPeak ?? 0}/{Meter?.RightPeak ?? 0}");
+							break;
 
 						case "Player.PlaybackPosition":
 							wrt.WriteLine($"{this.Player.Position}/{this.Player.Length}");
@@ -221,7 +221,7 @@ namespace TomiSoft_MP3_Player {
 
 						case "Playlist.ShowPlaylist":
 							int Index = 0;
-                            wrt.WriteLine(this.Playlist.Count);
+							wrt.WriteLine(this.Playlist.Count);
 							foreach (ISongInfo Song in this.Playlist) {
 								wrt.WriteLine($"<i>{Index}</i><a>{Song.Artist}</a><t>{Song.Title}</t>");
 								Index++;
@@ -370,8 +370,8 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="SongInfo">The ISongInfo instance that holds informations about the song.</param>
 		private async void OpenLyricsAsync(ISongInfo SongInfo) {
-            this.viewModel.Lyrics = "Dalszöveget keresünk...";
-            this.viewModel.LyricsReader = await LyricsProvider.FindLyricsAsync(SongInfo);
+			this.viewModel.Lyrics = "Dalszöveget keresünk...";
+			this.viewModel.LyricsReader = await LyricsProvider.FindLyricsAsync(SongInfo);
 		}
 
 		/// <summary>
@@ -523,10 +523,14 @@ namespace TomiSoft_MP3_Player {
 		/// <param name="sender">The sender object's instance</param>
 		/// <param name="e">Event parameters</param>
 		private void lvPlaylist_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-			if (lvPlaylist.SelectedIndex != -1) {
-				this.Playlist.MoveTo(lvPlaylist.SelectedIndex);
-				this.ToggleMenu(Show: false);
+			#region Error checking
+			if (lvPlaylist.SelectedIndex == -1 || e.ChangedButton != MouseButton.Left) {
+				return;
 			}
+			#endregion
+
+			this.Playlist.MoveTo(lvPlaylist.SelectedIndex);
+			this.ToggleMenu(Show: false);
 		}
 	}
 }
