@@ -5,12 +5,19 @@ TomiSoft MP3 Player
 
 An advanced audio playback application built on the BASS library.
   - Supports 36 audio file formats: mp3, ogg, wav, mp2, mp1, aiff, m2a, mpa, m1a, mpg, mpeg, aif, mp3pro, bwf, mus, wma, wmv, aac, adts, mp4, m4a, m4b, cda, flac, midi, mid, rmi, kar, wma, wmv, aac, adts, mp4, m4a, m4b, ac3
-  - Karaoke-like lyrics displaying (supports LRC and XML-format lyrics files)
+  - Karaoke-like lyrics displaying (supports LRC and XML-format (with multiple translation support) lyrics files)
   - VU meter
+  - API provided over TCP connection on loopback interface
+  
+Screenshots:
+------------
+![Screenshot 1](https://github.com/std66/TomiSoft-MP3-Player/raw/master/Screenshots/Screen1.png "Main screen")
+![Screenshot 2](https://github.com/std66/TomiSoft-MP3-Player/raw/master/Screenshots/Screen2.png "Playlist")
   
 Notes:
 ------
   - Mid, midi, rmi and kar files can be opened, but requires a SoundFont. However, this function is not implemented yet, so you will hear no sound.
+  - Lyrics translation can only be changed via TCP API connection
 
 System requirements:
 --------------------
