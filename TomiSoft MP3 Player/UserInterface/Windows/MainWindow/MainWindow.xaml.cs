@@ -15,7 +15,6 @@ using TomiSoft.MP3Player.Utils.Extensions;
 using TomiSoft.MP3Player.UserInterface.Windows.AboutWindow;
 using System.Linq;
 using TomiSoft.MP3Player.MediaInformation;
-using TomiSoft.Music.Lyrics;
 using TomiSoft.MP3Player.Lyrics;
 
 namespace TomiSoft_MP3_Player {
@@ -370,6 +369,7 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="SongInfo">The ISongInfo instance that holds informations about the song.</param>
 		private async void OpenLyricsAsync(ISongInfo SongInfo) {
+			this.viewModel.LyricsReader = null;
 			this.viewModel.Lyrics = "Dalszöveget keresünk...";
 			this.viewModel.LyricsReader = await LyricsProvider.FindLyricsAsync(SongInfo);
 		}
