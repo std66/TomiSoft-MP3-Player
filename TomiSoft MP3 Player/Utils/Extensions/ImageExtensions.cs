@@ -8,16 +8,18 @@ namespace TomiSoft.MP3Player.Utils.Extensions {
     /// Contains extension methods for images.
     /// </summary>
 	public static class ImageExtensions {
-		/// <summary>
-		/// Creates an System.Windows.Media.ImageSource from the given System.Drawing.Image.
-		/// </summary>
-		/// <param name="b">The System.Drawing.Image to convert.</param>
-		/// <returns>The System.Windows.Media.ImageSource instance or null if b is null.</returns>
-		public static ImageSource ToImageSource(this Image b) {
-			if (b == null)
+        /// <summary>
+        /// Creates an <see cref="ImageSource"/> from the given <see cref="Image"/>.
+        /// </summary>
+        /// <param name="b">The <see cref="Image"/> to convert.</param>
+        /// <returns>The <see cref="ImageSource"/> instance or null if b is null.</returns>
+        public static ImageSource ToImageSource(this Image b) {
+            #region Error checking
+            if (b == null)
 				return null;
+            #endregion
 
-			BitmapImage img = new BitmapImage();
+            BitmapImage img = new BitmapImage();
 			using (MemoryStream ms = new MemoryStream()) {
 				b.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
 				ms.Position = 0;
