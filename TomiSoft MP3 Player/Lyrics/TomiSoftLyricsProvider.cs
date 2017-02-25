@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.Music.Lyrics;
+using TomiSoft_MP3_Player;
 
 namespace TomiSoft.MP3Player.Lyrics {
     /// <summary>
@@ -25,6 +26,7 @@ namespace TomiSoft.MP3Player.Lyrics {
 
             using (WebClient Client = new WebClient()) {
                 Client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+				Client.Headers[HttpRequestHeader.UserAgent] = $"{App.Name} (version {App.Version})";
 
                 string Data = $"title={UrlEncode(SongInfo.Title)}&artist={UrlEncode(SongInfo.Artist)}";
                 string Response;

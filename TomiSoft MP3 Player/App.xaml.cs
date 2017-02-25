@@ -4,31 +4,95 @@ using System;
 using System.Reflection;
 using TomiSoft.MP3Player.Communication;
 using TomiSoft.MP3Player.Utils;
+using System.Windows.Threading;
+using System.IO;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
 	/// Interaction logic for App.xaml
 	/// </summary>
 	public partial class App : Application {
+		private MemoryStream LogStore;
+
         /// <summary>
         /// Initializes a new instance of the TomiSoft MP3 Player application.
         /// </summary>
 		public App() {
-			Trace.Listeners.Add(new TextWriterTraceListener($"{AppDomain.CurrentDomain.BaseDirectory}\\application.log"));
-			Trace.AutoFlush = true;
+			this.LogStore = new MemoryStream();
+
+			this.Exit += (o, e) => LogStore.Dispose();
+			AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
+
+			Trace.Listeners.Add(new TextWriterTraceListener(this.LogStore));
 
 			Trace.WriteLine("");
 			Trace.WriteLine($"New instance started at {DateTime.Now} (Is64BitProcess={Environment.Is64BitProcess}, Version={Version})");
 
             CheckIfAlreadyRunning();
         }
-        
-        /// <summary>
-        /// Checks if an instance of the application is already running. If yes,
-        /// sends the command line arguments to it and then terminates this
-        /// instance.
-        /// </summary>
-        private static void CheckIfAlreadyRunning() {
+
+		/// <summary>
+		/// This method is executed when an unhandled exception occures.
+		/// Flushes the log to the disk.
+		/// </summary>
+		/// <param name="sender">The sender object's instance</param>
+		/// <param name="e">Event parameters</param>
+		private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e) {
+			try {
+				Exception ex = e.ExceptionObject as Exception;
+
+				#region Error checking
+				if (ex == null)
+					return;
+				#endregion
+
+				Trace.WriteLine("");
+				Trace.WriteLine($"{ex.GetType().Name} occured:");
+				Trace.WriteLine($"Reason: {ex.Message}");
+				Trace.WriteLine("Stack trace:");
+				Trace.WriteLine(ex.StackTrace);
+
+				ex = ex.InnerException;
+				while (ex != null) {
+					Trace.WriteLine("");
+					Trace.WriteLine($"Inner exception: {ex.GetType().Name}:");
+					Trace.WriteLine($"Reason: {ex.Message}");
+					Trace.WriteLine("Stack trace:");
+					Trace.WriteLine(ex.StackTrace);
+
+					ex = ex.InnerException;
+				}
+
+				string LogFileName = Path.GetTempFileName();
+				using (Stream s = File.OpenWrite(LogFileName))
+					this.LogStore.WriteTo(s);
+
+				MessageBoxResult r = MessageBox.Show(
+					caption: "TomiSoft MP3 Player",
+					messageBoxText: "Egy hiba miatt az alkalmazásnak le kell állnia. Szeretnéd megnézni a naplót?",
+					button: MessageBoxButton.YesNo,
+					icon: MessageBoxImage.Question
+				);
+
+				if (r == MessageBoxResult.Yes) {
+					Process.Start(new ProcessStartInfo(
+						fileName: "notepad.exe",
+						arguments: LogFileName
+					));
+				}
+			}
+
+			finally {
+				Environment.Exit(0);
+			}
+		}
+
+		/// <summary>
+		/// Checks if an instance of the application is already running. If yes,
+		/// sends the command line arguments to it and then terminates this
+		/// instance.
+		/// </summary>
+		private static void CheckIfAlreadyRunning() {
             //If an instance is already running, send the file list to it.
             //Otherwise, this is the only running instance, so we start a server to
             //listen to the other instances.

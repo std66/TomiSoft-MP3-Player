@@ -90,7 +90,7 @@ namespace TomiSoft.MP3Player.Communication {
                     do {
                         Trace.TraceInformation("[Server] Waiting for incoming data...");
                         string Data = sr.ReadLine();
-                        Trace.TraceInformation("[Server] Data received");
+                        Trace.TraceInformation($"[Server] Data received: {Data}");
 
                         if (Data != null) {
                             string[] CommandLine = Data.Split(';');
