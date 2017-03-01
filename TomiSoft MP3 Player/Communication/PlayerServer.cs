@@ -95,8 +95,10 @@ namespace TomiSoft.MP3Player.Communication {
 						Trace.TraceInformation($"[Server] Data received: {Data}");
 
 						#region Error checking
-						if (String.IsNullOrWhiteSpace(Data))
+						if (String.IsNullOrWhiteSpace(Data)) {
+							ClientWriter.WriteLine("ERROR: Nothing received.");
 							continue;
+						}
 						#endregion
 
 						string[] CommandLine = Data.Split(';');
@@ -112,14 +114,18 @@ namespace TomiSoft.MP3Player.Communication {
 							string[] CommandParts = ModuleAndCommand.Split('.');
 
 							#region Error checking
-							if (CommandParts.Length != 2)
+							if (CommandParts.Length != 2) {
+								ClientWriter.WriteLine("ERROR: Syntax error.");
 								continue;
+							}
 							#endregion
 
 							string Module = CommandParts[0];
 							string Command = CommandParts[1];
 
-							this.ExecuteHandlerMethod(ClientWriter, Module, Command, Parameters);
+							if (!this.ExecuteHandlerMethod(ClientWriter, Module, Command, Parameters)) {
+								ClientWriter.WriteLine("ERROR: Command not supported.");
+							}
 						}
 
 					}
