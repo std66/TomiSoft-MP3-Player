@@ -17,7 +17,7 @@ namespace TomiSoft.MP3Player.Communication.Modules {
 
 		[ServerCommand]
 		public bool HasLoadedLyrics() {
-			return this.LyricsReader == null;
+			return this.LyricsReader != null;
 		}
 
 		[ServerCommand]
