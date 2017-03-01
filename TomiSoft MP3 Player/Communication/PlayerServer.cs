@@ -110,6 +110,12 @@ namespace TomiSoft.MP3Player.Communication {
 
 						if (HandledByInternalCommandHandler) {
 							string[] CommandParts = ModuleAndCommand.Split('.');
+
+							#region Error checking
+							if (CommandParts.Length != 2)
+								continue;
+							#endregion
+
 							string Module = CommandParts[0];
 							string Command = CommandParts[1];
 
