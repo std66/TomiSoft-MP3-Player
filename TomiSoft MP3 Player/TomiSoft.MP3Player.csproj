@@ -74,6 +74,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Communication\IServerModule.cs" />
+    <Compile Include="Communication\Modules\LyricsModule.cs" />
+    <Compile Include="Communication\Modules\PlayerModule.cs" />
+    <Compile Include="Communication\Modules\PlaylistModule.cs" />
+    <Compile Include="Communication\Modules\SoftwareModule.cs" />
+    <Compile Include="Communication\ServerCommandAttribute.cs" />
     <Compile Include="Lyrics\FileLyricsProvider.cs" />
     <Compile Include="Lyrics\ILyricsProvider.cs" />
     <Compile Include="Lyrics\TomiSoftLyricsProvider.cs" />

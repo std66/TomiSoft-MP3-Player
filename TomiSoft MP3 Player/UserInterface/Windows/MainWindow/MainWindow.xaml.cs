@@ -16,18 +16,44 @@ using TomiSoft.MP3Player.UserInterface.Windows.AboutWindow;
 using System.Linq;
 using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.MP3Player.Lyrics;
+using TomiSoft.MP3Player.Communication.Modules;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window {
-		private IPlaybackManager Player;
-		private Playlist Playlist = new Playlist();
-		private PlayerServer Server;
+		private IPlaybackManager player;
+		private readonly Playlist Playlist = new Playlist();
 		private PlaybackHotkeys Hotkeys;
+
+		private PlayerServer Server;
+		private readonly LyricsModule LyricsServerModule = new LyricsModule();
+		private readonly PlayerModule PlayerServerModule = new PlayerModule();
+
 		public MainWindowViewModel viewModel;
-		private bool MenuShowing = false;
+		
+		/// <summary>
+		/// Gets or sets the playback manager that handles the playback procedure.
+		/// </summary>
+		private IPlaybackManager Player {
+			get {
+				return this.player;
+			}
+			set {
+				this.player = value;
+				this.PlayerServerModule.PlaybackManager = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets if the menu is currently visible or not.
+		/// </summary>
+		private bool MenuShowing {
+			get {
+				return Menu.Opacity != 0;
+			}
+		}
 
 		public MainWindow() {
 			this.StartServer();
@@ -35,6 +61,8 @@ namespace TomiSoft_MP3_Player {
 			Trace.TraceInformation("[Player startup] Preparing main window to display...");
 
 			InitializeComponent();
+			Menu.Opacity = 0;
+
 			this.viewModel = new MainWindowViewModel() {
 				Playlist = this.Playlist
 			};
@@ -188,66 +216,21 @@ namespace TomiSoft_MP3_Player {
 				this.Server.Dispose();
 			};
 
-			Server.CommandReceived += (ClientStream, Command, Parameters) => {
-				Dispatcher.Invoke((Action<Stream, string, string[]>)delegate {
-					StreamWriter wrt = new StreamWriter(ClientStream) {
-						AutoFlush = true
-					};
+			this.Server.AttachModule(
+				new SoftwareModule(),
+				new PlaylistModule(this.Playlist),
+				this.LyricsServerModule,
+				this.PlayerServerModule
+			);
 
-					Trace.TraceInformation($"[Server] Command={Command}");
-
-					switch (Command) {
-						case "Player.Play":
-							this.OpenFiles(Parameters);
-							break;
-
-						case "Player.PlayNext":
-							this.PlayNext();
-							break;
-
-						case "Player.PlayPrevious":
-							this.PlayPrevious();
-							break;
-
-						case "Player.PeakLevel":
-							IAudioPeakMeter Meter = this.Player as IAudioPeakMeter;
-							wrt.WriteLine($"{Meter?.LeftPeak ?? 0}/{Meter?.RightPeak ?? 0}");
-							break;
-
-						case "Player.PlaybackPosition":
-							wrt.WriteLine($"{this.Player.Position}/{this.Player.Length}");
-							break;
-
-						case "Playlist.ShowPlaylist":
-							int Index = 0;
-							wrt.WriteLine(this.Playlist.Count);
-							foreach (ISongInfo Song in this.Playlist) {
-								wrt.WriteLine($"<i>{Index}</i><a>{Song.Artist}</a><t>{Song.Title}</t>");
-								Index++;
-							}
-							break;
-
-						case "Lyrics.ShowTranslations":
-							if (this.viewModel.LyricsReader != null) {
-								foreach (var Translation in this.viewModel.LyricsReader.Translations) {
-									wrt.WriteLine($"{Translation.Key};{Translation.Value}");
-								}
-							}
-							break;
-
-						case "Lyrics.UseTranslation":
-							if (this.viewModel.LyricsReader != null) {
-								if (this.viewModel.LyricsReader.Translations.ContainsKey(Parameters.FirstOrDefault())) {
-									this.viewModel.LyricsReader.TranslationID = Parameters.FirstOrDefault();
-								}
-							}
-							break;
-
-						default:
-							Trace.TraceWarning("[Server] Unrecognized command");
-							break;
-					}
-				}, ClientStream, Command, Parameters);
+			this.PlayerServerModule.OpenFiles += (o, e) => {
+				this.Dispatcher.Invoke(() => this.OpenFiles(e));
+			};
+			this.PlayerServerModule.NextSong += (o, e) => {
+				this.Dispatcher.Invoke(this.PlayNext);
+			};
+			this.PlayerServerModule.PreviousSong += (o, e) => {
+				this.Dispatcher.Invoke(this.PlayPrevious);
 			};
 		}
 
@@ -372,6 +355,8 @@ namespace TomiSoft_MP3_Player {
 			this.viewModel.LyricsReader = null;
 			this.viewModel.Lyrics = "Dalszöveget keresünk...";
 			this.viewModel.LyricsReader = await LyricsProvider.FindLyricsAsync(SongInfo);
+
+			this.LyricsServerModule.LyricsReader = this.viewModel.LyricsReader;
 		}
 
 		/// <summary>
@@ -477,8 +462,7 @@ namespace TomiSoft_MP3_Player {
 		/// <param name="sender">The sender object's instance</param>
 		/// <param name="e">Event parameters</param>
 		private void ToggleMenuVisibility(object sender, MouseButtonEventArgs e) {
-			bool ShowMenu = !this.MenuShowing;
-			this.ToggleMenu(ShowMenu);
+			this.ToggleMenu(!this.MenuShowing);
 		}
 
 		/// <summary>
@@ -492,8 +476,6 @@ namespace TomiSoft_MP3_Player {
 			else {
 				(this.Resources["FadeOutAnimation"] as Storyboard)?.Begin();
 			}
-
-			this.MenuShowing = Show;
 		}
 
 		protected override void OnSourceInitialized(EventArgs e) {

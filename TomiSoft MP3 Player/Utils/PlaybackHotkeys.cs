@@ -75,11 +75,11 @@ namespace TomiSoft.MP3Player.Utils {
         /// Hook up this method to the window's HwndSource instance. For the documentation of the
         /// parameters, see GetMessage function's documentation on MSDN.
         /// </summary>
-        /// <param name="hwnd"></param>
-        /// <param name="msg"></param>
-        /// <param name="wParam"></param>
-        /// <param name="lParam"></param>
-        /// <param name="handled"></param>
+        /// <param name="hwnd">A handle to the window that will capture the message.</param>
+        /// <param name="msg">The message received by the window</param>
+        /// <param name="wParam">A message-specific parameter</param>
+        /// <param name="lParam">A message-specific parameter</param>
+        /// <param name="handled">This value will be set to true if the messsage is handled</param>
         /// <returns>Always returns IntPtr.Zero</returns>
         public IntPtr Hook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
             if (msg == Hotkeys.WM_HOTKEY) {
