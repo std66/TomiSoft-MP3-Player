@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TomiSoft.MP3Player.Communic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TomiSoft.LyricsConverter", "TomiSoft.LyricsConverter\TomiSoft.LyricsConverter.csproj", "{395D4A6E-415A-48C7-B353-052E689D454B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TomiSoft.AudioVisualization", "TomiSoft.AudioVisualization\TomiSoft.AudioVisualization.csproj", "{C8AACAF6-9E2B-4D98-BC3A-35A030458F1B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{395D4A6E-415A-48C7-B353-052E689D454B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{395D4A6E-415A-48C7-B353-052E689D454B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{395D4A6E-415A-48C7-B353-052E689D454B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8AACAF6-9E2B-4D98-BC3A-35A030458F1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8AACAF6-9E2B-4D98-BC3A-35A030458F1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8AACAF6-9E2B-4D98-BC3A-35A030458F1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8AACAF6-9E2B-4D98-BC3A-35A030458F1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

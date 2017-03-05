@@ -164,7 +164,7 @@ namespace TomiSoft.MP3Player.Communication {
             string[] Result = this.Read().Split('/');
 
             LeftPeak = Convert.ToInt32(Result[0]);
-            RightPeak = Convert.ToInt32(Result[0]);
+            RightPeak = Convert.ToInt32(Result[1]);
 
             return 32768;
         }
