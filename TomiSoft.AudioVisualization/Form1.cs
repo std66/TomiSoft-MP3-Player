@@ -82,17 +82,15 @@ namespace TomiSoft.AudioVisualization {
 				float Y = Remap(Center, this.LeftPeaks[i]);
 				X -= Gap;
 				
-				if (PreviousLeft.X != 0 && PreviousLeft.Y != 0)
-					e.Graphics.DrawLine(Pens.Yellow, PreviousLeft, new PointF(X, Y));
+				e.Graphics.DrawLine(Pens.Yellow, PreviousLeft, new PointF(X, Y));
 
 				PreviousLeft.X = X;
 				PreviousLeft.Y = Y;
 
 				//Draw right peak
 				Y = Remap(Center, this.RightPeaks[i]) + Center;
-
-				if (PreviousRight.X != 0 && PreviousRight.Y != 0)
-					e.Graphics.DrawLine(Pens.Yellow, PreviousRight, new PointF(X, Y));
+				
+				e.Graphics.DrawLine(Pens.Yellow, PreviousRight, new PointF(X, Y));
 
 				PreviousRight.X = X;
 				PreviousRight.Y = Y;

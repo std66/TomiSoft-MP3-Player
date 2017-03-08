@@ -8,6 +8,8 @@ using TomiSoft.MP3Player.Utils.Extensions;
 using System.Windows;
 using TomiSoft.MP3Player.Playlist;
 using System.Collections.Specialized;
+using TomiSoft.MP3Player.UserInterface.Windows.MainWindow;
+using System.Windows.Input;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -23,6 +25,16 @@ namespace TomiSoft_MP3_Player {
 		private ILyricsReader lyricsReader;
         private Playlist playlist;
         private string lyrics;
+		private readonly SaveMediaCommand saveMediaCommand = new SaveMediaCommand();
+
+		/// <summary>
+		/// Gets the ICommand for the "Save media" button.
+		/// </summary>
+		public ICommand SaveMediaCommand {
+			get {
+				return this.saveMediaCommand;
+			}
+		}
 
         /// <summary>
         /// Gets the name of the application
@@ -93,6 +105,7 @@ namespace TomiSoft_MP3_Player {
 					this.playbackManager.PropertyChanged -= this.PlaybackStateChanged;
                 
 				this.playbackManager = value;
+				this.saveMediaCommand.PlaybackManager = value;
 				this.playbackManager.PropertyChanged += this.PlaybackStateChanged;
 				this.NotifyAll();
 			}

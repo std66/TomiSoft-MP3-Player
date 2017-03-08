@@ -514,5 +514,15 @@ namespace TomiSoft_MP3_Player {
 			this.Playlist.MoveTo(lvPlaylist.SelectedIndex);
 			this.ToggleMenu(Show: false);
 		}
+
+		/// <summary>
+		/// This method can be executed when a <see cref="System.Windows.Controls.Control"/> is clicked.
+		/// Hides the menu.
+		/// </summary>
+		/// <param name="sender">The sender object's instance</param>
+		/// <param name="e">Event parameters</param>
+		private void HideMenu(object sender, MouseButtonEventArgs e) {
+			this.ToggleMenu(Show: false);
+		}
 	}
 }

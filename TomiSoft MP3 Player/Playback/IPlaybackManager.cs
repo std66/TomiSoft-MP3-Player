@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
+using System.Threading.Tasks;
 using TomiSoft.MP3Player.MediaInformation;
 
 namespace TomiSoft.MP3Player.Playback {
@@ -31,7 +33,7 @@ namespace TomiSoft.MP3Player.Playback {
 		/// Gets or sets the playback volume.
 		/// </summary>
 		int Volume { get; set; }
-		
+
 		/// <summary>
 		/// Starts or continues the playback.
 		/// </summary>

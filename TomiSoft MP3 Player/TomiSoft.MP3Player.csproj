@@ -85,6 +85,7 @@
     <Compile Include="Lyrics\TomiSoftLyricsProvider.cs" />
     <Compile Include="Lyrics\LyricsProvider.cs" />
     <Compile Include="Playback\IAudioPeakMeter.cs" />
+    <Compile Include="Playback\ISavable.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="UserInterface\Controls\PlaybackControlViewModel.cs" />
     <Compile Include="UserInterface\Converters\DoubleToTimeConverter.cs" />
@@ -102,6 +103,7 @@
     </Compile>
     <Compile Include="UserInterface\Windows\AboutWindow\AboutWindowViewModel.cs" />
     <Compile Include="UserInterface\Windows\MainWindow\MainWindowViewModel.cs" />
+    <Compile Include="UserInterface\Windows\MainWindow\SaveMediaCommand.cs" />
     <Compile Include="Utils\Extensions\ArrayExtensions.cs" />
     <Compile Include="Utils\Extensions\ImageExtensions.cs" />
     <Compile Include="Utils\PlaybackHotkeys.cs" />

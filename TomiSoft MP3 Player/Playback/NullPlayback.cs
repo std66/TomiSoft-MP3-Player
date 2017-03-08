@@ -63,7 +63,7 @@ namespace TomiSoft.MP3Player.Playback {
 				return null;
 			}
 		}
-
+		
 		/// <summary>
 		/// Dummy method for staring playback. This method does nothing.
 		/// </summary>
