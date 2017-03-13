@@ -25,8 +25,7 @@ namespace TomiSoft_MP3_Player {
 			AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
 
 			Trace.Listeners.Add(new TextWriterTraceListener(this.LogStore));
-
-			Trace.WriteLine("");
+			
 			Trace.WriteLine($"New instance started at {DateTime.Now} (Is64BitProcess={Environment.Is64BitProcess}, Version={Version})");
 
             CheckIfAlreadyRunning();
@@ -102,7 +101,8 @@ namespace TomiSoft_MP3_Player {
             if (PlayerClient.IsServerRunning(App.Config.ServerPort)) {
                 Trace.TraceInformation("[Player startup] Found a running instance");
                 SendFileListToServer();
-            }
+				Environment.Exit(0);
+			}
             else {
                 Trace.TraceInformation("[Player startup] No other instances are running.");
             }
@@ -123,8 +123,6 @@ namespace TomiSoft_MP3_Player {
             catch (Exception e) {
                 PlayerUtils.ErrorMessageBox(App.Name, e.Message);
             }
-
-            Environment.Exit(0);
         }
 
         /// <summary>
