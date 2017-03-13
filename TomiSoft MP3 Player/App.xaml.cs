@@ -6,6 +6,7 @@ using TomiSoft.MP3Player.Communication;
 using TomiSoft.MP3Player.Utils;
 using System.Windows.Threading;
 using System.IO;
+using TomiSoft.MP3Player.Utils.Extensions;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -116,7 +117,7 @@ namespace TomiSoft_MP3_Player {
                     string[] args = Environment.GetCommandLineArgs();
 
                     if (args.Length > 1)
-                        Client.Play(args);
+                        Client.Play(args.GetPartOfArray(1, args.Length - 1));
                 }
             }
             catch (Exception e) {

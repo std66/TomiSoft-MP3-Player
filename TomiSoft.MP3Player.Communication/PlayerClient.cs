@@ -94,9 +94,14 @@ namespace TomiSoft.MP3Player.Communication {
         /// <summary>
         /// Sends the command to the server to play the specified files.
         /// </summary>
-        /// <param name="Filenames">The array of the files</param>
-        public void Play(string[] Filenames) {
-            this.Send($"Player.Play;{String.Join(";", Filenames)}");
+        /// <param name="Filenames">A sequence of the files</param>
+        public void Play(IEnumerable<string> Filenames) {
+			#region Error checking
+			if (Filenames == null)
+				return;
+			#endregion
+
+			this.Send($"Player.Play;{String.Join(";", Filenames)}");
         }
 
         /// <summary>
