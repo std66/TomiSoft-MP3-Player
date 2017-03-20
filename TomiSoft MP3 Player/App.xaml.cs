@@ -1,11 +1,10 @@
-﻿using System.Windows;
+﻿using System;
 using System.Diagnostics;
-using System;
+using System.IO;
 using System.Reflection;
+using System.Windows;
 using TomiSoft.MP3Player.Communication;
 using TomiSoft.MP3Player.Utils;
-using System.Windows.Threading;
-using System.IO;
 using TomiSoft.MP3Player.Utils.Extensions;
 
 namespace TomiSoft_MP3_Player {
@@ -25,7 +24,6 @@ namespace TomiSoft_MP3_Player {
 			AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
 
 			Trace.Listeners.Add(new TextWriterTraceListener(this.LogStore));
-			
 			Trace.WriteLine($"New instance started at {DateTime.Now} (Is64BitProcess={Environment.Is64BitProcess}, Version={Version})");
 
             CheckIfAlreadyRunning();

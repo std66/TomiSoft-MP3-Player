@@ -1,14 +1,33 @@
 ﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net.Http;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace TomiSoft.MP3Player.Communication {
 	/// <summary>
 	/// This class provides informations about a remote media resource.
 	/// </summary>
 	public class RemoteResourceInfo {
+		/// <summary>
+		/// Stores the mime types for playlists.
+		/// </summary>
+		private static readonly IEnumerable<string> PlaylistMimeTypes = new string[] {
+			//XSPF
+			"application/xspf+xml",
+
+			//M3U
+			"application/mpegurl", "application/x-mpegurl", "audio/mpegurl", "audio/x-mpegurl",
+			"application/vnd.apple.mpegurl", "application/vnd.apple.mpegurl.audio",
+
+			//PLS
+			"audio/x-scpls",
+
+			//WPL
+			"application/vnd.ms-wpl"
+		};
+
 		/// <summary>
 		/// Gets if the remote resource is an internet radio stream.
 		/// </summary>
@@ -44,6 +63,14 @@ namespace TomiSoft.MP3Player.Communication {
 		}
 
 		/// <summary>
+		/// Gets if the remote resource is a playlist file.
+		/// </summary>
+		public bool IsPlaylist {
+			get;
+			private set;
+		}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="RemoteResourceInfo"/> class.
 		/// </summary>
 		private RemoteResourceInfo() {}
@@ -71,8 +98,13 @@ namespace TomiSoft.MP3Player.Communication {
 
 			if (Result.RequestSucceeded) {
 				Result.IsInternetRadioStream = Response.Headers.Where(x => x.Key.ToLower().StartsWith("icy-")).Any();
-				Result.Length = Response.Content?.Headers.ContentLength ?? Response.Content?.Headers.ContentDisposition?.Size;
-				Result.Filename = Response.Content?.Headers.ContentDisposition?.Name ?? Path.GetFileName(uri.LocalPath);
+				Result.Length = Response.Content.Headers.ContentLength ?? Response.Content.Headers.ContentDisposition?.Size;
+				Result.Filename = Response.Content.Headers.ContentDisposition?.Name ?? Path.GetFileName(uri.LocalPath);
+
+				if (Response.Content.Headers.ContentType?.MediaType != null)
+					Result.IsPlaylist = PlaylistMimeTypes.Contains(Response.Content.Headers.ContentType.MediaType);
+				else
+					Result.IsPlaylist = false;
 			}
 
 			return Result;
