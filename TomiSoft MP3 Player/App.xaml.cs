@@ -62,8 +62,10 @@ namespace TomiSoft_MP3_Player {
 				}
 
 				string LogFileName = Path.GetTempFileName();
-				using (Stream s = File.OpenWrite(LogFileName))
+				using (Stream s = File.OpenWrite(LogFileName)) {
 					this.LogStore.WriteTo(s);
+					s.Flush();
+				}
 
 				MessageBoxResult r = MessageBox.Show(
 					caption: "TomiSoft MP3 Player",
