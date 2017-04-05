@@ -32,8 +32,13 @@ namespace TomiSoft.Music.Lyrics {
 			#endregion
 
 			foreach (IFileFormatChecker Validator in GetValidators(Filename)) {
-				if (Validator.ValidFile)
-					return Validator.GetLyricsReader();
+				try {
+					if (Validator.ValidFile)
+						return Validator.GetLyricsReader();
+				}
+				catch {
+					continue;
+				}
 			}
 
 			return null;

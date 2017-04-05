@@ -71,6 +71,14 @@ namespace TomiSoft.MP3Player.Communication {
 		}
 
 		/// <summary>
+		/// Gets the URI that was queried.
+		/// </summary>
+		public Uri RequestUri {
+			get;
+			private set;
+		}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="RemoteResourceInfo"/> class.
 		/// </summary>
 		private RemoteResourceInfo() {}
@@ -90,6 +98,8 @@ namespace TomiSoft.MP3Player.Communication {
 			RemoteResourceInfo Result = new RemoteResourceInfo();
 
 			var uri = new System.Uri(Uri);
+			Result.RequestUri = uri;
+
 			HttpRequestMessage Message = new HttpRequestMessage(HttpMethod.Get, uri);
 			Task<HttpResponseMessage> RequestTask = (new HttpClient()).SendAsync(Message, HttpCompletionOption.ResponseHeadersRead);
 			HttpResponseMessage Response = await RequestTask;

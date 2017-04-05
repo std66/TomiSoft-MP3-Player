@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
+using TomiSoft.MP3Player.Communication;
+using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Tags;
 
 namespace TomiSoft.MP3Player.MediaInformation {
@@ -78,25 +81,73 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the BassSongInfo class.
+		/// Initializes a new instance of the <see cref="BassSongInfo"/> class.
 		/// </summary>
 		private BassSongInfo() {
 			BassTags.ReadPictureTAGs = true;
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the BassSongInfo class.
+		/// Initializes a new instance of the <see cref="BassSongInfo"/> class.
 		/// </summary>
-		/// <param name="Source">The file's name or URI to read</param>
-		public BassSongInfo(string Source) : this() {
-			this.tagInfo = BassTags.BASS_TAG_GetFromFile(Source);
+		/// <param name="Path">The file's path to read</param>
+		public BassSongInfo(string Path) : this() {
+			#region Error checking
+			if (!File.Exists(Path))
+				throw new FileNotFoundException($"{Path} does not exists.", Path);
+			#endregion
+
+			this.tagInfo = BassTags.BASS_TAG_GetFromFile(Path);
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the BassSongInfo class.
+		/// Initializes a new instance of the <see cref="BassSongInfo"/> class.
+		/// </summary>
+		/// <param name="Info">A <see cref="RemoteResourceInfo"/> instance that holds informations about the requested URI.</param>
+		public BassSongInfo(RemoteResourceInfo Info) {
+			#region Error checking
+			if (Info == null)
+				throw new ArgumentNullException(nameof(Info));
+
+			if (!Info.RequestSucceeded)
+				throw new ArgumentException($"{nameof(Info)} represents a failed request.");
+
+			if (Info.IsPlaylist)
+				throw new ArgumentException($"{nameof(Info)} is a playlist, not a media resource.");
+			#endregion
+			
+			if (Info.IsInternetRadioStream) {
+				int Channel = Bass.BASS_StreamCreateURL(
+					url:    Info.RequestUri.ToString(),
+					offset: 0,
+					flags:  BASSFlag.BASS_STREAM_STATUS,
+					proc:   null,
+					user:   IntPtr.Zero
+				);
+
+				if (Channel == 0)
+					throw new Exception("Could not connect to the radio stream.");
+
+				this.tagInfo = new TAG_INFO();
+				if (!BassTags.BASS_TAG_GetFromURL(Channel, this.tagInfo))
+					throw new Exception("Could not retrieve informations about the radio stream.");
+			}
+			else {
+				this.tagInfo = BassTags.BASS_TAG_GetFromFile(Info.RequestUri.ToString());
+			}
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BassSongInfo"/> class.
 		/// </summary>
 		/// <param name="ChannelID">The BASS handle of the channel</param>
+		/// <exception cref="ArgumentException">when ChannelID is 0</exception>
 		public BassSongInfo(int ChannelID) : this() {
+			#region Error checking
+			if (ChannelID == 0)
+				throw new ArgumentException($"{nameof(ChannelID)} cannot be 0.");
+			#endregion
+
 			this.tagInfo = new TAG_INFO();
 			BassTags.BASS_TAG_GetFromFile(ChannelID, this.tagInfo);
 		}

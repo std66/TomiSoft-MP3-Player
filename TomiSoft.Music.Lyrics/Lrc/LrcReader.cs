@@ -157,9 +157,12 @@ namespace TomiSoft.Music.Lyrics.Lrc {
 
 			var Result = from c in Entries
 						 orderby c.Key ascending
-						 select c;
+						 select new {
+							 Timestamp = this.TimestampToSeconds(c.Key),
+							 Text = c.Value
+						 };
 
-			this.Lyrics = Result.ToDictionary(x => this.TimestampToSeconds(x.Key), y => y.Value);
+			this.Lyrics = Result.ToDictionary(x => x.Timestamp, y => y.Text);
 		}
 
 		/// <summary>
