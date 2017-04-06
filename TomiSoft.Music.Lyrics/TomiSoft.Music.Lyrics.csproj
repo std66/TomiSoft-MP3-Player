@@ -46,6 +46,7 @@
     <Compile Include="ILyricsWriter.cs" />
     <Compile Include="Lrc\LrcFileFormatChecker.cs" />
     <Compile Include="Lrc\LrcReader.cs" />
+    <Compile Include="Lrc\LrcWriter.cs" />
     <Compile Include="LyricsLine.cs" />
     <Compile Include="LyricsLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
