@@ -1,22 +1,22 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using System.Diagnostics;
+using System.Windows.Interop;
+using System.Windows.Media.Animation;
 using TomiSoft.MP3Player.Communication;
+using TomiSoft.MP3Player.Communication.Modules;
+using TomiSoft.MP3Player.Lyrics;
+using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.MP3Player.Playback;
 using TomiSoft.MP3Player.Playlist;
-using TomiSoft.MP3Player.Utils;
-using TomiSoft.MP3Player.Utils.Windows;
-using System.Windows.Media.Animation;
-using System.Windows.Interop;
-using TomiSoft.MP3Player.Utils.Extensions;
 using TomiSoft.MP3Player.UserInterface.Windows.AboutWindow;
-using System.Linq;
-using TomiSoft.MP3Player.MediaInformation;
-using TomiSoft.MP3Player.Lyrics;
-using TomiSoft.MP3Player.Communication.Modules;
+using TomiSoft.MP3Player.Utils;
+using TomiSoft.MP3Player.Utils.Extensions;
+using TomiSoft.MP3Player.Utils.Windows;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -285,7 +285,7 @@ namespace TomiSoft_MP3_Player {
 		/// <returns>True if the file is loaded, false if not.</returns>
 		private bool OpenFile(string Filename) {
 			#region Error checking
-			if (!BassManager.IsSupportedFile(Filename))
+			if (!PlaybackFactory.IsSupportedMedia(Filename))
 				return false;
 			#endregion
 
@@ -318,7 +318,7 @@ namespace TomiSoft_MP3_Player {
 		/// <param name="Filenames">An array containing the files' path</param>
 		/// <returns>True if all files are opened successfully, false if not</returns>
 		private bool OpenFiles(string[] Filenames) {
-			var SupportedFiles = Filenames.Where(x => BassManager.IsSupportedFile(x));
+			var SupportedFiles = Filenames.Where(x => PlaybackFactory.IsSupportedMedia(x));
 
 			#region Error checking
 			if (SupportedFiles.Count() == 0)
@@ -433,7 +433,7 @@ namespace TomiSoft_MP3_Player {
 				this.Playlist.Clear();
 
 				foreach (string File in Files) {
-					if (BassManager.IsSupportedFile(File))
+					if (PlaybackFactory.IsSupportedMedia(File))
 						this.Playlist.Add(new BassSongInfo(File));
 				}
 

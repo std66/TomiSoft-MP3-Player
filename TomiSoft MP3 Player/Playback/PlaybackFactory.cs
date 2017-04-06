@@ -37,20 +37,12 @@ namespace TomiSoft.MP3Player.Playback {
 		/// Gets a Null-Playback manager instance.
 		/// </summary>
 		/// <param name="Volume">The volume to initialize with.</param>
-		/// <returns>An IPlaybackManager that represents the Null-Playback manager instance</returns>
+		/// <returns>An <see cref="IPlaybackManager"/> that represents the Null-Playback manager instance</returns>
 		public static IPlaybackManager NullPlayback(int Volume) {
 			lastInstance = new NullPlayback() {
 				Volume = Volume
 			};
 
-			return lastInstance;
-		}
-
-		/// <summary>
-		/// Gets the last instance.
-		/// </summary>
-		/// <returns>The last IPlaybackManager instance that was created</returns>
-		public static IPlaybackManager GetLastInstance() {
 			return lastInstance;
 		}
 
@@ -61,9 +53,7 @@ namespace TomiSoft.MP3Player.Playback {
 		/// <returns>True if the media is supported, false if not</returns>
 		public static bool IsSupportedMedia(string Source) {
 			if (File.Exists(Source)) {
-				string Extension = PlayerUtils.GetFileExtension(Source);
-
-				if (BassManager.GetSupportedExtensions().Contains(Extension))
+				if (BassManager.IsSupportedFile(Source))
 					return true;
 			}
 

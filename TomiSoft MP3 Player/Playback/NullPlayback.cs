@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using TomiSoft.MP3Player.MediaInformation;
 
 namespace TomiSoft.MP3Player.Playback {
 	/// <summary>
 	/// Represents a playback method that does nothing.
 	/// </summary>
-	internal class NullPlayback : IPlaybackManager {
+	internal class NullPlayback : IPlaybackManager, IAudioPeakMeter {
 		/// <summary>
 		/// Gets or sets the playback position. Always returns 0.
 		/// Setting this value has no effect at all.
@@ -21,7 +20,7 @@ namespace TomiSoft.MP3Player.Playback {
 		}
 
 		/// <summary>
-		/// Gets the song's length. Always returns 1.
+		/// Gets the song's length. Always returns 0.1.
 		/// </summary>
 		public double Length {
 			get { return 0.1; }
