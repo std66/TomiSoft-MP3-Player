@@ -60,7 +60,7 @@ namespace TomiSoft.Music.Lyrics.Xml {
 				XDocument doc = XDocument.Load(Filename);
 				this.IsValid = true;
 			}
-			catch (Exception e) {
+			catch {
 				this.IsValid = false;
 			}
 		}

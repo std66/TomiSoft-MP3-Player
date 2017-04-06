@@ -25,11 +25,6 @@ namespace TomiSoft.MP3Player.Communication {
 		private volatile IList<IServerModule> Modules = new List<IServerModule>();
 
 		/// <summary>
-		/// Ez az esemény akkor fut le, ha parancs érkezik valamely klienstől.
-		/// </summary>
-		public event Action<Stream, string, string[]> CommandReceived;
-
-		/// <summary>
 		/// Létrehozza a PlayerServer osztály egy új példányát. Külön szálon várakozik
 		/// bejövő kapcsolatokra.
 		/// </summary>

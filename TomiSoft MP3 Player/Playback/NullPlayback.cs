@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using TomiSoft.MP3Player.MediaInformation;
 
 namespace TomiSoft.MP3Player.Playback {
@@ -96,11 +97,17 @@ namespace TomiSoft.MP3Player.Playback {
 		/// <summary>
 		/// Occures when a property is changed. Never fired.
 		/// </summary>
-		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged {
+			add { }
+			remove { }
+		}
 
 		/// <summary>
 		/// Occures when the song is ended. Never fired.
 		/// </summary>
-		public event Action SongEnded;
+		public event Action SongEnded {
+			add { }
+			remove { }
+		}
 	}
 }

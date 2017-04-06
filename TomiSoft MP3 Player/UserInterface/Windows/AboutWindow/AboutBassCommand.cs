@@ -10,7 +10,10 @@ namespace TomiSoft.MP3Player.UserInterface.Windows.AboutWindow {
         /// <summary>
         /// This event is fired when the CanExecute is changed.
         /// </summary>
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged {
+			add { }
+			remove { }
+		}
 
         /// <summary>
         /// Returns that the button should be enabled.
