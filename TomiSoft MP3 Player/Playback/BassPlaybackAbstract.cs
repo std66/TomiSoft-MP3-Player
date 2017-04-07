@@ -13,6 +13,7 @@ namespace TomiSoft.MP3Player.Playback {
 	/// </summary>
 	internal abstract class BassPlaybackAbstract : IPlaybackManager, IAudioPeakMeter {
 		private bool playing;
+		private bool paused;
 		private int channelID;
 		private DispatcherTimer PlaybackTimer;
 		protected ISongInfo songInfo;
@@ -44,6 +45,19 @@ namespace TomiSoft.MP3Player.Playback {
 				else {
 					this.PlaybackTimer.Stop();
 				}
+			}
+		}
+
+		/// <summary>
+		/// Gets if the playback is paused.
+		/// </summary>
+		public bool IsPaused {
+			get {
+				return this.paused;
+			}
+			private set {
+				this.paused = value;
+				this.NotifyPropertyChanged("IsPaused");
 			}
 		}
 
@@ -192,6 +206,7 @@ namespace TomiSoft.MP3Player.Playback {
         public void Play() {
 			if (Bass.BASS_ChannelPlay(this.ChannelID, false)) {
 				this.IsPlaying = true;
+				this.IsPaused = false;
 			}
 		}
 
@@ -201,6 +216,7 @@ namespace TomiSoft.MP3Player.Playback {
 		public void Stop() {
 			if (Bass.BASS_ChannelStop(this.ChannelID)) {
 				this.IsPlaying = false;
+				this.IsPaused = false;
 				this.Position = 0;
 				this.NotifyAll();
 			}
@@ -212,6 +228,7 @@ namespace TomiSoft.MP3Player.Playback {
 		public void Pause() {
 			if (Bass.BASS_ChannelPause(this.ChannelID)) {
 				this.IsPlaying = false;
+				this.IsPaused = true;
 				this.NotifyAll();
 			}
 		}

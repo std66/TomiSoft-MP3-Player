@@ -28,6 +28,11 @@ namespace TomiSoft.MP3Player.Playback {
 		/// Gets whether the song is currently playing.
 		/// </summary>
 		bool IsPlaying { get; }
+
+		/// <summary>
+		/// Gets whether the song is currently paused.
+		/// </summary>
+		bool IsPaused { get; }
 		
 		/// <summary>
 		/// Gets or sets the playback volume.

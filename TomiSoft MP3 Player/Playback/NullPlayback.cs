@@ -34,6 +34,13 @@ namespace TomiSoft.MP3Player.Playback {
 		}
 
 		/// <summary>
+		/// Gets whether the song is paused. Always returns false.
+		/// </summary>
+		public bool IsPaused {
+			get { return false; }
+		}
+
+		/// <summary>
 		/// Gets the left peak level. Always returns 0.
 		/// </summary>
 		public int LeftPeak {
