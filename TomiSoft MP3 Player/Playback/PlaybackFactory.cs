@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using TomiSoft.MP3Player.Utils;
 
 namespace TomiSoft.MP3Player.Playback {
@@ -17,19 +18,31 @@ namespace TomiSoft.MP3Player.Playback {
 		/// <summary>
 		/// Loads the given file.
 		/// </summary>
-		/// <param name="Filename">The file's path to load.</param>
-		/// <returns>An IPlaybackManager instance that can handle the given file.</returns>
+		/// <param name="Source">The file's path or an uri to load.</param>
+		/// <returns>An <see cref="IPlaybackManager"/> instance that can handle the given file.</returns>
 		/// <exception cref="NotSupportedException">when Filename is not supported by any playback methods</exception>
-		public static IPlaybackManager LoadFile(string Filename) {
-			string Extension = PlayerUtils.GetFileExtension(Filename);
-			
-			//In case of any file supported by BASS:
-			if (BassManager.GetSupportedExtensions().Contains(Extension)) {
-				lastInstance = new LocalAudioFilePlayback(Filename);
-				return lastInstance;
+		public async static Task<IPlaybackManager> LoadMedia(string Source) {
+			//If the Source is file:
+			if (File.Exists(Source)) {
+				string Extension = PlayerUtils.GetFileExtension(Source);
+
+				//In case of any file supported by BASS:
+				if (BassManager.GetSupportedExtensions().Contains(Extension)) {
+					lastInstance = new LocalAudioFilePlayback(Source);
+					return lastInstance;
+				}
 			}
 
-			Trace.TraceWarning($"[Playback] Unsupported file: {Filename}");
+			//If the Source is an Uri:
+			else if (Uri.IsWellFormedUriString(Source, UriKind.Absolute)) { 
+				//Youtube link:
+				if (Source.Contains("youtube.com/watch?v=")) {
+					lastInstance = await YoutubePlayback.DownloadVideo(Source);
+					return lastInstance;
+				}
+			}
+
+			Trace.TraceWarning($"[Playback] Unsupported file: {Source}");
 			throw new NotSupportedException("Nem támogatott fájlformátum");
 		}
 
@@ -54,6 +67,11 @@ namespace TomiSoft.MP3Player.Playback {
 		public static bool IsSupportedMedia(string Source) {
 			if (File.Exists(Source)) {
 				if (BassManager.IsSupportedFile(Source))
+					return true;
+			}
+
+			else if (Uri.IsWellFormedUriString(Source, UriKind.Absolute)) {
+				if (Source.Contains("youtube.com/watch?v="))
 					return true;
 			}
 

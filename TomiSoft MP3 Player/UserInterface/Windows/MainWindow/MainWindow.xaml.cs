@@ -139,7 +139,7 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="sender">The Playlist instance</param>
 		/// <param name="e">Event parameters</param>
-		private void Playlist_SelectedSongChanged(object sender, EventArgs e) {
+		private async void Playlist_SelectedSongChanged(object sender, EventArgs e) {
 			this.Player?.Stop();
 
 			#region Error checking
@@ -153,7 +153,10 @@ namespace TomiSoft_MP3_Player {
 
 			IPlaybackManager NewPlaybackManager = null;
 			try {
-				NewPlaybackManager = PlaybackFactory.LoadFile(this.Playlist.CurrentSongInfo.Source);
+				this.viewModel.LyricsReader = null;
+				this.viewModel.Lyrics = "Zene megnyitása...";
+
+				NewPlaybackManager = await PlaybackFactory.LoadMedia(this.Playlist.CurrentSongInfo.Source);
 			}
 			catch (Exception ex) {
 				if (ex is IOException || ex is NotSupportedException) {
@@ -327,8 +330,12 @@ namespace TomiSoft_MP3_Player {
 
 			try {
 				this.Playlist.Clear();
-				foreach (string Filename in SupportedFiles)
-					this.Playlist.Add(new BassSongInfo(Filename));
+				foreach (string Filename in SupportedFiles) {
+					if (Filename.Contains("youtube.com/watch?v="))
+						this.Playlist.Add(new YoutubeSongInfo(Filename));
+					else
+						this.Playlist.Add(new BassSongInfo(Filename));
+				}
 
 				this.Playlist.MoveTo(0);
 			}

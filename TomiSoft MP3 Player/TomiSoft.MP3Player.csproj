@@ -86,8 +86,10 @@
     <Compile Include="Lyrics\ILyricsProvider.cs" />
     <Compile Include="Lyrics\TomiSoftLyricsProvider.cs" />
     <Compile Include="Lyrics\LyricsProvider.cs" />
+    <Compile Include="MediaInformation\YoutubeSongInfo.cs" />
     <Compile Include="Playback\IAudioPeakMeter.cs" />
     <Compile Include="Playback\ISavable.cs" />
+    <Compile Include="Playback\YoutubePlayback.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="UserInterface\Controls\PlaybackControlViewModel.cs" />
     <Compile Include="UserInterface\Converters\DoubleToTimeConverter.cs" />

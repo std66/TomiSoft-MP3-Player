@@ -13,6 +13,11 @@ namespace TomiSoft.MP3Player.Utils {
 		/// <param name="Filename">The filename with or without the path.</param>
 		/// <returns>The extension of the file in lowercase without the prepending dot.</returns>
 		public static string GetFileExtension(string Filename) {
+			#region Error checking
+			if (!File.Exists(Filename))
+				return String.Empty;
+			#endregion
+
 			FileInfo f = new FileInfo(Filename);
 			return f.Extension.Substring(1).ToLower();
 		}
