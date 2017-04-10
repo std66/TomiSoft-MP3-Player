@@ -3,7 +3,7 @@
         xmlns:local="clr-namespace:TomiSoft_MP3_Player"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="{Binding ApplicationName}" SizeToContent="WidthAndHeight" Background="#FF3C3C3C" KeyUp="Window_KeyUp"
+        Title="{Binding ApplicationName}" SizeToContent="WidthAndHeight" Background="#FF3C3C3C" KeyUp="Window_KeyUpAsync"
         ResizeMode="CanMinimize"
         AllowDrop="True"
         Drop="Window_Drop"

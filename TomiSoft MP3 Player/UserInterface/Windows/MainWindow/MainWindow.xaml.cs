@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -227,7 +228,7 @@ namespace TomiSoft_MP3_Player {
 			);
 
 			this.PlayerServerModule.OpenFiles += (o, e) => {
-				this.Dispatcher.Invoke(() => this.OpenFiles(e));
+				this.Dispatcher.Invoke(() => this.OpenFilesAsync(e));
 			};
 			this.PlayerServerModule.NextSong += (o, e) => {
 				this.Dispatcher.Invoke(this.PlayNext);
@@ -237,10 +238,10 @@ namespace TomiSoft_MP3_Player {
 			};
 		}
 
-		private void Window_KeyUp(object sender, KeyEventArgs e) {
+		private async void Window_KeyUpAsync(object sender, KeyEventArgs e) {
 			//When CTRL+O is pressed, a file open dialog appears that lets the user to load a file.
 			if (e.Key == Key.O && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) {
-				if (this.OpenFile()) {
+				if (await this.OpenFileAsync()) {
 					this.Player?.Play();
 				}
 			}
@@ -264,7 +265,7 @@ namespace TomiSoft_MP3_Player {
 		/// Asks the user to open one or more files using a file open dialog.
 		/// </summary>
 		/// <returns>True if the files are opened, false if not.</returns>
-		private bool OpenFile() {
+		private async Task<bool> OpenFileAsync() {
 			OpenFileDialog dlg = new OpenFileDialog() {
 				Filter = $"Minden támogatott fájl|{String.Join(";", BassManager.GetSupportedExtensions().Select(x => "*." + x))}",
 				Multiselect = true
@@ -273,7 +274,7 @@ namespace TomiSoft_MP3_Player {
 			bool? DialogResult = dlg.ShowDialog();
 
 			if (DialogResult.HasValue && DialogResult.Value == true) {
-				return this.OpenFiles(dlg.FileNames);
+				return await this.OpenFilesAsync(dlg.FileNames);
 			}
 			else {
 				return false;
@@ -320,7 +321,7 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="Filenames">An array containing the files' path</param>
 		/// <returns>True if all files are opened successfully, false if not</returns>
-		private bool OpenFiles(string[] Filenames) {
+		private async Task<bool> OpenFilesAsync(string[] Filenames) {
 			var SupportedFiles = Filenames.Where(x => PlaybackFactory.IsSupportedMedia(x));
 
 			#region Error checking
@@ -332,7 +333,7 @@ namespace TomiSoft_MP3_Player {
 				this.Playlist.Clear();
 				foreach (string Filename in SupportedFiles) {
 					if (Filename.Contains("youtube.com/watch?v="))
-						this.Playlist.Add(new YoutubeSongInfo(Filename));
+						this.Playlist.Add(await YoutubeSongInfo.GetVideoInfoAsync(Filename));
 					else
 						this.Playlist.Add(new BassSongInfo(Filename));
 				}
@@ -459,7 +460,7 @@ namespace TomiSoft_MP3_Player {
 		private void FileOpenButton_Click(object sender, RoutedEventArgs e) {
 			this.ToggleMenu(Show: false);
 
-			this.OpenFile();
+			this.OpenFileAsync();
 		}
 
 		/// <summary>
