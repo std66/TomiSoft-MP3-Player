@@ -15,6 +15,8 @@ using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.MP3Player.Playback;
 using TomiSoft.MP3Player.Playlist;
 using TomiSoft.MP3Player.UserInterface.Windows.AboutWindow;
+using TomiSoft.MP3Player.UserInterface.Windows.ProgressBarDialog;
+using TomiSoft.MP3Player.UserInterface.Windows.TextInputDialog;
 using TomiSoft.MP3Player.Utils;
 using TomiSoft.MP3Player.Utils.Extensions;
 using TomiSoft.MP3Player.Utils.Windows;
@@ -332,7 +334,7 @@ namespace TomiSoft_MP3_Player {
 			try {
 				this.Playlist.Clear();
 				foreach (string Filename in SupportedFiles) {
-					if (Filename.Contains("youtube.com/watch?v="))
+					if (Filename.Contains("youtube.com/watch"))
 						this.Playlist.Add(await YoutubeSongInfo.GetVideoInfoAsync(Filename));
 					else
 						this.Playlist.Add(new BassSongInfo(Filename));
@@ -531,6 +533,50 @@ namespace TomiSoft_MP3_Player {
 		/// <param name="e">Event parameters</param>
 		private void HideMenu(object sender, MouseButtonEventArgs e) {
 			this.ToggleMenu(Show: false);
+		}
+
+		/// <summary>
+		/// This method is executed when the user wants to play a media from an URI source.
+		/// </summary>
+		/// <param name="sender">The sender object's instance</param>
+		/// <param name="e">Event parameters</param>
+		private async void UriOpen_Click(object sender, MouseButtonEventArgs e) {
+			ToggleMenu(Show: false);
+
+			#region Check requirements
+			if (!YoutubePlayback.ToolsAvailable) {
+				MessageBoxResult DownloadQuestion = MessageBox.Show(
+					messageBoxText: "Első alkalommal le kell tölteni az ffmpeg.exe, az ffprobe.exe és a youtube-dl.exe programokat. Szeretnéd most letölteni?",
+					caption: "Kellene még néhány dolog...",
+					button: MessageBoxButton.YesNo,
+					icon: MessageBoxImage.Question
+				);
+
+				if (DownloadQuestion == MessageBoxResult.Yes) {
+					ProgressBarDialog ProgressBar = new ProgressBarDialog("YouTube eszközök letöltése", "Fél perc és kész vagyunk...");
+					ProgressBar.Show();
+
+					await YoutubePlayback.DownloadSoftwareAsync();
+
+					ProgressBar.Close();
+				}
+				else {
+					return;
+				}
+			}
+			#endregion
+
+			TextInputDialog Dialog = new TextInputDialog("YouTube média letöltése", "Írd ide a videó címét, amit meg szeretnél nyitni:");
+
+			bool? Result = Dialog.ShowDialog();
+			if (Result.HasValue && Result.Value == true) {
+				if (!YoutubePlayback.IsValudYoutubeUri(Dialog.UserInput)) {
+					PlayerUtils.ErrorMessageBox(App.Name, "Úgy tűnik, hibás linket adtál meg.");
+					return;
+				}
+
+				await this.OpenFilesAsync(new string[] { Dialog.UserInput });
+			}
 		}
 	}
 }

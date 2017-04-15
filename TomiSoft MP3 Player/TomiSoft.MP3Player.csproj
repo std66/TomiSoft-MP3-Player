@@ -78,6 +78,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -140,6 +142,12 @@
     <Compile Include="UserInterface\Windows\AboutWindow\AboutWindowViewModel.cs" />
     <Compile Include="UserInterface\Windows\MainWindow\MainWindowViewModel.cs" />
     <Compile Include="UserInterface\Windows\MainWindow\SaveMediaCommand.cs" />
+    <Compile Include="UserInterface\Windows\ProgressBarDialog\ProgressBarDialog.xaml.cs">
+      <DependentUpon>ProgressBarDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Windows\TextInputDialog\TextInputDialog.xaml.cs">
+      <DependentUpon>TextInputDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils\Extensions\ArrayExtensions.cs" />
     <Compile Include="Utils\Extensions\ImageExtensions.cs" />
     <Compile Include="Utils\PlaybackHotkeys.cs" />
@@ -166,6 +174,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UserInterface\Controls\PlaybackControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterface\Windows\ProgressBarDialog\ProgressBarDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterface\Windows\TextInputDialog\TextInputDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

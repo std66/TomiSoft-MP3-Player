@@ -37,7 +37,7 @@ namespace TomiSoft.MP3Player.Playback {
 			else if (Uri.IsWellFormedUriString(Source, UriKind.Absolute)) { 
 				//Youtube link:
 				if (Source.Contains("youtube.com/watch?v=")) {
-					lastInstance = await YoutubePlayback.DownloadVideo(Source);
+					lastInstance = await YoutubePlayback.DownloadVideoAsync(Source);
 					return lastInstance;
 				}
 			}

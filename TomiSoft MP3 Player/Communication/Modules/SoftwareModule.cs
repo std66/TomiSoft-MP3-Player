@@ -1,4 +1,5 @@
-﻿using TomiSoft_MP3_Player;
+﻿using TomiSoft.MP3Player.Playback;
+using TomiSoft_MP3_Player;
 
 namespace TomiSoft.MP3Player.Communication.Modules {
 	public class SoftwareModule : IServerModule {
@@ -26,6 +27,16 @@ namespace TomiSoft.MP3Player.Communication.Modules {
 		[ServerCommand]
 		public string Website() {
 			return App.Website.ToString();
+		}
+
+		[ServerCommand]
+		public string Path() {
+			return App.Path;
+		}
+
+		[ServerCommand]
+		public void DownloadYoutube() {
+			YoutubePlayback.DownloadSoftwareAsync().Wait();
 		}
 
 		[ServerCommand]

@@ -61,7 +61,7 @@ namespace TomiSoft_MP3_Player {
 					ex = ex.InnerException;
 				}
 
-				string LogFileName = Path.GetTempFileName();
+				string LogFileName = System.IO.Path.GetTempFileName();
 				using (Stream s = File.OpenWrite(LogFileName)) {
 					this.LogStore.WriteTo(s);
 					s.Flush();
@@ -169,5 +169,19 @@ namespace TomiSoft_MP3_Player {
                 return "Sinku Tamás";
             }
         }
+
+		/// <summary>
+		/// Gets the path of the application.
+		/// </summary>
+		public static string Path {
+			get {
+				string Result = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+				if (!Result.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
+					Result += System.IO.Path.DirectorySeparatorChar;
+				
+				return Result;
+			}
+		}
 	}
 }
