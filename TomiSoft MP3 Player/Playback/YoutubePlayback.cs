@@ -51,7 +51,7 @@ namespace TomiSoft.MP3Player.Playback {
 		/// </returns>
 		public static async Task<IPlaybackManager> DownloadVideoAsync(string Uri) {
 			#region Error checking
-			if (!IsValudYoutubeUri(Uri))
+			if (!IsValidYoutubeUri(Uri))
 				throw new ArgumentException("Not a valid YouTube URI");
 			#endregion
 
@@ -132,7 +132,7 @@ namespace TomiSoft.MP3Player.Playback {
 		/// </summary>
 		/// <param name="Uri">The URI to check</param>
 		/// <returns>True if valid, false if not</returns>
-		public static bool IsValudYoutubeUri(string Uri) {
+		public static bool IsValidYoutubeUri(string Uri) {
 			if (!System.Uri.IsWellFormedUriString(Uri, UriKind.Absolute))
 				return false;
 

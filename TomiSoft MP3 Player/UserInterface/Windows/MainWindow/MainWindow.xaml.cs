@@ -570,7 +570,7 @@ namespace TomiSoft_MP3_Player {
 
 			bool? Result = Dialog.ShowDialog();
 			if (Result.HasValue && Result.Value == true) {
-				if (!YoutubePlayback.IsValudYoutubeUri(Dialog.UserInput)) {
+				if (!YoutubePlayback.IsValidYoutubeUri(Dialog.UserInput)) {
 					PlayerUtils.ErrorMessageBox(App.Name, "Úgy tűnik, hibás linket adtál meg.");
 					return;
 				}
