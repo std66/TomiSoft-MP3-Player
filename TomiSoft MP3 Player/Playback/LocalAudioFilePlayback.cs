@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Un4seen.Bass;
 
@@ -38,6 +39,23 @@ namespace TomiSoft.MP3Player.Playback {
 		public string OriginalSource {
 			get {
 				return this.Filename;
+			}
+		}
+
+		/// <summary>
+		/// Gets the recommended file name of the media.
+		/// </summary>
+		public string RecommendedFilename {
+			get {
+				if (this.SongInfo.Title == null)
+					return this.Filename;
+
+				string Extension = Path.GetExtension(this.OriginalFilename);
+
+				if (this.SongInfo.Artist != null)
+					return $"{this.SongInfo.Artist} - {this.SongInfo.Title}{Extension}";
+
+				return $"{this.SongInfo.Title}{Extension}";
 			}
 		}
 

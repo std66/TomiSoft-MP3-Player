@@ -21,9 +21,16 @@ namespace TomiSoft.MP3Player.Playback {
 		}
 
 		/// <summary>
-		/// Saves the media to the given stream.
+		/// Gets the recommended file name of the media.
 		/// </summary>
-		/// <param name="TargetStream">The stream where the media is written to.</param>
+		string RecommendedFilename {
+			get;
+		}
+
+		/// <summary>
+		/// Saves the media to the given <see cref="Stream"/>.
+		/// </summary>
+		/// <param name="TargetStream">The <see cref="Stream"/> where the media is written to.</param>
 		/// <returns>
 		/// A task that represents the process of the saving procedure. When the saving
 		/// is finished, a bool value will represent whether the saving was successful or not.

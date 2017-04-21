@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.MP3Player.Utils;
 
 namespace TomiSoft.MP3Player.Playback {
@@ -20,30 +21,36 @@ namespace TomiSoft.MP3Player.Playback {
 		/// </summary>
 		/// <param name="Source">The file's path or an uri to load.</param>
 		/// <returns>An <see cref="IPlaybackManager"/> instance that can handle the given file.</returns>
-		/// <exception cref="NotSupportedException">when Filename is not supported by any playback methods</exception>
-		public async static Task<IPlaybackManager> LoadMedia(string Source) {
+		/// <exception cref="ArgumentNullException">when <paramref name="SongInfo"/> is null</exception> 
+		/// <exception cref="NotSupportedException">when the media represented by <paramref name="SongInfo"/> is not supported by any playback methods</exception>
+		public async static Task<IPlaybackManager> LoadMedia(ISongInfo SongInfo) {
+			#region Error checking
+			if (SongInfo == null)
+				throw new ArgumentNullException(nameof(SongInfo));
+			#endregion
+
 			//If the Source is file:
-			if (File.Exists(Source)) {
-				string Extension = PlayerUtils.GetFileExtension(Source);
+			if (File.Exists(SongInfo.Source)) {
+				string Extension = PlayerUtils.GetFileExtension(SongInfo.Source);
 
 				//In case of any file supported by BASS:
 				if (BassManager.GetSupportedExtensions().Contains(Extension)) {
-					lastInstance = new LocalAudioFilePlayback(Source);
+					lastInstance = new LocalAudioFilePlayback(SongInfo.Source);
 					return lastInstance;
 				}
 			}
 
 			//If the Source is an Uri:
-			else if (Uri.IsWellFormedUriString(Source, UriKind.Absolute)) { 
+			else if (Uri.IsWellFormedUriString(SongInfo.Source, UriKind.Absolute)) { 
 				//Youtube link:
-				if (Source.Contains("youtube.com/watch?v=")) {
-					lastInstance = await YoutubePlayback.DownloadVideoAsync(Source);
+				if (SongInfo.Source.Contains("youtube.com/watch?v=")) {
+					lastInstance = await YoutubePlayback.DownloadVideoAsync(SongInfo);
 					return lastInstance;
 				}
 			}
 
-			Trace.TraceWarning($"[Playback] Unsupported file: {Source}");
-			throw new NotSupportedException("Nem támogatott fájlformátum");
+			Trace.TraceWarning($"[Playback] Unsupported media: {SongInfo.Source}");
+			throw new NotSupportedException("Nem támogatott média");
 		}
 
 		/// <summary>

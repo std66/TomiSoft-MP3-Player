@@ -36,7 +36,7 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		}
 
 		/// <summary>
-		/// Gets the artist of the song. Always returns a string similar to "Source: YouTube".
+		/// Gets the artist of the song. Always returns a <see cref="string"/> similar to "Source: YouTube".
 		/// </summary>
 		public string Artist {
 			get {

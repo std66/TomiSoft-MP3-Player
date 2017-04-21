@@ -120,6 +120,7 @@
     <Compile Include="Lyrics\ILyricsProvider.cs" />
     <Compile Include="Lyrics\TomiSoftLyricsProvider.cs" />
     <Compile Include="Lyrics\LyricsProvider.cs" />
+    <Compile Include="MediaInformation\SongInfo.cs" />
     <Compile Include="MediaInformation\YoutubeSongInfo.cs" />
     <Compile Include="Playback\IAudioPeakMeter.cs" />
     <Compile Include="Playback\ISavable.cs" />

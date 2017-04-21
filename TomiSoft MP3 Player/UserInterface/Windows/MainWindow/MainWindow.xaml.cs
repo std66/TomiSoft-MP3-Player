@@ -159,7 +159,7 @@ namespace TomiSoft_MP3_Player {
 				this.viewModel.LyricsReader = null;
 				this.viewModel.Lyrics = "Zene megnyitása...";
 
-				NewPlaybackManager = await PlaybackFactory.LoadMedia(this.Playlist.CurrentSongInfo.Source);
+				NewPlaybackManager = await PlaybackFactory.LoadMedia(this.Playlist.CurrentSongInfo);
 			}
 			catch (Exception ex) {
 				if (ex is IOException || ex is NotSupportedException) {
@@ -459,10 +459,10 @@ namespace TomiSoft_MP3_Player {
 		/// </summary>
 		/// <param name="sender">The sender object's instance</param>
 		/// <param name="e">Event parameters</param>
-		private void FileOpenButton_Click(object sender, RoutedEventArgs e) {
+		private async void FileOpenButton_Click(object sender, RoutedEventArgs e) {
 			this.ToggleMenu(Show: false);
 
-			this.OpenFileAsync();
+			await this.OpenFileAsync();
 		}
 
 		/// <summary>

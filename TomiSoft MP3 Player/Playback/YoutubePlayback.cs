@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
+using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft_MP3_Player;
 
 namespace TomiSoft.MP3Player.Playback {
@@ -19,7 +20,11 @@ namespace TomiSoft.MP3Player.Playback {
 		/// Initializes a new instance of the <see cref="YoutubePlayback"/> class.
 		/// </summary>
 		/// <param name="DownloadedFile">The path of the media file downloaded and converted by youtube-dl.</param>
-		private YoutubePlayback(string DownloadedFile) : base(DownloadedFile) {}
+		private YoutubePlayback(ISongInfo SongInfo, string DownloadedFile) : base(DownloadedFile) {
+			this.songInfo = new SongInfo(this.songInfo) {
+				Title = SongInfo.Title
+			};
+		}
 
 		/// <summary>
 		/// Gets if all tools are available to play media from YouTube. If false,
@@ -43,19 +48,24 @@ namespace TomiSoft.MP3Player.Playback {
 		/// <summary>
 		/// Downloads a video asynchronously with youtube-dl.
 		/// </summary>
-		/// <param name="Uri">The URI of the media to download</param>
+		/// <param name="SongInfo">A <see cref="ISongInfo"/> instance that holds the URI of the media to download</param>
 		/// <returns>
 		///		A <see cref="Task"/> for an <see cref="IPlaybackManager"/> instance
 		///		that can play the YouTube media. Null is returned when the download
 		///		fails.
 		/// </returns>
-		public static async Task<IPlaybackManager> DownloadVideoAsync(string Uri) {
+		/// <exception cref="ArgumentNullException">when <paramref name="SongInfo"/> is null</exception> 
+		/// <exception cref="ArgumentException">when <see cref="ISongInfo.Source"/> is not a valid YouTube URI</exception>
+		public static async Task<IPlaybackManager> DownloadVideoAsync(ISongInfo SongInfo) {
 			#region Error checking
-			if (!IsValidYoutubeUri(Uri))
+			if (SongInfo == null)
+				throw new ArgumentNullException(nameof(SongInfo));
+
+			if (!IsValidYoutubeUri(SongInfo.Source))
 				throw new ArgumentException("Not a valid YouTube URI");
 			#endregion
 
-			Uri = GetVideoOnlyUri(Uri);
+			string Uri = GetVideoOnlyUri(SongInfo.Source);
 
 			string Filename = Path.GetTempFileName();
 			string MediaFilename = Path.ChangeExtension(Filename, "mp3");
@@ -91,7 +101,7 @@ namespace TomiSoft.MP3Player.Playback {
 				return null;
 			}
 
-			return new YoutubePlayback(MediaFilename);
+			return new YoutubePlayback(SongInfo, MediaFilename);
 		}
 
 		/// <summary>

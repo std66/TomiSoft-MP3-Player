@@ -26,6 +26,8 @@ namespace TomiSoft.MP3Player.UserInterface.Windows.TextInputDialog {
 		public TextInputDialog() {
 			InitializeComponent();
 			this.Initialized += (o, e) => this.DialogResult = false;
+
+			this.UI_TextBox.Focus();
 		}
 
 		public TextInputDialog(string Title, string Text)
@@ -47,6 +49,20 @@ namespace TomiSoft.MP3Player.UserInterface.Windows.TextInputDialog {
 
 		private void btnCancel_Click(object sender, RoutedEventArgs e) {
 			this.Close();
+		}
+
+		private void UI_TextBox_KeyUp(object sender, KeyEventArgs e) {
+			switch (e.Key) {
+				case Key.Enter:
+					this.DialogResult = true;
+					this.Close();
+					break;
+
+				case Key.Escape:
+					this.Close();
+					break;
+			}
+
 		}
 	}
 }

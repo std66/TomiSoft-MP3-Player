@@ -42,7 +42,7 @@ namespace TomiSoft.MP3Player.UserInterface.Windows.MainWindow {
 		}
 
 		/// <summary>
-		/// Executes the command. If the media represented by the PlaybackManager
+		/// Executes the command. If the media represented by the <see cref="PlaybackManager"/>
 		/// can be saved, asks the user for a path to the target file and
 		/// copies the media.
 		/// </summary>
@@ -92,10 +92,10 @@ namespace TomiSoft.MP3Player.UserInterface.Windows.MainWindow {
 				return false;
 			}
 			#endregion
-
+			
 			SaveFileDialog Dialog = new SaveFileDialog() {
 				Filter = $"Médiafájl|*{Path.GetExtension(SavableMedia.OriginalSource)}",
-				FileName = SavableMedia.OriginalFilename
+				FileName = SavableMedia.RecommendedFilename ?? SavableMedia.OriginalFilename
 			};
 			
 			bool Result = Dialog.ShowDialog() ?? false;
