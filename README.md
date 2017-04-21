@@ -6,6 +6,7 @@ TomiSoft MP3 Player
 An advanced audio playback application built on the BASS library.
   - Supports 36 audio file formats: mp3, ogg, wav, mp2, mp1, aiff, m2a, mpa, m1a, mpg, mpeg, aif, mp3pro, bwf, mus, wma, wmv, aac, adts, mp4, m4a, m4b, cda, flac, midi, mid, rmi, kar, wma, wmv, aac, adts, mp4, m4a, m4b, ac3
   - Karaoke-like lyrics displaying (supports LRC and XML-format (with multiple translation support) lyrics files)
+  - Downloading and playing music from YouTube (see "YouTube support")
   - VU meter
   - API provided over TCP connection on loopback interface
   
@@ -22,6 +23,10 @@ Notes:
 ------
   - Mid, midi, rmi and kar files can be opened, but requires a SoundFont. However, this function is not implemented yet, so you will hear no sound.
   - Lyrics translation can only be changed via TCP API connection
+
+YouTube support:
+----------------
+YouTube support requires ffmpeg.exe, ffprobe.exe (LGPL 2.1, https://ffmpeg.org/) and youtube-dl.exe (The Unlicense, https://rg3.github.io/youtube-dl/). These are not the part of the package. At the first YouTube download the user will be prompted about downloading and installing these dependencies. The installation is automatic if the user agreed and may require administrative privileges.
 
 System requirements:
 --------------------
