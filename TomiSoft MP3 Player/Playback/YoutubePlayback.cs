@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using TomiSoft.MP3Player.MediaInformation;
@@ -56,7 +58,7 @@ namespace TomiSoft.MP3Player.Playback {
 		/// </returns>
 		/// <exception cref="ArgumentNullException">when <paramref name="SongInfo"/> is null</exception> 
 		/// <exception cref="ArgumentException">when <see cref="ISongInfo.Source"/> is not a valid YouTube URI</exception>
-		public static async Task<IPlaybackManager> DownloadVideoAsync(ISongInfo SongInfo) {
+		public static async Task<IPlaybackManager> DownloadVideoAsync(ISongInfo SongInfo, IProgress<YoutubeDownloadProgress> Progress) {
 			#region Error checking
 			if (SongInfo == null)
 				throw new ArgumentNullException(nameof(SongInfo));
@@ -64,6 +66,8 @@ namespace TomiSoft.MP3Player.Playback {
 			if (!IsValidYoutubeUri(SongInfo.Source))
 				throw new ArgumentException("Not a valid YouTube URI");
 			#endregion
+
+			Progress?.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Initializing, 0));
 
 			string Uri = GetVideoOnlyUri(SongInfo.Source);
 
@@ -88,12 +92,27 @@ namespace TomiSoft.MP3Player.Playback {
 					StartInfo = new ProcessStartInfo {
 						FileName = YoutubeDownloader,
 						Arguments = Arguments,
-						UseShellExecute = true,
+						UseShellExecute = false,
+						RedirectStandardOutput = true,
+						RedirectStandardError = true,
+						WindowStyle = ProcessWindowStyle.Hidden,
+						CreateNoWindow = true,
 						WorkingDirectory = App.Path
 					}
 				};
 
+				DownloaderProcess.OutputDataReceived += (o, e) => ReportProgress(e.Data, Progress);
+				DownloaderProcess.ErrorDataReceived += (o, e) => {
+					if (!String.IsNullOrWhiteSpace(e.Data)) {
+						Progress?.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Error, 0));
+						Trace.TraceWarning($"youtube-dl StdErr: {e.Data}");
+					}
+				};
+
 				DownloaderProcess.Start();
+				DownloaderProcess.BeginOutputReadLine();
+				DownloaderProcess.BeginErrorReadLine();
+
 				await Task.Run(() => DownloaderProcess.WaitForExit());
 			}
 			catch (Exception e) {
@@ -101,7 +120,29 @@ namespace TomiSoft.MP3Player.Playback {
 				return null;
 			}
 
+			Progress?.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Completed, 100));
+
 			return new YoutubePlayback(SongInfo, MediaFilename);
+		}
+
+		private static void ReportProgress(string Output, IProgress<YoutubeDownloadProgress> Progress) {
+			#region Error checking
+			if (Progress == null || String.IsNullOrWhiteSpace(Output))
+				return;
+			#endregion
+
+			Trace.TraceInformation($"youtube-dl StdOut: {Output}");
+
+			if (Output.ToLower().StartsWith("[download]") && !Output.ToLower().Contains("destination")) {
+				string Match = Regex.Match(Output, @"\b\d+([\.,]\d+)?").Value;
+				double Percentage = Convert.ToDouble(Match, CultureInfo.InvariantCulture);
+
+				Progress.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Downloading, Percentage));
+			}
+
+			else if (Output.ToLower().StartsWith("[ffmpeg]")) {
+				Progress.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Converting, 0));
+			}
 		}
 
 		/// <summary>
@@ -182,6 +223,7 @@ namespace TomiSoft.MP3Player.Playback {
 					FileName = YoutubeDownloader,
 					Arguments = Arguments,
 					UseShellExecute = true,
+					WindowStyle = ProcessWindowStyle.Hidden,
 					WorkingDirectory = App.Path
 				}
 			};

@@ -124,6 +124,7 @@
     <Compile Include="MediaInformation\YoutubeSongInfo.cs" />
     <Compile Include="Playback\IAudioPeakMeter.cs" />
     <Compile Include="Playback\ISavable.cs" />
+    <Compile Include="Playback\YoutubeDownloadProgress.cs" />
     <Compile Include="Playback\YoutubePlayback.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="UserInterface\Controls\PlaybackControlViewModel.cs" />

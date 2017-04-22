@@ -99,6 +99,9 @@ namespace TomiSoft_MP3_Player {
 			this.Loaded += RegisterHotKeys;
 			this.Playlist.SelectedSongChanged += Playlist_SelectedSongChanged;
 			this.Closed += WindowClosed;
+			PlaybackFactory.MediaOpenProgressChanged += (Percentage, StatusString) => {
+				this.viewModel.Lyrics = StatusString;
+			};
 
 			Trace.TraceInformation("[Player startup] Startup successful.");
 

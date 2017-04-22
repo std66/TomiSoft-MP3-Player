@@ -16,6 +16,8 @@ namespace TomiSoft.MP3Player.Playback {
 		/// </summary>
 		private static IPlaybackManager lastInstance;
 
+		public static event Action<double, string> MediaOpenProgressChanged;
+
 		/// <summary>
 		/// Loads the given file.
 		/// </summary>
@@ -41,10 +43,15 @@ namespace TomiSoft.MP3Player.Playback {
 			}
 
 			//If the Source is an Uri:
-			else if (Uri.IsWellFormedUriString(SongInfo.Source, UriKind.Absolute)) { 
+			else if (Uri.IsWellFormedUriString(SongInfo.Source, UriKind.Absolute)) {
 				//Youtube link:
-				if (SongInfo.Source.Contains("youtube.com/watch?v=")) {
-					lastInstance = await YoutubePlayback.DownloadVideoAsync(SongInfo);
+				if (SongInfo is YoutubeSongInfo) {
+					Progress<YoutubeDownloadProgress> Progress = new Progress<YoutubeDownloadProgress>();
+					Progress.ProgressChanged += YoutubeDownloadProgressChanged;
+
+					lastInstance = await YoutubePlayback.DownloadVideoAsync(SongInfo, Progress);
+
+					Progress.ProgressChanged -= YoutubeDownloadProgressChanged;
 					return lastInstance;
 				}
 			}
@@ -53,6 +60,15 @@ namespace TomiSoft.MP3Player.Playback {
 			throw new NotSupportedException("Nem támogatott média");
 		}
 
+		private static void YoutubeDownloadProgressChanged(object sender, YoutubeDownloadProgress e) {
+			#region Error checking
+			if (e == null)
+				return;
+			#endregion
+
+			MediaOpenProgressChanged?.Invoke(e.Percentage, e.ToString());
+		}
+		
 		/// <summary>
 		/// Gets a Null-Playback manager instance.
 		/// </summary>
