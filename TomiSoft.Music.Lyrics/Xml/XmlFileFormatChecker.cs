@@ -28,12 +28,12 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		}
 
 		/// <summary>
-		/// Gets an instance of the XmlLyricsReader class.
+		/// Gets an instance of the <see cref="XmlLyricsReader"/> class.
 		/// </summary>
 		/// <returns>
-        /// An XmlLyricsReader instance that parses the validated lyrics file.
-        /// Null is returned when there was a problem while opening the file.
-        /// </returns>
+		/// An <see cref="XmlLyricsReader"/> instance that parses the validated lyrics file.
+		/// Null is returned when there was a problem while opening the file.
+		/// </returns>
 		/// <exception cref="InvalidOperationException">when the file is not a valid lyrics file</exception>
 		public ILyricsReader GetLyricsReader() {
 			#region Error checking
@@ -50,7 +50,7 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the XmlFileFormatChecker class.
+		/// Initializes a new instance of the <see cref="XmlFileFormatChecker"/> class.
 		/// </summary>
 		/// <param name="Filename">The file's full path which is checked</param>
 		public XmlFileFormatChecker(string Filename) {

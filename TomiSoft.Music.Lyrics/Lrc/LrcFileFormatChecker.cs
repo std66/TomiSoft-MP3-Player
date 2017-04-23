@@ -28,7 +28,7 @@ namespace TomiSoft.Music.Lyrics.Lrc {
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the LrcFileFormatChecker class.
+		/// Initializes a new instance of the <see cref="LrcFileFormatChecker"/> class.
 		/// </summary>
 		/// <param name="Filename">The file's full path which is checked</param>
 		public LrcFileFormatChecker(string Filename) {
@@ -37,12 +37,12 @@ namespace TomiSoft.Music.Lyrics.Lrc {
 		}
 
 		/// <summary>
-		/// Gets an instance of the LrcReader class.
+		/// Gets an instance of the <see cref="LrcReader"/> class.
 		/// </summary>
 		/// <returns>
-        /// An LrcReader instance that parses the validated lyrics file.
-        /// Null is returned when there was a problem while opening the file.
-        /// </returns>
+		/// An <see cref="LrcReader"/> instance that parses the validated lyrics file.
+		/// Null is returned when there was a problem while opening the file.
+		/// </returns>
 		/// <exception cref="InvalidOperationException">when the file is not a valid lyrics file</exception>
 		public ILyricsReader GetLyricsReader() {
 			#region Error checking

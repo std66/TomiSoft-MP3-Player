@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TomiSoft.MP3Player", "TomiSoft MP3 Player\TomiSoft.MP3Player.csproj", "{8DE81E73-1DEA-412D-8C94-77697831FF4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TomiSoft.MP3Player", "TomiSoft.MP3Player\TomiSoft.MP3Player.csproj", "{8DE81E73-1DEA-412D-8C94-77697831FF4D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F482B663-DF59-4160-8F82-D32641AAFD60} = {F482B663-DF59-4160-8F82-D32641AAFD60}
 	EndProjectSection

@@ -92,7 +92,7 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 
 			try {
 				YoutubeDl Downloader = new YoutubeDl("youtube-dl.exe", App.Path) {
-					FileFormat = YoutubeDlAudioFormat.mp3,
+					AudioFileFormat = YoutubeDlAudioFormat.mp3,
 					Filename = MediaFilename,
 					VideoID = GetVideoID(SongInfo.Source)
 				};

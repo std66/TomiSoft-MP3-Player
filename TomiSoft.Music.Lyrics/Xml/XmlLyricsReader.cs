@@ -99,7 +99,7 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the XmlLyricsReader class. Loads the given lyrics file.
+		/// Initializes a new instance of the <see cref="XmlLyricsReader"/> class. Loads the given lyrics file.
 		/// </summary>
 		/// <param name="Filename">The file's URI to load.</param>
 		public XmlLyricsReader(string Filename) {
@@ -108,9 +108,9 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the XmlLyricsReader class. Loads the given lyrics file.
+		/// Initializes a new instance of the <see cref="XmlLyricsReader"/> class. Loads the given lyrics file.
 		/// </summary>
-		/// <param name="Stream">A Stream that represents the file.</param>
+		/// <param name="Stream">A <see cref="Stream"/> that represents the file.</param>
 		public XmlLyricsReader(System.IO.Stream Stream) {
 			this.doc = XDocument.Load(Stream);
 			this.TranslationID = this.DefaultTranslationID;
@@ -118,7 +118,7 @@ namespace TomiSoft.Music.Lyrics.Xml {
 
 		/// <summary>
 		/// Gets the lyrics line(s) at the given playback position. Multiple lines may be returned eg. when
-		/// there are more than one singers. The translation defined in the TranslationID property will be used.
+		/// there are more than one singers. The translation defined in the <see cref="TranslationID"/> property will be used.
 		/// </summary>
 		/// <param name="Seconds">The playback position in seconds.</param>
 		/// <returns>The lyrics line(s)</returns>
@@ -148,7 +148,7 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		}
 
 		/// <summary>
-		/// Gets all the lines of the given translation (see TranslationID).
+		/// Gets all the lines of the given translation (see <see cref="TranslationID"/>).
 		/// </summary>
 		/// <returns>A sequence of the lyrics' lines.</returns>
 		public IEnumerable<ILyricsLine> GetAllLines() {
