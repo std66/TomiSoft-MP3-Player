@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using TomiSoft.MP3Player.MediaInformation;
 using Un4seen.Bass;
 
 namespace TomiSoft.MP3Player.Playback.BASS {
@@ -22,6 +23,12 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 		public LocalAudioFilePlayback(string Filename)
 			:base(Bass.BASS_StreamCreateFile(Filename, 0, 0, BASSFlag.BASS_DEFAULT)){
 			this.Filename = Filename;
+
+			if (this.SongInfo.Title == null) {
+				this.songInfo = new SongInfo(this.songInfo) {
+					Title = Path.GetFileNameWithoutExtension(Filename)
+				};
+			}
 		}
 
 		/// <summary>
