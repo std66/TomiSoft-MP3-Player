@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
 using TomiSoft.MP3Player.Playback;
+using TomiSoft.MP3Player.Playback.BASS;
 using TomiSoft.MP3Player.Utils.Extensions;
 using TomiSoft_MP3_Player;
 

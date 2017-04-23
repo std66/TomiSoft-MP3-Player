@@ -4,11 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TomiSoft.MP3Player.Playback {
-	enum YoutubeDownloadStatus {
-		Initializing, Downloading, Converting, Completed, Error
-	}
-
+namespace TomiSoft.MP3Player.Playback.YouTube {
 	class YoutubeDownloadProgress {
 		public YoutubeDownloadStatus Status {
 			get;
@@ -27,6 +23,7 @@ namespace TomiSoft.MP3Player.Playback {
 
 		public override string ToString() {
 			Dictionary<YoutubeDownloadStatus, string> Dict = new Dictionary<YoutubeDownloadStatus, string>() {
+				{ YoutubeDownloadStatus.Updating, "youtube-dl frissítése..." },
 				{ YoutubeDownloadStatus.Initializing, "Letöltés indítása..." },
 				{ YoutubeDownloadStatus.Converting, "Videó átalakítása MP3 fájllá..." },
 				{ YoutubeDownloadStatus.Completed, "Letöltés kész" },

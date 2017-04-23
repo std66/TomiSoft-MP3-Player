@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Un4seen.Bass;
 
-namespace TomiSoft.MP3Player.Playback {
+namespace TomiSoft.MP3Player.Playback.BASS {
 	/// <summary>
 	/// Provides a file playback method using BASS.
 	/// </summary>

@@ -124,8 +124,10 @@
     <Compile Include="MediaInformation\YoutubeSongInfo.cs" />
     <Compile Include="Playback\IAudioPeakMeter.cs" />
     <Compile Include="Playback\ISavable.cs" />
-    <Compile Include="Playback\YoutubeDownloadProgress.cs" />
-    <Compile Include="Playback\YoutubePlayback.cs" />
+    <Compile Include="Playback\YouTube\YoutubeDl.cs" />
+    <Compile Include="Playback\YouTube\YoutubeDownloadProgress.cs" />
+    <Compile Include="Playback\YouTube\YoutubeDownloadStatus.cs" />
+    <Compile Include="Playback\YouTube\YoutubePlayback.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="UserInterface\Controls\PlaybackControlViewModel.cs" />
     <Compile Include="UserInterface\Converters\DoubleToTimeConverter.cs" />
@@ -170,7 +172,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Playback\BassManager.cs" />
+    <Compile Include="Playback\BASS\BassManager.cs" />
     <Compile Include="UserInterface\Windows\MainWindow\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -189,9 +191,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Playback\BassPlaybackAbstract.cs" />
+    <Compile Include="Playback\BASS\BassPlaybackAbstract.cs" />
     <Compile Include="Playback\IPlaybackManager.cs" />
-    <Compile Include="Playback\LocalAudioFilePlayback.cs" />
+    <Compile Include="Playback\BASS\LocalAudioFilePlayback.cs" />
     <Compile Include="Playback\PlaybackFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

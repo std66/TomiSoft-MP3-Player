@@ -13,6 +13,8 @@ using TomiSoft.MP3Player.Communication.Modules;
 using TomiSoft.MP3Player.Lyrics;
 using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.MP3Player.Playback;
+using TomiSoft.MP3Player.Playback.BASS;
+using TomiSoft.MP3Player.Playback.YouTube;
 using TomiSoft.MP3Player.Playlist;
 using TomiSoft.MP3Player.UserInterface.Windows.AboutWindow;
 using TomiSoft.MP3Player.UserInterface.Windows.ProgressBarDialog;
@@ -570,6 +572,7 @@ namespace TomiSoft_MP3_Player {
 			#endregion
 
 			TextInputDialog Dialog = new TextInputDialog("YouTube média letöltése", "Írd ide a videó címét, amit meg szeretnél nyitni:");
+			Dialog.Owner = this;
 
 			bool? Result = Dialog.ShowDialog();
 			if (Result.HasValue && Result.Value == true) {

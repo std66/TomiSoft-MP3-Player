@@ -6,7 +6,7 @@ using System.Windows.Threading;
 using TomiSoft.MP3Player.MediaInformation;
 using Un4seen.Bass;
 
-namespace TomiSoft.MP3Player.Playback {
+namespace TomiSoft.MP3Player.Playback.BASS {
 	/// <summary>
 	/// Provides basic functionality for playback handlers that uses
 	/// BASS to play the media.
@@ -236,7 +236,7 @@ namespace TomiSoft.MP3Player.Playback {
 		/// <summary>
 		/// Closes the BASS channel.
 		/// </summary>
-		public void Dispose() {
+		public virtual void Dispose() {
 			if (this.IsPlaying) {
 				this.Stop();
 			}

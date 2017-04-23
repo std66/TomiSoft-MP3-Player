@@ -7,7 +7,7 @@ using System.Diagnostics;
 using Un4seen.Bass;
 using TomiSoft.MP3Player.Utils.Extensions;
 
-namespace TomiSoft.MP3Player.Playback {
+namespace TomiSoft.MP3Player.Playback.BASS {
 	/// <summary>
 	/// This class manages the BASS library.
 	/// </summary>

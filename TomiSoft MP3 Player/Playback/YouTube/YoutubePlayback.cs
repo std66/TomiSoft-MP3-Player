@@ -10,14 +10,20 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using TomiSoft.MP3Player.MediaInformation;
+using TomiSoft.MP3Player.Playback.BASS;
 using TomiSoft_MP3_Player;
 
-namespace TomiSoft.MP3Player.Playback {
+namespace TomiSoft.MP3Player.Playback.YouTube {
 	/// <summary>
 	/// Provides a playback method to support media on YouTube with
 	/// youtube-dl.
 	/// </summary>
 	class YoutubePlayback : LocalAudioFilePlayback {
+		/// <summary>
+		/// Stores the path of the downloaded file.
+		/// </summary>
+		private readonly string DownloadedFile;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="YoutubePlayback"/> class.
 		/// </summary>
@@ -26,6 +32,16 @@ namespace TomiSoft.MP3Player.Playback {
 			this.songInfo = new SongInfo(this.songInfo) {
 				Title = SongInfo.Title
 			};
+
+			this.DownloadedFile = DownloadedFile;
+		}
+
+		/// <summary>
+		/// Closes the BASS channel and deletes the downloaded file.
+		/// </summary>
+		public override void Dispose() {
+			base.Dispose();
+			File.Delete(this.DownloadedFile);
 		}
 
 		/// <summary>
@@ -66,85 +82,36 @@ namespace TomiSoft.MP3Player.Playback {
 			if (!IsValidYoutubeUri(SongInfo.Source))
 				throw new ArgumentException("Not a valid YouTube URI");
 			#endregion
-
-			Progress?.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Initializing, 0));
-
-			string Uri = GetVideoOnlyUri(SongInfo.Source);
-
-			string Filename = Path.GetTempFileName();
-			string MediaFilename = Path.ChangeExtension(Filename, "mp3");
+			
+			string MediaFilename = Path.ChangeExtension(Path.GetTempFileName(), "mp3");
 
 			#region Cleanup
-			if (File.Exists(Filename))
-				File.Delete(Filename);
-
 			if (File.Exists(MediaFilename))
 				File.Delete(MediaFilename);
 			#endregion
 
 			try {
-				await UpdateYoutubeDlAsync();
-
-				string YoutubeDownloader = "youtube-dl.exe";
-				string Arguments = $"--extract-audio --audio-format mp3 -o \"{Filename}\" {Uri}";
-
-				Process DownloaderProcess = new Process() {
-					StartInfo = new ProcessStartInfo {
-						FileName = YoutubeDownloader,
-						Arguments = Arguments,
-						UseShellExecute = false,
-						RedirectStandardOutput = true,
-						RedirectStandardError = true,
-						WindowStyle = ProcessWindowStyle.Hidden,
-						CreateNoWindow = true,
-						WorkingDirectory = App.Path
-					}
+				YoutubeDl Downloader = new YoutubeDl("youtube-dl.exe", App.Path) {
+					FileFormat = YoutubeDlAudioFormat.mp3,
+					Filename = MediaFilename,
+					VideoID = GetVideoID(SongInfo.Source)
 				};
 
-				DownloaderProcess.OutputDataReceived += (o, e) => ReportProgress(e.Data, Progress);
-				DownloaderProcess.ErrorDataReceived += (o, e) => {
-					if (!String.IsNullOrWhiteSpace(e.Data)) {
-						Progress?.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Error, 0));
-						Trace.TraceWarning($"youtube-dl StdErr: {e.Data}");
-					}
-				};
-
-				DownloaderProcess.Start();
-				DownloaderProcess.BeginOutputReadLine();
-				DownloaderProcess.BeginErrorReadLine();
-
-				await Task.Run(() => DownloaderProcess.WaitForExit());
+				Progress.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Updating, 0));
+				await Downloader.UpdateAsync();
+				await Downloader.DownloadAudioAsync(Progress);
 			}
 			catch (Exception e) {
 				Trace.WriteLine(e.Message);
 				return null;
 			}
 
-			Progress?.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Completed, 100));
-
-			return new YoutubePlayback(SongInfo, MediaFilename);
+			if (File.Exists(MediaFilename))
+				return new YoutubePlayback(SongInfo, MediaFilename);
+			else
+				return null;
 		}
-
-		private static void ReportProgress(string Output, IProgress<YoutubeDownloadProgress> Progress) {
-			#region Error checking
-			if (Progress == null || String.IsNullOrWhiteSpace(Output))
-				return;
-			#endregion
-
-			Trace.TraceInformation($"youtube-dl StdOut: {Output}");
-
-			if (Output.ToLower().StartsWith("[download]") && !Output.ToLower().Contains("destination")) {
-				string Match = Regex.Match(Output, @"\b\d+([\.,]\d+)?").Value;
-				double Percentage = Convert.ToDouble(Match, CultureInfo.InvariantCulture);
-
-				Progress.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Downloading, Percentage));
-			}
-
-			else if (Output.ToLower().StartsWith("[ffmpeg]")) {
-				Progress.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Converting, 0));
-			}
-		}
-
+		
 		/// <summary>
 		/// Downloads the required additional softwares asynchronously for downloading and converting
 		/// YouTube videos.
@@ -203,33 +170,11 @@ namespace TomiSoft.MP3Player.Playback {
 		/// </summary>
 		/// <param name="Uri">A YouTube URI to clean up.</param>
 		/// <returns>A YouTube URI that contains only the video ID</returns>
-		private static string GetVideoOnlyUri(string Uri) {
+		private static string GetVideoID(string Uri) {
 			Uri u = (new Uri(Uri));
-			string VideoID = HttpUtility.ParseQueryString(u.Query)["v"];
-
-			return $"http://youtube.com/watch?v={VideoID}";
+			return HttpUtility.ParseQueryString(u.Query)["v"];
 		}
 
-		/// <summary>
-		/// Updates youtube-dl.
-		/// </summary>
-		/// <returns>A Task for a process that updates youtube-dl.</returns>
-		private static async Task UpdateYoutubeDlAsync() {
-			string YoutubeDownloader = "youtube-dl.exe";
-			string Arguments = "-U";
-
-			Process DownloaderProcess = new Process() {
-				StartInfo = new ProcessStartInfo {
-					FileName = YoutubeDownloader,
-					Arguments = Arguments,
-					UseShellExecute = true,
-					WindowStyle = ProcessWindowStyle.Hidden,
-					WorkingDirectory = App.Path
-				}
-			};
-
-			DownloaderProcess.Start();
-			await Task.Run(() => DownloaderProcess.WaitForExit());
-		}
+		
 	}
 }
