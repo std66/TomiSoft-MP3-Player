@@ -72,8 +72,10 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 				return (int)(vol * 100);
 			}
 			set {
+				#region Error checking
 				if (value < 0 || value > 100)
 					throw new ArgumentOutOfRangeException("A hangerő 0 és 100 közti érték lehet.");
+				#endregion
 
 				Bass.BASS_ChannelSetAttribute(this.channelID, BASSAttribute.BASS_ATTRIB_VOL, (float)value / 100);
 			}
@@ -162,10 +164,10 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 		}
 
 		/// <summary>
-		/// Initializes a new instance of BassPlaybackAbstract using the given channel ID.
+		/// Initializes a new instance of <see cref="BassPlaybackAbstract"/> using the given channel ID.
 		/// </summary>
 		/// <param name="ChannelID">The channel ID provided by BASS.</param>
-        /// <exception cref="IOException">when BASS can't open the file</exception>
+		/// <exception cref="IOException">when BASS can't open the file</exception>
 		public BassPlaybackAbstract(int ChannelID) {
 			#region Error checking
 			if (ChannelID == 0) {
@@ -186,12 +188,12 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 			this.songInfo = new BassSongInfo(this.ChannelID);
 		}
 
-        /// <summary>
-        /// This method is executed when the PlaybackTimer ticks.
-        /// </summary>
-        /// <param name="sender">The DispatcherTimer instance</param>
-        /// <param name="e">Event parameters</param>
-        private void TimerTick(object sender, EventArgs e) {
+		/// <summary>
+		/// This method is executed when the <see cref="PlaybackTimer"/> ticks.
+		/// </summary>
+		/// <param name="sender">The <see cref="DispatcherTimer"/> instance</param>
+		/// <param name="e">Event parameters</param>
+		private void TimerTick(object sender, EventArgs e) {
             if (Position >= Length) {
                 this.Stop();
                 this.SongEnded?.Invoke();
@@ -208,6 +210,9 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 				this.IsPlaying = true;
 				this.IsPaused = false;
 			}
+			else {
+				Trace.TraceWarning($"[BASS] Could not start playback (BassError = {Bass.BASS_ErrorGetCode()})");
+			}
 		}
 
 		/// <summary>
@@ -220,6 +225,9 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 				this.Position = 0;
 				this.NotifyAll();
 			}
+			else {
+				Trace.TraceWarning($"[BASS] Could not stop playback (BassError = {Bass.BASS_ErrorGetCode()})");
+			}
 		}
 
 		/// <summary>
@@ -230,6 +238,9 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 				this.IsPlaying = false;
 				this.IsPaused = true;
 				this.NotifyAll();
+			}
+			else {
+				Trace.TraceWarning($"[BASS] Could not pause playback (BassError = {Bass.BASS_ErrorGetCode()})");
 			}
 		}
 
@@ -242,13 +253,13 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 			}
 
             if (!Bass.BASS_StreamFree(this.ChannelID))
-                Trace.TraceWarning($"[BASS] Could not release stream: (ErrorCode={Bass.BASS_ErrorGetCode()})");
+                Trace.TraceWarning($"[BASS] Could not release stream: (BassError = {Bass.BASS_ErrorGetCode()})");
 
             this.PlaybackTimer.Tick -= TimerTick;
 		}
 
 		/// <summary>
-		/// Fires the PropertyChanged event for the given property.
+		/// Fires the <see cref="PropertyChanged"/> event for the given property.
 		/// </summary>
 		/// <param name="info">The property's name that changed.</param>
 		private void NotifyPropertyChanged(String info) {
@@ -256,7 +267,7 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 		}
 
 		/// <summary>
-		/// Fires PropertyChanged event for all properties.
+		/// Fires <see cref="PropertyChanged"/> event for all properties.
 		/// </summary>
 		private void NotifyAll() {
 			#region Error checking

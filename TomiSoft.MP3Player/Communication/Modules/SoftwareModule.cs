@@ -1,6 +1,4 @@
-﻿using TomiSoft.MP3Player.Playback;
-using TomiSoft.MP3Player.Playback.YouTube;
-using TomiSoft_MP3_Player;
+﻿using TomiSoft_MP3_Player;
 
 namespace TomiSoft.MP3Player.Communication.Modules {
 	public class SoftwareModule : IServerModule {
@@ -38,6 +36,11 @@ namespace TomiSoft.MP3Player.Communication.Modules {
 		[ServerCommand]
 		public string IsRunning() {
 			return "true";
+		}
+
+		[ServerCommand]
+		public string TraceLog() {
+			return App.TraceLog;
 		}
 	}
 }
