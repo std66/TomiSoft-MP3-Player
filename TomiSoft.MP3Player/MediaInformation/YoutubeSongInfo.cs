@@ -6,10 +6,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
+using TomiSoft.MP3Player.Playback.YouTube;
 using TomiSoft_MP3_Player;
 
 namespace TomiSoft.MP3Player.MediaInformation {
@@ -39,9 +41,8 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		/// Gets the artist of the song. Always returns a <see cref="string"/> similar to "Source: YouTube".
 		/// </summary>
 		public string Artist {
-			get {
-				return "Forrás: YouTube";
-			}
+			get;
+			private set;
 		}
 
 		/// <summary>
@@ -87,6 +88,19 @@ namespace TomiSoft.MP3Player.MediaInformation {
 			this.Source = Source;
 			this.Title = Title;
 			this.Length = DurationInSeconds;
+			this.Artist = "Forrás: YouTube";
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="YoutubeSongInfo"/> class.
+		/// </summary>
+		/// <param name="Source">The URI of the video</param>
+		/// <param name="Title">The title of the video</param>
+		/// <param name="Artist">The artist of the video</param>
+		/// <param name="DurationInSeconds">The length of the video in seconds</param>
+		private YoutubeSongInfo(string Source, string Title, string Artist, double DurationInSeconds)
+			:this (Source, Title, DurationInSeconds) {
+			this.Artist = Artist ?? "Forrás: YouTube";
 		}
 
 		/// <summary>
@@ -97,6 +111,12 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		public static async Task<YoutubeSongInfo> GetVideoInfoAsync(string Source) {
 			string ApiKey = await GetApiKeyAsync();
 
+			YoutubeDl d = new YoutubeDl("youtube-dl.exe", App.Path) {
+				VideoID = GetVideoID(Source)
+			};
+			dynamic r = await d.GetVideoInfo();
+
+			/*
 			YouTubeService s = new YouTubeService(new BaseClientService.Initializer() {
 				ApiKey = ApiKey,
 				ApplicationName = App.Name
@@ -106,11 +126,12 @@ namespace TomiSoft.MP3Player.MediaInformation {
 			Request.Id = GetVideoID(Source);
 
 			VideoListResponse Response = await Request.ExecuteAsync();
-
+			*/
 			return new YoutubeSongInfo(
 				Source: Source,
-				Title: Response.Items[0].Snippet.Title,
-				DurationInSeconds: XmlConvert.ToTimeSpan(Response.Items[0].ContentDetails.Duration).TotalSeconds
+				Title: r.alt_title ?? r.title,
+				Artist: r.creator,
+				DurationInSeconds: r.duration
 			);
 		}
 

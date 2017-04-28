@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -33,6 +37,15 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 		/// update is needed.
 		/// </summary>
 		public event EventHandler UpdateRequired;
+
+		/// <summary>
+		/// Gets a YouTube watch link generated from <see cref="VideoID"/>.
+		/// </summary>
+		public string YoutubeUri {
+			get {
+				return $"https://youtube.com/watch?v={this.VideoID}";
+			}
+		}
 
 		/// <summary>
 		/// Gets of sets the YouTube video ID.
@@ -100,8 +113,7 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 
 					DownloaderProcess.Kill();
 
-					if (e.Data.Contains("Make sure you are using the latest version"))
-						this.UpdateRequired?.Invoke(this, EventArgs.Empty);
+					this.CheckIfUpdateRequired(e.Data);
 				}
 			};
 
@@ -114,6 +126,38 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 			await Task.Run(() => DownloaderProcess.WaitForExit());
 
 			Progress?.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Completed, 100));
+		}
+		
+		/// <summary>
+		/// Downloads informations about the video asynchronously.
+		/// </summary>
+		/// <returns>An <see cref="ExpandoObject"/> instance that holds the video information.</returns>
+		public async Task<dynamic> GetVideoInfo() {
+			Process DownloaderProcess = new Process() {
+				StartInfo = new ProcessStartInfo {
+					FileName = this.ExecutablePath,
+					Arguments = $"--quiet --print-json {this.YoutubeUri}",
+					UseShellExecute = false,
+					WindowStyle = ProcessWindowStyle.Hidden,
+					CreateNoWindow = true,
+					WorkingDirectory = this.WorkingDirectory,
+					RedirectStandardOutput = true,
+					RedirectStandardError = true
+				}
+			};
+
+			StringBuilder StdOut = new StringBuilder();
+			DownloaderProcess.OutputDataReceived += (o, e) => StdOut.Append(e.Data);
+
+			DownloaderProcess.Start();
+			DownloaderProcess.BeginOutputReadLine();
+
+			await Task.Run(() => DownloaderProcess.WaitForExit());
+
+			string json = StdOut.ToString();
+			dynamic Result = JsonConvert.DeserializeObject<ExpandoObject>(json, new ExpandoObjectConverter());
+
+			return Result;
 		}
 
 		/// <summary>
@@ -135,6 +179,20 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 			await Task.Run(() => DownloaderProcess.WaitForExit());
 		}
 
+		private Task WaitForExitAsync(Process p) {
+			return Task.Run(() => p.WaitForExit());
+		}
+
+		private void CheckIfUpdateRequired(string ErrorLine) {
+			#region Error checking
+			if (String.IsNullOrWhiteSpace(ErrorLine))
+				return;
+			#endregion
+
+			if (ErrorLine.Contains("Make sure you are using the latest version"))
+				this.UpdateRequired?.Invoke(this, EventArgs.Empty);
+		}
+		
 		/// <summary>
 		/// Extracts the status information from the standard output of the youtube-dl.
 		/// </summary>
@@ -167,11 +225,9 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 		/// <param name="TempFilename">A temporary file that will hold the unprocessed media.</param>
 		/// <returns>The <see cref="ProcessStartInfo"/> instance.</returns>
 		private ProcessStartInfo GetProcessStartInfo(string TempFilename) {
-			string Uri = $"https://youtube.com/watch?v={this.VideoID}";
-
 			return new ProcessStartInfo {
 				FileName = this.ExecutablePath,
-				Arguments = $"--extract-audio --audio-format {this.AudioFileFormat} -o \"{TempFilename}\" {Uri}",
+				Arguments = $"--extract-audio --audio-format {this.AudioFileFormat} -o \"{TempFilename}\" {this.YoutubeUri}",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 				RedirectStandardError = true,

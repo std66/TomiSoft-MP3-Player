@@ -27,7 +27,8 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 		/// <param name="DownloadedFile">The path of the media file downloaded and converted by youtube-dl.</param>
 		private YoutubePlayback(ISongInfo SongInfo, string DownloadedFile) : base(DownloadedFile) {
 			this.songInfo = new SongInfo(this.songInfo) {
-				Title = SongInfo.Title
+				Title = SongInfo.Title,
+				Artist = SongInfo.Artist != "Forrás: YouTube" ? SongInfo.Artist : null
 			};
 
 			this.DownloadedFile = DownloadedFile;
