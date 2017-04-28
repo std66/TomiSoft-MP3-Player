@@ -29,6 +29,12 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 		private readonly string WorkingDirectory;
 
 		/// <summary>
+		/// This event occures when a download has failed because a software
+		/// update is needed.
+		/// </summary>
+		public event EventHandler UpdateRequired;
+
+		/// <summary>
 		/// Gets of sets the YouTube video ID.
 		/// </summary>
 		public string VideoID {
@@ -91,6 +97,11 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 				if (!String.IsNullOrWhiteSpace(e.Data)) {
 					Progress?.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Error, 0));
 					Trace.TraceWarning($"youtube-dl StdErr: {e.Data}");
+
+					DownloaderProcess.Kill();
+
+					if (e.Data.Contains("Make sure you are using the latest version"))
+						this.UpdateRequired?.Invoke(this, EventArgs.Empty);
 				}
 			};
 

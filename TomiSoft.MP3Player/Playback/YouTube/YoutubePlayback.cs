@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using TomiSoft.MP3Player.MediaInformation;
@@ -97,8 +94,14 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 					VideoID = GetVideoID(SongInfo.Source)
 				};
 
-				Progress.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Updating, 0));
-				await Downloader.UpdateAsync();
+				//When download fails and youtube-dl reports that an update is required, update it and retry.
+				Downloader.UpdateRequired += async (o, e) => {
+					Progress.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Updating, 0));
+					await Downloader.UpdateAsync();
+
+					await Downloader.DownloadAudioAsync(Progress);
+				};
+
 				await Downloader.DownloadAudioAsync(Progress);
 			}
 			catch (Exception e) {
