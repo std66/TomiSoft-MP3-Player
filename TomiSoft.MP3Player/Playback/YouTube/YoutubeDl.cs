@@ -8,6 +8,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using TomiSoft.MP3Player.Utils.Extensions;
 
 namespace TomiSoft.MP3Player.Playback.YouTube {
 	/// <summary>
@@ -21,6 +22,11 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 	/// A wrapper class for youtube-dl that can be used to download media from YouTube.
 	/// </summary>
 	class YoutubeDl {
+		/// <summary>
+		/// Stores if a retry is needed because of an update.
+		/// </summary>
+		private bool RequiresUpdateAndRetry = false;
+
 		/// <summary>
 		/// Stores the relative path of the youtube-dl.exe file according to the
 		/// <see cref="WorkingDirectory"/>.
@@ -46,6 +52,15 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 				return $"https://youtube.com/watch?v={this.VideoID}";
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets if youtube-dl should be updated automatically and retry the operation when
+		/// download error occures because of the outdated version. True by default.
+		/// </summary>
+		public bool AutoUpdateAndRetry {
+			get;
+			set;
+		} = true;
 
 		/// <summary>
 		/// Gets of sets the YouTube video ID.
@@ -99,6 +114,8 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 		/// <param name="Progress">An <see cref="IProgress{YoutubeDownloadProgress}"/> instance that can be used to report the progress of the download. Can be null.</param>
 		/// <returns>A <see cref="Task"/> that represents the asynchronous process.</returns>
 		public async Task DownloadAudioAsync(IProgress<YoutubeDownloadProgress> Progress) {
+			this.RequiresUpdateAndRetry = false;
+
 			string TempPath = Path.ChangeExtension(this.Filename, ".tmp");
 			if (File.Exists(TempPath))
 				File.Delete(TempPath);
@@ -110,9 +127,7 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 				if (!String.IsNullOrWhiteSpace(e.Data)) {
 					Progress?.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Error, 0));
 					Trace.TraceWarning($"youtube-dl StdErr: {e.Data}");
-
-					DownloaderProcess.Kill();
-
+					
 					this.CheckIfUpdateRequired(e.Data);
 				}
 			};
@@ -123,7 +138,11 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 			DownloaderProcess.BeginOutputReadLine();
 			DownloaderProcess.BeginErrorReadLine();
 
-			await Task.Run(() => DownloaderProcess.WaitForExit());
+			await DownloaderProcess.WaitForExitAsync();
+			if (this.RequiresUpdateAndRetry && this.AutoUpdateAndRetry) {
+				await this.UpdateAsync();
+				await DownloadAudioAsync(Progress);
+			}
 
 			Progress?.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Completed, 100));
 		}
@@ -133,6 +152,8 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 		/// </summary>
 		/// <returns>An <see cref="ExpandoObject"/> instance that holds the video information.</returns>
 		public async Task<dynamic> GetVideoInfo() {
+			this.RequiresUpdateAndRetry = false;
+
 			Process DownloaderProcess = new Process() {
 				StartInfo = new ProcessStartInfo {
 					FileName = this.ExecutablePath,
@@ -148,14 +169,20 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 
 			StringBuilder StdOut = new StringBuilder();
 			DownloaderProcess.OutputDataReceived += (o, e) => StdOut.Append(e.Data);
+			DownloaderProcess.ErrorDataReceived += (o, e) => this.CheckIfUpdateRequired(e.Data);
 
 			DownloaderProcess.Start();
 			DownloaderProcess.BeginOutputReadLine();
 
-			await Task.Run(() => DownloaderProcess.WaitForExit());
+			await DownloaderProcess.WaitForExitAsync();
 
 			string json = StdOut.ToString();
 			dynamic Result = JsonConvert.DeserializeObject<ExpandoObject>(json, new ExpandoObjectConverter());
+
+			if (RequiresUpdateAndRetry && this.AutoUpdateAndRetry) {
+				await this.UpdateAsync();
+				return await GetVideoInfo();
+			}
 
 			return Result;
 		}
@@ -176,11 +203,7 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 			};
 
 			DownloaderProcess.Start();
-			await Task.Run(() => DownloaderProcess.WaitForExit());
-		}
-
-		private Task WaitForExitAsync(Process p) {
-			return Task.Run(() => p.WaitForExit());
+			await DownloaderProcess.WaitForExitAsync();
 		}
 
 		private void CheckIfUpdateRequired(string ErrorLine) {
@@ -189,8 +212,10 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 				return;
 			#endregion
 
-			if (ErrorLine.Contains("Make sure you are using the latest version"))
+			if (ErrorLine.Contains("Make sure you are using the latest version")) {
 				this.UpdateRequired?.Invoke(this, EventArgs.Empty);
+				this.RequiresUpdateAndRetry = true;
+			}
 		}
 		
 		/// <summary>

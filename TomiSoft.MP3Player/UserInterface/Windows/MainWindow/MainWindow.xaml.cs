@@ -341,7 +341,7 @@ namespace TomiSoft_MP3_Player {
 				foreach (string Filename in SupportedFiles) {
 					if (Filename.Contains("youtube.com/watch")) {
 						this.viewModel.LyricsReader = null;
-						this.viewModel.Lyrics = "Megnézzük, mit kell tudni a videóról...";
+						this.viewModel.Lyrics = "Előkészülünk a letöltéshez...";
 						this.Playlist.Add(await YoutubeSongInfo.GetVideoInfoAsync(Filename));
 					}
 					else
