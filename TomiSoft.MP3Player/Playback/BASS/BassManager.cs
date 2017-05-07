@@ -127,6 +127,8 @@ namespace TomiSoft.MP3Player.Playback.BASS {
                 }
             }
 
+			Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_DEV_DEFAULT, 1);
+
             if (!Bass.BASS_Init(-1, 44800, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero)) {
                 Trace.TraceError($"[BASS output init] Cannot initialize BASS: (BassErrorCode={Bass.BASS_ErrorGetCode().ToString()})");
                 return false;

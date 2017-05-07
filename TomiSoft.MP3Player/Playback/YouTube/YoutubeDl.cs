@@ -140,7 +140,9 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 
 			await DownloaderProcess.WaitForExitAsync();
 			if (this.RequiresUpdateAndRetry && this.AutoUpdateAndRetry) {
+				Progress?.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Updating, 0));
 				await this.UpdateAsync();
+
 				await DownloadAudioAsync(Progress);
 			}
 
