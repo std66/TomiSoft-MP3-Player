@@ -9,10 +9,6 @@ An advanced audio playback application built on the BASS library.
   - Downloading and playing music from YouTube (see "YouTube support")
   - VU meter
   - API provided over TCP connection on loopback interface
-  
-Download binary:
-----------------
-http://tomisoft.site90.net/TomiSoft-MP3-Player/TomiSoft-MP3-Player.zip
 
 Screenshots:
 ------------
