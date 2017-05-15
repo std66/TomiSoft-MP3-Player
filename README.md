@@ -10,6 +10,10 @@ An advanced audio playback application built on the BASS library.
   - VU meter
   - API provided over TCP connection on loopback interface
 
+Download:
+---------
+http://tomisoft.byethost7.com/TomiSoft-MP3-Player/TomiSoft-MP3-Player.zip
+
 Screenshots:
 ------------
 ![Screenshot 1](https://github.com/std66/TomiSoft-MP3-Player/raw/master/Screenshots/Screen1.png "Main screen")
