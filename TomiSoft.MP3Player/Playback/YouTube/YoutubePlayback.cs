@@ -9,6 +9,7 @@ using System.Web;
 using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.MP3Player.Playback.BASS;
 using TomiSoft_MP3_Player;
+using Un4seen.Bass.AddOn.Tags;
 
 namespace TomiSoft.MP3Player.Playback.YouTube {
 	/// <summary>
@@ -32,6 +33,33 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 			};
 
 			this.DownloadedFile = DownloadedFile;
+		}
+
+		/// <summary>
+		/// Creates a copy of the downloaded file to the given <see cref="Stream"/>. If the
+		/// <paramref name="TargetStream"/> is a <see cref="FileStream"/>, additional metatags will
+		/// be added.
+		/// </summary>
+		/// <param name="TargetStream">The <see cref="Stream"/> where the file is copied to</param>
+		/// <returns>True if saving was successful, false if not</returns>
+		public override async Task<bool> SaveToAsync(Stream TargetStream) {
+			bool SavedSuccessfully = await base.SaveToAsync(TargetStream);
+
+			if (!SavedSuccessfully)
+				return false;
+
+			FileStream fs = TargetStream as FileStream;
+			if (fs == null)
+				return true;
+
+			TargetStream.Dispose();
+
+			TagLib.File f = TagLib.File.Create(fs.Name);
+			f.Tag.Title = this.songInfo.Title;
+			f.Tag.AlbumArtists = new string[] { this.songInfo.Artist };
+			f.Save();
+
+			return true;
 		}
 
 		/// <summary>

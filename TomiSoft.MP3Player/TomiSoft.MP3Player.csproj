@@ -95,6 +95,10 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="taglib-sharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\taglib-sharp.dll</HintPath>
+    </Reference>
     <Reference Include="Windows" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -224,6 +228,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="taglib-sharp.dll" />
     <Resource Include="ApplicationIcon.ico" />
     <Content Include="Bass.Net.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

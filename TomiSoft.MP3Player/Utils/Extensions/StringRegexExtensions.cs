@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace TomiSoft.MP3Player.Utils.Extensions {
@@ -68,6 +69,17 @@ namespace TomiSoft.MP3Player.Utils.Extensions {
 					Current.Groups[ValueName].Value
 				);
 			}
+		}
+
+		/// <summary>
+		/// Removes all the characters from the <see cref="string"/> that are forbidden in a path.
+		/// </summary>
+		/// <param name="Input">The <see cref="string"/> that represents the path</param>
+		/// <returns>A <see cref="string"/>that does not contain forbidden characters</returns>
+		public static string RemovePathInvalidChars(this string Input) {
+			string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+			Regex r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
+			return r.Replace(Input, "");
 		}
 	}
 }

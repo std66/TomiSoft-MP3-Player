@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TomiSoft.MP3Player.MediaInformation;
+using TomiSoft.MP3Player.Utils.Extensions;
 using Un4seen.Bass;
 
 namespace TomiSoft.MP3Player.Playback.BASS {
@@ -55,14 +57,14 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 		public string RecommendedFilename {
 			get {
 				if (this.SongInfo.Title == null)
-					return this.Filename;
+					return this.Filename.RemovePathInvalidChars();
 
 				string Extension = Path.GetExtension(this.OriginalFilename);
 
 				if (this.SongInfo.Artist != null)
-					return $"{this.SongInfo.Artist} - {this.SongInfo.Title}{Extension}";
-
-				return $"{this.SongInfo.Title}{Extension}";
+					return $"{this.SongInfo.Artist} - {this.SongInfo.Title}{Extension}".RemovePathInvalidChars();
+				
+				return $"{this.SongInfo.Title}{Extension}".RemovePathInvalidChars();
 			}
 		}
 
@@ -74,7 +76,7 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 		/// A <see cref="Task"/> that represents the process of the saving procedure. When the saving
 		/// is finished, a bool value will represent whether the saving was successful or not.
 		/// </returns>
-		public async Task<bool> SaveToAsync(Stream TargetStream) {
+		public virtual async Task<bool> SaveToAsync(Stream TargetStream) {
 			#region Error checking
 			if (TargetStream == null)
 				return false;

@@ -39,7 +39,13 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		/// </summary>
 		public string Artist {
 			get {
-				return String.IsNullOrWhiteSpace(tagInfo.artist) ? null : tagInfo.artist;
+				if (!String.IsNullOrWhiteSpace(tagInfo.artist))
+					return tagInfo.artist;
+
+				if (!String.IsNullOrWhiteSpace(tagInfo.albumartist))
+					return tagInfo.albumartist;
+
+				return null;
 			}
 		}
 
