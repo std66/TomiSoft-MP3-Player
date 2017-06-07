@@ -159,7 +159,7 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 			Process DownloaderProcess = new Process() {
 				StartInfo = new ProcessStartInfo {
 					FileName = this.ExecutablePath,
-					Arguments = $"--quiet --print-json {this.YoutubeUri}",
+					Arguments = $"--dump-json {this.YoutubeUri}",
 					UseShellExecute = false,
 					WindowStyle = ProcessWindowStyle.Hidden,
 					CreateNoWindow = true,
