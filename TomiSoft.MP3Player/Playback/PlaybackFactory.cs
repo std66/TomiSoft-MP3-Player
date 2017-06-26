@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using TomiSoft.ExternalApis.YoutubeDl;
 using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.MP3Player.Playback.BASS;
 using TomiSoft.MP3Player.Playback.YouTube;

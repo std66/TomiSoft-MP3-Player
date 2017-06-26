@@ -47,34 +47,6 @@
       <HintPath>..\packages\FontAwesome.WPF.4.5.0.8\lib\net40\FontAwesome.WPF.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Google.Apis, Version=1.25.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.1.25.0\lib\net45\Google.Apis.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Google.Apis.Auth, Version=1.25.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.Auth.1.25.0\lib\net45\Google.Apis.Auth.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Google.Apis.Auth.PlatformServices, Version=1.25.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.Auth.1.25.0\lib\net45\Google.Apis.Auth.PlatformServices.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Google.Apis.Core, Version=1.25.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.Core.1.25.0\lib\net45\Google.Apis.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Google.Apis.PlatformServices, Version=1.25.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.1.25.0\lib\net45\Google.Apis.PlatformServices.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Google.Apis.YouTube.v3, Version=1.25.0.760, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.YouTube.v3.1.25.0.760\lib\net45\Google.Apis.YouTube.v3.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -103,10 +75,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Zlib.Portable, Version=1.11.0.0, Culture=neutral, PublicKeyToken=431cba815f6a8b5b, processorArchitecture=MSIL">
-      <HintPath>..\packages\Zlib.Portable.Signed.1.11.0\lib\portable-net4+sl5+wp8+win8+wpa81+MonoTouch+MonoAndroid\Zlib.Portable.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -128,9 +96,6 @@
     <Compile Include="MediaInformation\YoutubeSongInfo.cs" />
     <Compile Include="Playback\IAudioPeakMeter.cs" />
     <Compile Include="Playback\ISavable.cs" />
-    <Compile Include="Playback\YouTube\YoutubeDl.cs" />
-    <Compile Include="Playback\YouTube\YoutubeDownloadProgress.cs" />
-    <Compile Include="Playback\YouTube\YoutubeDownloadStatus.cs" />
     <Compile Include="Playback\YouTube\YoutubePlayback.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="UserInterface\Controls\PlaybackControlViewModel.cs" />
@@ -158,7 +123,6 @@
     </Compile>
     <Compile Include="Utils\Extensions\ArrayExtensions.cs" />
     <Compile Include="Utils\Extensions\ImageExtensions.cs" />
-    <Compile Include="Utils\Extensions\ProcessExtensions.cs" />
     <Compile Include="Utils\PlaybackHotkeys.cs" />
     <Compile Include="Utils\Extensions\StringRegexExtensions.cs" />
     <Compile Include="Utils\Windows\Hotkeys.cs" />
@@ -285,6 +249,10 @@
     <None Include="Resources\default.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TomiSoft.ExternalApis.YoutubeDl\TomiSoft.ExternalApis.YoutubeDl.csproj">
+      <Project>{4EABF703-A827-4305-A006-14AE7EB65663}</Project>
+      <Name>TomiSoft.ExternalApis.YoutubeDl</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TomiSoft.MP3Player.Communication\TomiSoft.MP3Player.Communication.csproj">
       <Project>{fab5119b-1065-45b0-9e71-83fba9ccb811}</Project>
       <Name>TomiSoft.MP3Player.Communication</Name>

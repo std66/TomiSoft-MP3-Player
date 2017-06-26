@@ -1,17 +1,11 @@
-﻿using Google.Apis.Services;
-using Google.Apis.YouTube.v3;
-using Google.Apis.YouTube.v3.Data;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using System.Xml;
-using TomiSoft.MP3Player.Playback.YouTube;
+using TomiSoft.ExternalApis.YoutubeDl;
+using TomiSoft.ExternalApis.YoutubeDl.MediaInformation;
 using TomiSoft_MP3_Player;
 
 namespace TomiSoft.MP3Player.MediaInformation {
@@ -114,24 +108,14 @@ namespace TomiSoft.MP3Player.MediaInformation {
 			YoutubeDl d = new YoutubeDl("youtube-dl.exe", App.Path) {
 				VideoID = GetVideoID(Source)
 			};
-			dynamic r = await d.GetVideoInfo();
 
-			/*
-			YouTubeService s = new YouTubeService(new BaseClientService.Initializer() {
-				ApiKey = ApiKey,
-				ApplicationName = App.Name
-			});
-
-			VideosResource.ListRequest Request = s.Videos.List("contentDetails,snippet");
-			Request.Id = GetVideoID(Source);
-
-			VideoListResponse Response = await Request.ExecuteAsync();
-			*/
+			YoutubeMediaInfo r = await d.GetVideoInfo();
+			
 			return new YoutubeSongInfo(
 				Source: Source,
-				Title: r.alt_title ?? r.title,
-				Artist: r.creator,
-				DurationInSeconds: r.duration
+				Title: r.RecognizedMedia?.Title ?? r.Title,
+				Artist: r.RecognizedMedia?.Artist,
+				DurationInSeconds: r.Duration.TotalSeconds
 			);
 		}
 
