@@ -103,8 +103,6 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		/// <param name="Source">The URL of the video</param>
 		/// <returns>A <see cref="YoutubeSongInfo"/> instance.</returns>
 		public static async Task<YoutubeSongInfo> GetVideoInfoAsync(string Source) {
-			string ApiKey = await GetApiKeyAsync();
-
 			YoutubeDl d = new YoutubeDl("youtube-dl.exe", App.Path) {
 				VideoID = GetVideoID(Source)
 			};
@@ -117,19 +115,6 @@ namespace TomiSoft.MP3Player.MediaInformation {
 				Artist: r.RecognizedMedia?.Artist,
 				DurationInSeconds: r.Duration.TotalSeconds
 			);
-		}
-
-		/// <summary>
-		/// Gets the API key for YouTube Data APi access.
-		/// </summary>
-		/// <returns>The API key that is used to access the YouTube Data API.</returns>
-		private static async Task<string> GetApiKeyAsync() {
-			string ApiKey = null;
-			using (WebClient cl = new WebClient()) {
-				ApiKey = await cl.DownloadStringTaskAsync("http://tomisoft.site90.net/TomiSoft-MP3-Player/ApiKey.data");
-			}
-
-			return ApiKey;
 		}
 
 		/// <summary>
