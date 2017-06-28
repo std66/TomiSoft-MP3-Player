@@ -72,6 +72,9 @@
         
         <!-- Menu -->
 		<StackPanel HorizontalAlignment="Left" Height="237" Grid.RowSpan="3" Width="235" Background="LightGray" Name="Menu">
+			<StackPanel.Effect>
+				<DropShadowEffect Direction="0" ShadowDepth="4" BlurRadius="10"/>
+			</StackPanel.Effect>
 			<StackPanel.RenderTransform>
                 <TranslateTransform X="-235"/>
             </StackPanel.RenderTransform>
