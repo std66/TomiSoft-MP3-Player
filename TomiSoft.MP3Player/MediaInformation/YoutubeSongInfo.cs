@@ -26,9 +26,8 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		/// Gets the cover image of the album. Always returns null.
 		/// </summary>
 		public Image AlbumImage {
-			get {
-				return null;
-			}
+			get;
+			private set;
 		}
 
 		/// <summary>
@@ -108,13 +107,18 @@ namespace TomiSoft.MP3Player.MediaInformation {
 			};
 
 			YoutubeMediaInfo r = await d.GetVideoInfo();
-			
-			return new YoutubeSongInfo(
+
+			var Result = new YoutubeSongInfo(
 				Source: Source,
 				Title: r.RecognizedMedia?.Title ?? r.Title,
 				Artist: r.RecognizedMedia?.Artist,
 				DurationInSeconds: r.Duration.TotalSeconds
 			);
+
+			if (App.Config.YoutubeDownloadThumbnail)
+				Result.AlbumImage = await r.Thumbnails.FirstOrDefault()?.DownloadAsImageAsync();
+
+			return Result;
 		}
 
 		/// <summary>

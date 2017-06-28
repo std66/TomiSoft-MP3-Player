@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -10,7 +11,6 @@ using TomiSoft.ExternalApis.YoutubeDl;
 using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.MP3Player.Playback.BASS;
 using TomiSoft_MP3_Player;
-using Un4seen.Bass.AddOn.Tags;
 
 namespace TomiSoft.MP3Player.Playback.YouTube {
 	/// <summary>
@@ -28,7 +28,7 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 		/// </summary>
 		/// <param name="DownloadedFile">The path of the media file downloaded and converted by youtube-dl.</param>
 		private YoutubePlayback(ISongInfo SongInfo, string DownloadedFile) : base(DownloadedFile) {
-			this.songInfo = new SongInfo(this.songInfo) {
+			this.songInfo = new SongInfo(SongInfo) {
 				Title = SongInfo.Title,
 				Artist = SongInfo.Artist != "Forrás: YouTube" ? SongInfo.Artist : null
 			};
@@ -54,10 +54,19 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 				return true;
 
 			TargetStream.Dispose();
-
+			
 			TagLib.File f = TagLib.File.Create(fs.Name);
 			f.Tag.Title = this.songInfo.Title;
 			f.Tag.AlbumArtists = new string[] { this.songInfo.Artist };
+
+			if (this.songInfo.AlbumImage != null) {
+				using (MemoryStream ms = new MemoryStream()) {
+					this.songInfo.AlbumImage.Save(ms, ImageFormat.Png);
+					ms.Position = 0;
+					f.Tag.Pictures = new TagLib.IPicture[] { new TagLib.Picture(TagLib.ByteVector.FromStream(ms)) };
+				}
+			}
+
 			f.Save();
 
 			return true;

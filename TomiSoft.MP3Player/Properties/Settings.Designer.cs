@@ -58,5 +58,17 @@ namespace TomiSoft.MP3Player.Properties {
                 this["ServerPort"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool YoutubeDownloadThumbnail {
+            get {
+                return ((bool)(this["YoutubeDownloadThumbnail"]));
+            }
+            set {
+                this["YoutubeDownloadThumbnail"] = value;
+            }
+        }
     }
 }
