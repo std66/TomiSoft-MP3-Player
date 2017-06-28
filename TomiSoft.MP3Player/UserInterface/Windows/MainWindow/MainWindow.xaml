@@ -110,8 +110,8 @@
 
             <Separator/>
 
-            <ListView x:Name="lvPlaylist" MouseDoubleClick="lvPlaylist_MouseDoubleClick" Height="156" Background="Transparent" ItemsSource="{Binding Playlist}"  BorderBrush="Transparent">
-                <ListView.ItemTemplate>
+			<ListView x:Name="lvPlaylist" MouseDoubleClick="lvPlaylist_MouseDoubleClick" Height="156" Background="Transparent" ItemsSource="{Binding Playlist}"  BorderBrush="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+				<ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Vertical">
                             <TextBlock FontWeight="Bold" Text="{Binding Title, FallbackValue='Ismeretlen szám'}"/>
