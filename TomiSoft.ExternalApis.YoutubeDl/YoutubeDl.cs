@@ -107,14 +107,14 @@ namespace TomiSoft.ExternalApis.YoutubeDl {
 		/// </summary>
 		/// <param name="Progress">An <see cref="IProgress{YoutubeDownloadProgress}"/> instance that can be used to report the progress of the download. Can be null.</param>
 		/// <returns>A <see cref="Task"/> that represents the asynchronous process.</returns>
-		public async Task DownloadAudioAsync(IProgress<YoutubeDownloadProgress> Progress) {
+		public async Task DownloadAudioAsync(IProgress<YoutubeDownloadProgress> Progress, MediaFormat Format = null) {
 			this.RequiresUpdateAndRetry = false;
 
 			string TempPath = Path.ChangeExtension(this.Filename, ".tmp");
 			if (File.Exists(TempPath))
 				File.Delete(TempPath);
 
-			Process DownloaderProcess = new Process { StartInfo = this.GetProcessStartInfo(TempPath) };
+			Process DownloaderProcess = new Process { StartInfo = this.GetProcessStartInfo(TempPath, Format) };
 
 			DownloaderProcess.OutputDataReceived += (o, e) => ReportProgress(e.Data, Progress);
 			DownloaderProcess.ErrorDataReceived += (o, e) => {
@@ -245,10 +245,12 @@ namespace TomiSoft.ExternalApis.YoutubeDl {
 		/// </summary>
 		/// <param name="TempFilename">A temporary file that will hold the unprocessed media.</param>
 		/// <returns>The <see cref="ProcessStartInfo"/> instance.</returns>
-		private ProcessStartInfo GetProcessStartInfo(string TempFilename) {
+		private ProcessStartInfo GetProcessStartInfo(string TempFilename, MediaFormat DesiredFormat = null) {
+			string Format = DesiredFormat != null ? $" --format {DesiredFormat.FormatID} " : String.Empty;
+
 			return new ProcessStartInfo {
 				FileName = this.ExecutablePath,
-				Arguments = $"--extract-audio --audio-format {this.AudioFileFormat} -o \"{TempFilename}\" {this.YoutubeUri}",
+				Arguments = $"--extract-audio --audio-format {this.AudioFileFormat}{Format} -o \"{TempFilename}\" {this.YoutubeUri}",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 				RedirectStandardError = true,

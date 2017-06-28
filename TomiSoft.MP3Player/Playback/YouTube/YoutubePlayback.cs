@@ -8,6 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using TomiSoft.ExternalApis.YoutubeDl;
+using TomiSoft.ExternalApis.YoutubeDl.MediaInformation;
 using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.MP3Player.Playback.BASS;
 using TomiSoft_MP3_Player;
@@ -126,6 +127,8 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 				File.Delete(MediaFilename);
 			#endregion
 
+			MediaFormat Format = (SongInfo as YoutubeSongInfo)?.GetBestAudioFormat();
+
 			try {
 				YoutubeDl Downloader = new YoutubeDl("youtube-dl.exe", App.Path) {
 					AudioFileFormat = YoutubeDlAudioFormat.mp3,
@@ -141,7 +144,7 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 					await Downloader.DownloadAudioAsync(Progress);
 				};
 
-				await Downloader.DownloadAudioAsync(Progress);
+				await Downloader.DownloadAudioAsync(Progress, Format);
 			}
 			catch (Exception e) {
 				Trace.WriteLine(e.Message);

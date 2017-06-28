@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Net;
@@ -72,6 +73,14 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		}
 
 		/// <summary>
+		/// Gets all available media formats.
+		/// </summary>
+		public IEnumerable<MediaFormat> Formats {
+			get;
+			private set;
+		}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="YoutubeSongInfo"/> class.
 		/// </summary>
 		/// <param name="Source">The URI of the video</param>
@@ -113,12 +122,18 @@ namespace TomiSoft.MP3Player.MediaInformation {
 				Title: r.RecognizedMedia?.Title ?? r.Title,
 				Artist: r.RecognizedMedia?.Artist,
 				DurationInSeconds: r.Duration.TotalSeconds
-			);
+			) {
+				Formats = r.MediaFormats
+			};
 
 			if (App.Config.YoutubeDownloadThumbnail)
 				Result.AlbumImage = await r.Thumbnails.FirstOrDefault()?.DownloadAsImageAsync();
 
 			return Result;
+		}
+
+		public MediaFormat GetBestAudioFormat() {
+			return this.Formats.Where(x => x.Format == MediaType.Audio).OrderByDescending(x => ((DashAudio)x).SamplingRate).FirstOrDefault();
 		}
 
 		/// <summary>
