@@ -11,6 +11,8 @@ using TomiSoft.ExternalApis.YoutubeDl;
 using TomiSoft.ExternalApis.YoutubeDl.MediaInformation;
 using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.MP3Player.Playback.BASS;
+using TomiSoft.MP3Player.Utils;
+using TomiSoft.MP3Player.Utils.Extensions;
 using TomiSoft_MP3_Player;
 
 namespace TomiSoft.MP3Player.Playback.YouTube {
@@ -116,7 +118,7 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 			if (SongInfo == null)
 				throw new ArgumentNullException(nameof(SongInfo));
 
-			if (!IsValidYoutubeUri(SongInfo.Source))
+			if (!YoutubeUri.IsValidYoutubeUri(SongInfo.Source))
 				throw new ArgumentException("Not a valid YouTube URI");
 			#endregion
 			
@@ -133,7 +135,7 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 				YoutubeDl Downloader = new YoutubeDl("youtube-dl.exe", App.Path) {
 					AudioFileFormat = YoutubeDlAudioFormat.mp3,
 					Filename = MediaFilename,
-					VideoID = GetVideoID(SongInfo.Source)
+					VideoID = YoutubeUri.GetVideoID(SongInfo.Source)
 				};
 
 				//When download fails and youtube-dl reports that an update is required, update it and retry.
@@ -189,37 +191,5 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 			//Delete unnecessary ffmpeg archive
 			File.Delete(FFMpegLocation);
 		}
-
-		/// <summary>
-		/// Determines that an URI string is a valid YouTube URI.
-		/// </summary>
-		/// <param name="Uri">The URI to check</param>
-		/// <returns>True if valid, false if not</returns>
-		public static bool IsValidYoutubeUri(string Uri) {
-			if (!System.Uri.IsWellFormedUriString(Uri, UriKind.Absolute))
-				return false;
-
-			Uri u = (new Uri(Uri));
-
-			if (!u.Host.Contains("youtube.com"))
-				return false;
-
-			if (!HttpUtility.ParseQueryString(u.Query).AllKeys.Contains("v"))
-				return false;
-
-			return true;
-		}
-
-		/// <summary>
-		/// Creates a new YouTube URI that contains only the video ID.
-		/// </summary>
-		/// <param name="Uri">A YouTube URI to clean up.</param>
-		/// <returns>A YouTube URI that contains only the video ID</returns>
-		private static string GetVideoID(string Uri) {
-			Uri u = (new Uri(Uri));
-			return HttpUtility.ParseQueryString(u.Query)["v"];
-		}
-
-		
 	}
 }

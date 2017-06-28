@@ -339,7 +339,7 @@ namespace TomiSoft_MP3_Player {
 			try {
 				this.Playlist.Clear();
 				foreach (string Filename in SupportedFiles) {
-					if (Filename.Contains("youtube.com/watch")) {
+					if (YoutubeUri.IsValidYoutubeUri(Filename)) {
 						this.viewModel.LyricsReader = null;
 						this.viewModel.Lyrics = "Előkészülünk a letöltéshez...";
 						this.Playlist.Add(await YoutubeSongInfo.GetVideoInfoAsync(Filename));
@@ -579,7 +579,7 @@ namespace TomiSoft_MP3_Player {
 
 			bool? Result = Dialog.ShowDialog();
 			if (Result.HasValue && Result.Value == true) {
-				if (!YoutubePlayback.IsValidYoutubeUri(Dialog.UserInput)) {
+				if (!YoutubeUri.IsValidYoutubeUri(Dialog.UserInput)) {
 					PlayerUtils.ErrorMessageBox(App.Name, "Úgy tűnik, hibás linket adtál meg.");
 					return;
 				}

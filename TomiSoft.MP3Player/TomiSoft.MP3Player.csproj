@@ -129,6 +129,7 @@
     <Compile Include="Utils\Windows\Toast.cs" />
     <Compile Include="Utils\PlayerUtils.cs" />
     <Compile Include="Utils\Windows\VirtualKey.cs" />
+    <Compile Include="Utils\YoutubeUri.cs" />
     <Page Include="UserInterface\Windows\AboutWindow\AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -97,7 +97,7 @@ namespace TomiSoft.MP3Player.Playback {
 			}
 
 			else if (Uri.IsWellFormedUriString(Source, UriKind.Absolute)) {
-				if (Source.Contains("youtube.com/watch?v="))
+				if (YoutubeUri.IsValidYoutubeUri(Source))
 					return true;
 			}
 

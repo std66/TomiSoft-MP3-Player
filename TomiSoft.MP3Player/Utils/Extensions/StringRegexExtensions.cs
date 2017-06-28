@@ -81,5 +81,11 @@ namespace TomiSoft.MP3Player.Utils.Extensions {
 			Regex r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
 			return r.Replace(Input, "");
 		}
+
+		public static IEnumerable<string> GetNamedMatches(this string Input, string Pattern, string CaptureGroupName) {
+			foreach (Match m in (new Regex(Pattern)).Matches(Input)) {
+				yield return m.Groups[CaptureGroupName].Value;
+			}
+		}
 	}
 }

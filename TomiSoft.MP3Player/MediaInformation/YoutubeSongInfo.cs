@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Web;
 using TomiSoft.ExternalApis.YoutubeDl;
 using TomiSoft.ExternalApis.YoutubeDl.MediaInformation;
+using TomiSoft.MP3Player.Playback.YouTube;
+using TomiSoft.MP3Player.Utils;
 using TomiSoft_MP3_Player;
 
 namespace TomiSoft.MP3Player.MediaInformation {
@@ -112,7 +114,7 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		/// <returns>A <see cref="YoutubeSongInfo"/> instance.</returns>
 		public static async Task<YoutubeSongInfo> GetVideoInfoAsync(string Source) {
 			YoutubeDl d = new YoutubeDl("youtube-dl.exe", App.Path) {
-				VideoID = GetVideoID(Source)
+				VideoID = YoutubeUri.GetVideoID(Source)
 			};
 
 			YoutubeMediaInfo r = await d.GetVideoInfo();
@@ -134,16 +136,6 @@ namespace TomiSoft.MP3Player.MediaInformation {
 
 		public MediaFormat GetBestAudioFormat() {
 			return this.Formats.Where(x => x.Format == MediaType.Audio).OrderByDescending(x => ((DashAudio)x).SamplingRate).FirstOrDefault();
-		}
-
-		/// <summary>
-		/// Gets the YouTube Video ID from the url of the video.
-		/// </summary>
-		/// <param name="url">The url of the video.</param>
-		/// <returns>The ID of the video</returns>
-		private static string GetVideoID(string url) {
-			Uri u = new Uri(url);
-			return HttpUtility.ParseQueryString(u.Query).GetValues("v").FirstOrDefault();
 		}
 	}
 }
