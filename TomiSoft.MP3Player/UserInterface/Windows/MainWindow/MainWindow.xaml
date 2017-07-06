@@ -76,59 +76,64 @@
 				<DropShadowEffect Direction="0" ShadowDepth="4" BlurRadius="10"/>
 			</StackPanel.Effect>
 			<StackPanel.RenderTransform>
-                <TranslateTransform X="-235"/>
-            </StackPanel.RenderTransform>
-            <Label Height="23">
-                <Label.Content>
-                    <StackPanel Orientation="Horizontal">
-                        <fa:ImageAwesome Icon="Bars" VerticalAlignment="Center" Margin="0,0,7,0"/>
-                        <TextBlock FontWeight="Bold" VerticalAlignment="Center">MENÜ</TextBlock>
-                    </StackPanel>
-                </Label.Content>
-            </Label>
+				<TranslateTransform X="-235"/>
+			</StackPanel.RenderTransform>
 
-            <Separator/>
+			<DockPanel Height="237">
+				<StackPanel DockPanel.Dock="Top">
+					<Label Height="23">
+						<Label.Content>
+							<StackPanel Orientation="Horizontal">
+								<fa:ImageAwesome Icon="Bars" VerticalAlignment="Center" Margin="0,0,7,0"/>
+								<TextBlock FontWeight="Bold" VerticalAlignment="Center">MENÜ</TextBlock>
+							</StackPanel>
+						</Label.Content>
+					</Label>
 
-            <StackPanel Orientation="Horizontal" Height="22">
-                <StackPanel.Resources>
-					<Style BasedOn="{StaticResource MenuLabelStyle}" TargetType="Label"/>
-				</StackPanel.Resources>
-                
-                <Label MouseLeftButtonUp="FileOpenButton_Click" ToolTip="Zene kiválasztása" Margin="2,0,0,0">
-                    <fa:ImageAwesome Icon="FolderOpen"/>
-                </Label>
-				<Label MouseLeftButtonUp="UriOpen_Click" ToolTip="YouTube-média megnyitása" Margin="2,0,0,0">
-					<fa:ImageAwesome Icon="YoutubePlay"/>
-				</Label>
-				<Label MouseLeftButtonUp="HideMenu" ToolTip="Zene mentése" Margin="2,0,0,0">
-					<Label.InputBindings>
-						<MouseBinding Command="{Binding SaveMediaCommand}" MouseAction="LeftClick"/>
-					</Label.InputBindings>
-					<fa:ImageAwesome Icon="Save"/>
-				</Label>
-				<Label MouseLeftButtonUp="AboutClicked" ToolTip="Névjegy">
-                    <fa:ImageAwesome Icon="InfoCircle"/>
-                </Label>
-            </StackPanel>
+					<Separator/>
 
-            <Separator/>
+					<StackPanel Orientation="Horizontal" Height="22">
+						<StackPanel.Resources>
+							<Style BasedOn="{StaticResource MenuLabelStyle}" TargetType="Label"/>
+						</StackPanel.Resources>
 
-			<ListView x:Name="lvPlaylist" MouseDoubleClick="lvPlaylist_MouseDoubleClick" Height="156" Background="Transparent" ItemsSource="{Binding Playlist}"  BorderBrush="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-				<ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock FontWeight="Bold" Text="{Binding Title, FallbackValue='Ismeretlen szám'}"/>
-                            <TextBlock FontStyle="Italic" Text="{Binding Artist, FallbackValue='Ismeretlen előadó'}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            
-            <DockPanel>
-                <Label DockPanel.Dock="Left" Content="{Binding Playlist.Count, FallbackValue='0'}"/>
-                <Label DockPanel.Dock="Left" Content="szám" Margin="-6,0,0,0"/>
-                <Label Content="{Binding Playlist.TotalLength, Converter={StaticResource DoubleToTimeConverter}, FallbackValue='00:00:00'}" HorizontalAlignment="Right"></Label>
-            </DockPanel>
-        </StackPanel>
+						<Label MouseLeftButtonUp="FileOpenButton_Click" ToolTip="Zene kiválasztása" Margin="2,0,0,0">
+							<fa:ImageAwesome Icon="FolderOpen"/>
+						</Label>
+						<Label MouseLeftButtonUp="UriOpen_Click" ToolTip="YouTube-média megnyitása" Margin="2,0,0,0">
+							<fa:ImageAwesome Icon="YoutubePlay"/>
+						</Label>
+						<Label MouseLeftButtonUp="HideMenu" ToolTip="Zene mentése" Margin="2,0,0,0">
+							<Label.InputBindings>
+								<MouseBinding Command="{Binding SaveMediaCommand}" MouseAction="LeftClick"/>
+							</Label.InputBindings>
+							<fa:ImageAwesome Icon="Save"/>
+						</Label>
+						<Label MouseLeftButtonUp="AboutClicked" ToolTip="Névjegy">
+							<fa:ImageAwesome Icon="InfoCircle"/>
+						</Label>
+					</StackPanel>
+
+					<Separator/>
+				</StackPanel>
+
+				<DockPanel DockPanel.Dock="Bottom">
+					<Label Content="{Binding Playlist.Count, FallbackValue='0'}"/>
+					<Label Content="szám" Margin="-5,0,0,0"/>
+					<Label HorizontalAlignment="Right" Content="{Binding Playlist.TotalLength, Converter={StaticResource DoubleToTimeConverter}, FallbackValue='00:00:00'}"/>
+				</DockPanel>
+
+				<ListView x:Name="lvPlaylist" MouseDoubleClick="lvPlaylist_MouseDoubleClick" Height="156" Background="Transparent" ItemsSource="{Binding Playlist}"  BorderBrush="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Vertical">
+								<TextBlock FontWeight="Bold" Text="{Binding Title, FallbackValue='Ismeretlen szám'}"/>
+								<TextBlock FontStyle="Italic" Text="{Binding Artist, FallbackValue='Ismeretlen előadó'}"/>
+							</StackPanel>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+			</DockPanel>
+		</StackPanel>
     </Grid>
 </Window>

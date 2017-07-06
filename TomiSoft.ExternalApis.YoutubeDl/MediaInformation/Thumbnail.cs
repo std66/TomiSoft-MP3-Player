@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -38,6 +39,10 @@ namespace TomiSoft.ExternalApis.YoutubeDl.MediaInformation {
 		public Task<byte[]> DownloadAsByteArrayAsync() {
 			using (WebClient cl = new WebClient())
 				return cl.DownloadDataTaskAsync(Uri);
+		}
+
+		public async Task SaveAsync(Stream Target, ImageFormat Format) {
+			(await this.DownloadAsImageAsync()).Save(Target, Format);
 		}
 	}
 }
