@@ -99,7 +99,7 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 			#endregion
 			
             if (this.IsAudioCd) {
-                await this.CopyFromAudioCd(TargetStream);
+                await this.CopyFromAudioCdAsync(TargetStream);
                 return true;
             }
 
@@ -115,9 +115,19 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 			return true;
 		}
 
-        private async Task CopyFromAudioCd(Stream TargetStream) {
-            if (this.IsPlaying)
+        /// <summary>
+        /// Stops the playback and copies the audio stream from CD to a <see cref="Stream"/> in MP3
+        /// format asynchronously. If the song was playing before copying, playback will be restored.
+        /// </summary>
+        /// <param name="TargetStream">The <see cref="Stream"/> where the media is written to.</param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous process.</returns>
+        private async Task CopyFromAudioCdAsync(Stream TargetStream) {
+            bool RequiresRestore = this.IsPlaying;
+            double Position = this.Position;
+
+            if (this.IsPlaying) {
                 this.Stop();
+            }
 
             ENCODEPROC proc = new ENCODEPROC(
                 (handle, channel, buffer, length, user) => {
@@ -138,13 +148,16 @@ namespace TomiSoft.MP3Player.Playback.BASS {
                 int DataRead = 0;
                 while (Bass.BASS_ChannelGetPosition(DecodingChannel) < Bass.BASS_ChannelGetLength(DecodingChannel)) { 
                     DataRead = Bass.BASS_ChannelGetData(DecodingChannel, Buffer, BufferLength);
-                    //BassEnc.BASS_Encode_Write(Handle, Buffer, DataRead);
                 }
 
                 BassEnc.BASS_Encode_Stop(Handle);
             });
 
             this.ChannelID = Bass.BASS_StreamCreateFile(this.Filename, 0, 0, BASSFlag.BASS_DEFAULT);
+            if (RequiresRestore) {
+                this.Position = Position;
+                this.Play();
+            }
         }
 	}
 }
