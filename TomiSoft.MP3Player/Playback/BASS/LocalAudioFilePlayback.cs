@@ -1,21 +1,32 @@
 ﻿using System;
 using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using TomiSoft.MP3Player.Encoder.Lame;
 using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.MP3Player.Utils.Extensions;
 using Un4seen.Bass;
+using Un4seen.Bass.AddOn.Enc;
 
 namespace TomiSoft.MP3Player.Playback.BASS {
-	/// <summary>
-	/// Provides a file playback method using BASS.
-	/// </summary>
-	internal class LocalAudioFilePlayback : BassPlaybackAbstract, ISavable {
+    /// <summary>
+    /// Provides a file playback method using BASS.
+    /// </summary>
+    internal class LocalAudioFilePlayback : BassPlaybackAbstract, ISavable {
 		/// <summary>
 		/// Stores the loaded file's path.
 		/// </summary>
 		private readonly string Filename;
+
+        /// <summary>
+        /// Gets if the opened file is a track from an audio CD.
+        /// </summary>
+        public bool IsAudioCd {
+            get {
+                string Extension = Path.GetExtension(this.Filename).ToLower();
+                return Extension == ".cda";
+            }
+        }
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="LocalAudioFilePlayback"/> using
@@ -64,7 +75,9 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 				if (this.SongInfo.Artist != null)
 					return $"{this.SongInfo.Artist} - {this.SongInfo.Title}{Extension}".RemovePathInvalidChars();
 				
-				return $"{this.SongInfo.Title}{Extension}".RemovePathInvalidChars();
+				string Result = $"{this.SongInfo.Title}{Extension}".RemovePathInvalidChars();
+
+                return (this.IsAudioCd) ? Path.ChangeExtension(Result, "mp3") : Result;
 			}
 		}
 
@@ -85,6 +98,11 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 				return false;
 			#endregion
 			
+            if (this.IsAudioCd) {
+                await this.CopyFromAudioCd(TargetStream);
+                return true;
+            }
+
 			try {
 				using (Stream Source = File.OpenRead(this.Filename)) {
 					await Source.CopyToAsync(TargetStream);
@@ -96,5 +114,37 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 
 			return true;
 		}
+
+        private async Task CopyFromAudioCd(Stream TargetStream) {
+            if (this.IsPlaying)
+                this.Stop();
+
+            ENCODEPROC proc = new ENCODEPROC(
+                (handle, channel, buffer, length, user) => {
+                    byte[] ManagedBuffer = new byte[length];
+                    Marshal.Copy(buffer, ManagedBuffer, 0, length);
+
+                    TargetStream.Write(ManagedBuffer, 0, length);
+                }
+            );
+
+            int DecodingChannel = Bass.BASS_StreamCreateFile(this.Filename, 0, 0, BASSFlag.BASS_STREAM_DECODE);
+            int Handle = BassEnc.BASS_Encode_Start(DecodingChannel, (new Lame()).GetCommandLine(), BASSEncode.BASS_ENCODE_AUTOFREE, proc, IntPtr.Zero);
+
+            await Task.Run(() => { 
+                int BufferLength = 1024;
+                byte[] Buffer = new byte[1024];
+
+                int DataRead = 0;
+                while (Bass.BASS_ChannelGetPosition(DecodingChannel) < Bass.BASS_ChannelGetLength(DecodingChannel)) { 
+                    DataRead = Bass.BASS_ChannelGetData(DecodingChannel, Buffer, BufferLength);
+                    //BassEnc.BASS_Encode_Write(Handle, Buffer, DataRead);
+                }
+
+                BassEnc.BASS_Encode_Stop(Handle);
+            });
+
+            this.ChannelID = Bass.BASS_StreamCreateFile(this.Filename, 0, 0, BASSFlag.BASS_DEFAULT);
+        }
 	}
 }

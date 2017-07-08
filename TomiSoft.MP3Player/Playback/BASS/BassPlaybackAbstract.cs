@@ -112,6 +112,13 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 			get {
 				return this.channelID;
 			}
+            protected set {
+                if (value == 0)
+                    return;
+
+                Bass.BASS_StreamFree(this.channelID);
+                this.channelID = value;
+            }
 		}
 
 		/// <summary>

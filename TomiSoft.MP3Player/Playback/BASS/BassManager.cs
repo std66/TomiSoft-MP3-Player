@@ -6,6 +6,7 @@ using System.Diagnostics;
 
 using Un4seen.Bass;
 using TomiSoft.MP3Player.Utils.Extensions;
+using Un4seen.Bass.AddOn.Enc;
 
 namespace TomiSoft.MP3Player.Playback.BASS {
 	/// <summary>
@@ -98,6 +99,7 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 				return false;
 
 			LoadBassPlugins(Directory);
+            LoadBassEnc(Directory);
             
 			return true;
 		}
@@ -199,6 +201,10 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 
 			return true;
 		}
+
+        private static void LoadBassEnc(string Directory) {
+            BassEnc.LoadMe(Directory);
+        }
 
 		/// <summary>
 		/// Loads all BASS plugins from the given directory.

@@ -88,6 +88,7 @@
     <Compile Include="Communication\Modules\SoftwareModule.cs" />
     <Compile Include="Communication\RemoteResourceInfo.cs" />
     <Compile Include="Communication\ServerCommandAttribute.cs" />
+    <Compile Include="Encoder\Lame\Lame.cs" />
     <Compile Include="Lyrics\FileLyricsProvider.cs" />
     <Compile Include="Lyrics\ILyricsProvider.cs" />
     <Compile Include="Lyrics\TomiSoftLyricsProvider.cs" />
@@ -193,6 +194,30 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Bass\x64\bassenc.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Bass\x86\bassenc.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Encoder\Lame\x64\lame.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Encoder\Lame\x64\lame_enc.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Encoder\Lame\x64\License.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Encoder\Lame\x86\lame.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Encoder\Lame\x86\lame_enc.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Encoder\Lame\x86\License.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="taglib-sharp.dll" />
     <Resource Include="ApplicationIcon.ico" />
     <Content Include="Bass.Net.dll">

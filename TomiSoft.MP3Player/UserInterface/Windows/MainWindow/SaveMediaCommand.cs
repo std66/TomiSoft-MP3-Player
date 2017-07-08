@@ -4,6 +4,8 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using TomiSoft.MP3Player.Playback;
+using TomiSoft.MP3Player.Playback.BASS;
+using TomiSoft.MP3Player.Utils.Windows;
 using TomiSoft_MP3_Player;
 
 namespace TomiSoft.MP3Player.UserInterface.Windows.MainWindow {
@@ -91,11 +93,13 @@ namespace TomiSoft.MP3Player.UserInterface.Windows.MainWindow {
 				Filename = String.Empty;
 				return false;
 			}
-			#endregion
-			
-			SaveFileDialog Dialog = new SaveFileDialog() {
-				Filter = $"Médiafájl|*{Path.GetExtension(SavableMedia.OriginalSource)}",
-				FileName = SavableMedia.RecommendedFilename ?? SavableMedia.OriginalFilename
+            #endregion
+
+            string filename = SavableMedia.RecommendedFilename ?? SavableMedia.OriginalFilename;
+
+            SaveFileDialog Dialog = new SaveFileDialog() {
+				Filter = $"Médiafájl|*{Path.GetExtension(filename)}",
+				FileName = filename
 			};
 			
 			bool Result = Dialog.ShowDialog() ?? false;
