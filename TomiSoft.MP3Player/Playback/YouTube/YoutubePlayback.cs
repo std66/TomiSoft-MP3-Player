@@ -39,15 +39,16 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 			this.DownloadedFile = DownloadedFile;
 		}
 
-		/// <summary>
-		/// Creates a copy of the downloaded file to the given <see cref="Stream"/>. If the
-		/// <paramref name="TargetStream"/> is a <see cref="FileStream"/>, additional metatags will
-		/// be added.
-		/// </summary>
-		/// <param name="TargetStream">The <see cref="Stream"/> where the file is copied to</param>
-		/// <returns>True if saving was successful, false if not</returns>
-		public override async Task<bool> SaveToAsync(Stream TargetStream) {
-			bool SavedSuccessfully = await base.SaveToAsync(TargetStream);
+        /// <summary>
+        /// Creates a copy of the downloaded file to the given <see cref="Stream"/>. If the
+        /// <paramref name="TargetStream"/> is a <see cref="FileStream"/>, additional metatags will
+        /// be added.
+        /// </summary>
+        /// <param name="TargetStream">The <see cref="Stream"/> where the file is copied to</param>
+        /// <param param name="Progress">An <see cref="IProgress{T}"/> instance that will be used to report the save progress. Can be null.</param>
+        /// <returns>True if saving was successful, false if not</returns>
+        public override async Task<bool> SaveToAsync(Stream TargetStream, IProgress<LongOperationProgress> Progress) {
+			bool SavedSuccessfully = await base.SaveToAsync(TargetStream, Progress);
 
 			if (!SavedSuccessfully)
 				return false;

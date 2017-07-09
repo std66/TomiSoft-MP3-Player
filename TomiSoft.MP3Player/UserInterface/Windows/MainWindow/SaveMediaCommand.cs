@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using TomiSoft.MP3Player.Playback;
 using TomiSoft.MP3Player.Playback.BASS;
+using TomiSoft.MP3Player.Utils;
 using TomiSoft.MP3Player.Utils.Windows;
 using TomiSoft_MP3_Player;
 
@@ -61,14 +62,26 @@ namespace TomiSoft.MP3Player.UserInterface.Windows.MainWindow {
 			if (this.ShowSaveDialog(SavableMedia, out Filename)) {
 				bool Result = false;
 
+                Progress<LongOperationProgress> Progress = new Progress<LongOperationProgress>();
+
+                ProgressBarDialog.ProgressBarDialog dlg = new ProgressBarDialog.ProgressBarDialog(
+                    Title: "TomiSoft MP3 Player",
+                    Text: "Zene mentése...",
+                    Progress: Progress
+                );
+                
+                dlg.Show();
+
 				try {
 					using (Stream s = File.OpenWrite(Filename)) {
-						Result = await SavableMedia.SaveToAsync(s);
+						Result = await SavableMedia.SaveToAsync(s, Progress);
 					}
 				}
 				catch (IOException) {
 					Result = false;
 				}
+
+                dlg.Close();
 
 				if (!Result) {
 					MessageBox.Show(

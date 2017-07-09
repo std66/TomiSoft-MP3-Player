@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using TomiSoft.MP3Player.Encoder.Lame;
 using TomiSoft.MP3Player.MediaInformation;
+using TomiSoft.MP3Player.Utils;
 using TomiSoft.MP3Player.Utils.Extensions;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Enc;
@@ -81,15 +82,16 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 			}
 		}
 
-		/// <summary>
-		/// Saves the media to the given <see cref="Stream"/>.
-		/// </summary>
-		/// <param name="TargetStream">The <see cref="Stream"/> where the media is written to.</param>
-		/// <returns>
-		/// A <see cref="Task"/> that represents the process of the saving procedure. When the saving
-		/// is finished, a bool value will represent whether the saving was successful or not.
-		/// </returns>
-		public virtual async Task<bool> SaveToAsync(Stream TargetStream) {
+        /// <summary>
+        /// Saves the media to the given <see cref="Stream"/>.
+        /// </summary>
+        /// <param name="TargetStream">The <see cref="Stream"/> where the media is written to.</param>
+        /// <param param name="Progress">An <see cref="IProgress{T}"/> instance that will be used to report the save progress. Can be null.</param>
+        /// <returns>
+        /// A <see cref="Task"/> that represents the process of the saving procedure. When the saving
+        /// is finished, a bool value will represent whether the saving was successful or not.
+        /// </returns>
+        public virtual async Task<bool> SaveToAsync(Stream TargetStream, IProgress<LongOperationProgress> Progress) {
 			#region Error checking
 			if (TargetStream == null)
 				return false;
@@ -99,11 +101,19 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 			#endregion
 			
             if (this.IsAudioCd) {
-                await this.CopyFromAudioCdAsync(TargetStream);
+                await this.CopyFromAudioCdAsync(TargetStream, Progress);
                 return true;
             }
 
-			try {
+            LongOperationProgress Status = new LongOperationProgress {
+                IsIndetermine = true,
+                Maximum = 1,
+                Position = 0
+            };
+
+            Progress?.Report(Status);
+
+            try {
 				using (Stream Source = File.OpenRead(this.Filename)) {
 					await Source.CopyToAsync(TargetStream);
 				}
@@ -120,8 +130,9 @@ namespace TomiSoft.MP3Player.Playback.BASS {
         /// format asynchronously. If the song was playing before copying, playback will be restored.
         /// </summary>
         /// <param name="TargetStream">The <see cref="Stream"/> where the media is written to.</param>
+        /// <param param name="Progress">An <see cref="IProgress{T}"/> instance that will be used to report the save progress. Can be null.</param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous process.</returns>
-        private async Task CopyFromAudioCdAsync(Stream TargetStream) {
+        private async Task CopyFromAudioCdAsync(Stream TargetStream, IProgress<LongOperationProgress> Progress) {
             bool RequiresRestore = this.IsPlaying;
             double Position = this.Position;
 
@@ -137,17 +148,26 @@ namespace TomiSoft.MP3Player.Playback.BASS {
                     TargetStream.Write(ManagedBuffer, 0, length);
                 }
             );
-
+            
             int DecodingChannel = Bass.BASS_StreamCreateFile(this.Filename, 0, 0, BASSFlag.BASS_STREAM_DECODE);
+            long DecodingChannelLength = Bass.BASS_ChannelGetLength(DecodingChannel);
             int Handle = BassEnc.BASS_Encode_Start(DecodingChannel, (new Lame()).GetCommandLine(), BASSEncode.BASS_ENCODE_AUTOFREE, proc, IntPtr.Zero);
+
+            LongOperationProgress Status = new LongOperationProgress {
+                IsIndetermine = false,
+                Maximum = DecodingChannelLength,
+                Position = 0
+            };
+
+            Progress?.Report(Status);
 
             await Task.Run(() => { 
                 int BufferLength = 1024;
                 byte[] Buffer = new byte[1024];
-
-                int DataRead = 0;
-                while (Bass.BASS_ChannelGetPosition(DecodingChannel) < Bass.BASS_ChannelGetLength(DecodingChannel)) { 
-                    DataRead = Bass.BASS_ChannelGetData(DecodingChannel, Buffer, BufferLength);
+                
+                while (Bass.BASS_ChannelGetPosition(DecodingChannel) < DecodingChannelLength) { 
+                    Status.Position += Bass.BASS_ChannelGetData(DecodingChannel, Buffer, BufferLength);
+                    Progress?.Report(Status);
                 }
 
                 BassEnc.BASS_Encode_Stop(Handle);
