@@ -6,11 +6,25 @@ using System.Xml;
 using System.Xml.Linq;
 
 namespace TomiSoft.Music.Lyrics.Xml {
-	public class XmlLyricsWriter : ILyricsWriter {
+    /// <summary>
+    /// Represents a lyrics writer for XML format.
+    /// </summary>
+	public class XmlLyricsWriter : ILyricsWriter, ILyricsMetadata {
+        /// <summary>
+        /// Stores the structure of the XML file.
+        /// </summary>
 		private XDocument doc;
+
+        /// <summary>
+        /// Stores the translations. The key is the TranslationID and the value is a user-friendly name.
+        /// </summary>
 		private Dictionary<string, string> translations = new Dictionary<string, string>();
+        
 		private Dictionary<string, List<ILyricsLine>> lines = new Dictionary<string, List<ILyricsLine>>();
 
+        /// <summary>
+        /// Gets or sets the title of the song.
+        /// </summary>
 		public string Title {
 			get {
 				return doc.Root.GetAttributeValue("Title");
@@ -20,6 +34,9 @@ namespace TomiSoft.Music.Lyrics.Xml {
 			}
 		}
 
+        /// <summary>
+        /// Gets or sets the artist of the song.
+        /// </summary>
 		public string Artist {
 			get {
 				return doc.Root.GetAttributeValue("Artist");
@@ -29,6 +46,9 @@ namespace TomiSoft.Music.Lyrics.Xml {
 			}
 		}
 
+        /// <summary>
+        /// Gets or sets the album of the song.
+        /// </summary>
 		public string Album {
 			get {
 				return doc.Root.GetAttributeValue("Album");
@@ -37,32 +57,51 @@ namespace TomiSoft.Music.Lyrics.Xml {
 				doc.Root.SetAttributeValue("Album", value);
 			}
 		}
-
+        
+        /// <summary>
+        /// Gets or sets the title of the song.
+        /// </summary>
+        /// <exception cref="ArgumentException">when a translation with ID <paramref name="value"/> has not added yet</exception>
 		public string DefaultTranslationID {
 			get {
 				return doc.Root.Element("Translations").GetAttributeValue("Default");
 			}
 			set {
 				if (!this.translations.ContainsKey(value))
-					throw new Exception($"{value} azonosítójú fordítás nem lett még hozzáadva.");
+					throw new ArgumentException($"A translation with ID '{value}' has not added yet.");
 
 				doc.Root.Element("Translations").SetAttributeValue("Default", value);
 			}
 		}
 
+        /// <summary>
+        /// Gets all the translations. The key is the Translation ID and the value is a
+        /// user-friendly display name.
+        /// </summary>
 		public IReadOnlyDictionary<string, string> Translations {
 			get {
 				return this.translations;
 			}
 		}
 
+        /// <summary>
+        /// Gets if this format supports multiple translations. Always returns true.
+        /// </summary>
 		public bool SupportsMultipleTranslations {
 			get {
 				return true;
 			}
 		}
+        
+        public double Length
+        {
+            get
+            {
+                return 0;
+            }
+        }
 
-		public XmlLyricsWriter() {
+        public XmlLyricsWriter() {
 			this.doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement("Lyrics"));
 			this.doc.Root.Add(new XElement("Translations"));
 			this.doc.Root.Add(new XElement("Lines"));
@@ -170,11 +209,15 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		}
 
 		public static ILyricsWriter CreateFromReader(ILyricsReader Reader) {
-			ILyricsWriter wrt = new XmlLyricsWriter() {
-				Title = Reader.Title,
-				Artist = Reader.Artist,
-				Album = Reader.Album
-			};
+            XmlLyricsWriter wrt = new XmlLyricsWriter();
+
+            ILyricsMetadata Metadata = Reader as ILyricsMetadata;
+            if (Metadata != null)
+            {
+                wrt.Title  = Metadata.Title;
+                wrt.Artist = Metadata.Artist;
+                wrt.Album  = Metadata.Album;
+            }
 
 			foreach (var i in Reader.Translations) {
 				wrt.AddTranslation(i.Value);

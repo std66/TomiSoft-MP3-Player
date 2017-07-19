@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="IFileFormatChecker.cs" />
     <Compile Include="ILyricsLine.cs" />
+    <Compile Include="ILyricsMetadata.cs" />
     <Compile Include="ILyricsReader.cs" />
     <Compile Include="ILyricsWriter.cs" />
     <Compile Include="Lrc\LrcFileFormatChecker.cs" />

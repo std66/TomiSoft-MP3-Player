@@ -8,7 +8,7 @@ namespace TomiSoft.Music.Lyrics.Lrc {
 	/// <summary>
 	/// Provides functionality to read LRC-format lyrics files.
 	/// </summary>
-	public class LrcReader : ILyricsReader {
+	public class LrcReader : ILyricsReader, ILyricsMetadata {
 		private Dictionary<double, string> Lyrics;
 
 		/// <summary>

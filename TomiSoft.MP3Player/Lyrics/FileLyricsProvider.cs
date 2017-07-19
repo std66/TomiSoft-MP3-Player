@@ -10,10 +10,10 @@ namespace TomiSoft.MP3Player.Lyrics {
     internal class FileLyricsProvider : ILyricsProvider {
         /// <summary>
         /// Finds a lyrics file asynchronously using the informations provided by an
-        /// ISongInfo instance.
+        /// <see cref="ISongInfo"/> instance.
         /// </summary>
-        /// <param name="SongInfo">An ISongInfo instance that holds informations about a song.</param>
-        /// <returns>A Task for an ILyricsReader instance if the lyrics is found or null otherwise.</returns>
+        /// <param name="SongInfo">An <see cref="ISongInfo"/> instance that holds informations about a song.</param>
+        /// <returns>A Task for an <see cref="ILyricsReader"/> instance if the lyrics is found or null otherwise.</returns>
         public Task<ILyricsReader> FindLyricsAsync(ISongInfo SongInfo) {
             #region Error checking
             if (SongInfo == null)
@@ -29,8 +29,8 @@ namespace TomiSoft.MP3Player.Lyrics {
         /// Performs a scan in the directory that contains the music file for a
         /// matching lyrics file.
         /// </summary>
-        /// <param name="SongInfo">An ISongInfo instance that holds informations about a song.</param>
-        /// <returns>An ILyricsReader instance if the lyrics is found or null otherwise.</returns>
+        /// <param name="SongInfo">An <see cref="ISongInfo"/> instance that holds informations about a song.</param>
+        /// <returns>An <see cref="ILyricsReader"/> instance if the lyrics is found or null otherwise.</returns>
         private ILyricsReader ScanFileDirectory(ISongInfo SongInfo) {
             string Dir = Path.GetDirectoryName(SongInfo.Source);
 
@@ -53,8 +53,13 @@ namespace TomiSoft.MP3Player.Lyrics {
             foreach (var File in LyricsLoader.FindAllLyricsFiles(Dir)) {
                 try {
                     ILyricsReader reader = LyricsLoader.LoadFile(File);
-                    if (reader.Title == SongInfo.Title && reader.Artist == SongInfo.Artist)
-                        return reader;
+                    ILyricsMetadata metadata = reader as ILyricsMetadata;
+
+                    if (metadata != null)
+                    {
+                        if (metadata.Title == SongInfo.Title && metadata.Artist == SongInfo.Artist)
+                            return reader;
+                    }
                 }
                 catch {}
             }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace TomiSoft.Music.Lyrics.Lrc {
-	public class LrcWriter : ILyricsWriter {
+	public class LrcWriter : ILyricsWriter, ILyricsMetadata {
 		public string Album {
 			get;
 			set;
@@ -52,7 +52,14 @@ namespace TomiSoft.Music.Lyrics.Lrc {
 			}
 		}
 
-		public void AddLine(string TranslationID, ILyricsLine Line) {
+        public double Length
+        {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
+        public void AddLine(string TranslationID, ILyricsLine Line) {
 			throw new NotImplementedException();
 		}
 

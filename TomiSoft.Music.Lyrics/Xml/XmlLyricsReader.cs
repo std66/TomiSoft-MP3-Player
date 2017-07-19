@@ -8,7 +8,7 @@ namespace TomiSoft.Music.Lyrics.Xml {
 	/// <summary>
 	/// Reads an XML-format lyrics file.
 	/// </summary>
-	public class XmlLyricsReader : ILyricsReader {
+	public class XmlLyricsReader : ILyricsReader, ILyricsMetadata {
 		private XDocument doc;
 		private string translationID;
 

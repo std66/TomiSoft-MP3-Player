@@ -9,26 +9,11 @@ namespace TomiSoft.Music.Lyrics {
 		/// Gets if the used file format supports multiple translations.
 		/// </summary>
 		bool SupportsMultipleTranslations { get; }
-
-		/// <summary>
-		/// Gets or sets the album of the song.
-		/// </summary>
-		string Album { get; set; }
-
-		/// <summary>
-		/// Gets or sets the artist of the song.
-		/// </summary>
-		string Artist { get; set; }
-
+        
 		/// <summary>
 		/// Gets or sets the ID of the default translation.
 		/// </summary>
 		string DefaultTranslationID { get; set; }
-
-		/// <summary>
-		/// Gets or sets the title of the song.
-		/// </summary>
-		string Title { get; set; }
 
 		/// <summary>
 		/// Gets the translations supported by the lyrics file.
