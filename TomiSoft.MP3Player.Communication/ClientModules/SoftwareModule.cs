@@ -13,7 +13,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
 		public bool ServerReady {
             get {
                 this.Connection.Send("Software.IsRunning");
-                return (this.Connection.Read().Contains("true"));
+                return this.Connection.ReadBoolean();
             }
         }
 

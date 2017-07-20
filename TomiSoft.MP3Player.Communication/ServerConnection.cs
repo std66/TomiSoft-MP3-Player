@@ -67,6 +67,14 @@ namespace TomiSoft.MP3Player.Communication {
         }
 
         /// <summary>
+        /// Reads a <see cref="bool"/> data from the server in a safe way.
+        /// </summary>
+        /// <returns>The <see cref="bool"/> value read from the server</returns>
+        public bool ReadBoolean() {
+            return Convert.ToBoolean(this.Read());
+        }
+
+        /// <summary>
         /// Sends a command to the server to keep alive the connection.
         /// </summary>
         public void SendKeepAlive() {

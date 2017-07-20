@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using TomiSoft.MP3Player.Common.Lyrics;
 
 namespace TomiSoft.MP3Player.Communication.ClientModules {
     /// <summary>
@@ -14,7 +16,18 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         public bool HasLyricsLoaded {
             get {
                 this.Connection.Send("Lyrics.HasLyricsLoaded");
-                return Convert.ToBoolean(this.Connection.Read());
+                return this.Connection.ReadBoolean();
+            }
+        }
+
+        /// <summary>
+        /// Gets whether the currently loaded lyrics supports multiple
+        /// translations.
+        /// </summary>
+        public bool SupportsMultipleTranslations {
+            get {
+                this.Connection.Send("Lyrics.SupportsMultipleTranslations");
+                return this.Connection.ReadBoolean();
             }
         }
 
@@ -32,13 +45,16 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// <summary>
         /// Gets or sets the currently displayed translation.
         /// </summary>
-        public string CurrentTranslationID {
+        public Translation CurrentTranslationID {
             get {
                 this.Connection.Send("Lyrics.GetCurrentTranslationID");
-                return this.Connection.Read();
+                string TranslationID = this.Connection.Read();
+
+                return this.Translations.FirstOrDefault(x => x.TranslationID == TranslationID);
             }
             set {
-                this.Connection.Send($"Lyrics.UseTranslation;" + value);
+                if (value != null && this.SupportsMultipleTranslations)
+                    this.Connection.Send($"Lyrics.UseTranslation;" + value.TranslationID);
             }
         }
         
@@ -46,17 +62,13 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// Gets all the translations. The key is the Translation ID and the value is
         /// its user-friendly display name.
         /// </summary>
-        public IDictionary<string, string> Translations {
+        public IEnumerable<Translation> Translations {
             get {
-                Dictionary<string, string> Result = new Dictionary<string, string>();
-
                 for (int i = 0; i < NumberOfTranslations; i++) {
                     string[] Parts = this.Connection.Read().Split(';');
 
-                    Result.Add(Parts[0], Parts[1]);
+                    yield return new Translation(Parts[0], Parts[1]);
                 }
-
-                return Result;
             }
         }
 
