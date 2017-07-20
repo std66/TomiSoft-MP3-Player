@@ -9,11 +9,7 @@ namespace TomiSoft.MP3Player.Communication {
         private readonly StreamReader ServerReader;
 
         private bool keepAlive = false;
-
-        internal double ReadDouble() {
-            throw new NotImplementedException();
-        }
-
+        
         /// <summary>
         /// Gets if the connection is kept alive. If false,
         /// you can change it by invoking <see cref="SendKeepAlive"/>.
@@ -84,6 +80,14 @@ namespace TomiSoft.MP3Player.Communication {
         /// <returns>The <see cref="int"/> value read from the server</returns>
         public int ReadInt32() {
             return Convert.ToInt32(this.Read());
+        }
+
+        /// <summary>
+        /// Reads an <see cref="double"/> data from the server in a safe way.
+        /// </summary>
+        /// <returns>The <see cref="double"/> value read from the server</returns>
+        public double ReadDouble() {
+            return Convert.ToDouble(this.Read());
         }
 
         /// <summary>
