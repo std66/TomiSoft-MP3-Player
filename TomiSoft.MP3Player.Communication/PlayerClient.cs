@@ -17,6 +17,7 @@ namespace TomiSoft.MP3Player.Communication {
         private readonly SoftwareModule softwareModule;
         private readonly PlaylistModule playlistModule;
         private readonly PlaybackModule playbackModule;
+        private readonly LyricsModule lyricsModule;
 
         /// <summary>
         /// Gets if the connection is open.
@@ -24,6 +25,16 @@ namespace TomiSoft.MP3Player.Communication {
         public bool IsConnected {
             get {
                 return this.Connection.ConnectionIsOpen;
+            }
+        }
+
+        /// <summary>
+        /// Gets if the connection is kept alive. If false,
+        /// you can invoke <see cref="KeepAlive"/>.
+        /// </summary>
+        public bool KeepAliveConnection {
+            get {
+                return this.Connection.KeepAlive;
             }
         }
 
@@ -54,6 +65,15 @@ namespace TomiSoft.MP3Player.Communication {
             }
         }
         
+        /// <summary>
+        /// Provides commands for controlling the lyrics.
+        /// </summary>
+        public LyricsModule Lyrics {
+            get {
+                return lyricsModule;
+            }
+        }
+
         /// <summary>
         /// Determines whether the server is running.
         /// </summary>
@@ -86,6 +106,7 @@ namespace TomiSoft.MP3Player.Communication {
             this.softwareModule = new SoftwareModule(this.Connection);
             this.playlistModule = new PlaylistModule(this.Connection);
             this.playbackModule = new PlaybackModule(this.Connection);
+            this.lyricsModule = new LyricsModule(this.Connection);
         }
         
         /// <summary>
