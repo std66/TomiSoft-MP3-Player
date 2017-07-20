@@ -23,7 +23,6 @@ Screenshots:
 Notes:
 ------
   - Mid, midi, rmi and kar files can be opened, but requires a SoundFont. However, this function is not implemented yet, so you will hear no sound.
-  - Lyrics translation can only be changed via TCP API connection
 
 YouTube support:
 ----------------
