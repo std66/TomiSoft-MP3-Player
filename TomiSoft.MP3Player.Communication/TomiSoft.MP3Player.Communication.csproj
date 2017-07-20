@@ -40,8 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientModules\PlaybackModule.cs" />
+    <Compile Include="ClientModules\PlaylistModule.cs" />
     <Compile Include="PlayerClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerConnection.cs" />
+    <Compile Include="ClientModules\SoftwareModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,0 +1,45 @@
+﻿<Window x:Class="TomiSoft.LyricsEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TomiSoft.LyricsEditor"
+        xmlns:viewModels="clr-namespace:TomiSoft.LyricsEditor.ViewModels"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        mc:Ignorable="d"
+        Title="Dalszövegszerkesztő" Height="350" Width="525">
+
+    <Window.DataContext>
+        <viewModels:MainWindowViewModel/>
+    </Window.DataContext>
+    
+    <StackPanel>
+        <Menu x:Name="menu">
+            <MenuItem Header="Fájl">
+                <MenuItem Header="Új dalszöveg" Command="{Binding NewLyricsCommand}"/>
+                <MenuItem Header="Megnyitás" Command="{Binding OpenLyricsCommand}"/>
+                <MenuItem Header="Mentés" Command="{Binding SaveLyricsCommand}"/>
+                <Separator/>
+                <MenuItem Header="Kilépés" Command="{Binding ExitApplicationCommand}"/>
+            </MenuItem>
+        </Menu>
+
+        <ToolBarPanel>
+            <ToolBar>
+                <Button Height="21">
+                    <fa:ImageAwesome Icon="Play" Margin="2"/>
+                </Button>
+                <Button Height="21">
+                    <fa:ImageAwesome Icon="Pause" Margin="2"/>
+                </Button>
+                <Button Height="21">
+                    <fa:ImageAwesome Icon="Stop" Margin="2"/>
+                </Button>
+                
+                <Slider Width="150" Minimum="0" Maximum="100" Margin="10,3,3,3"/>
+
+                <TextBlock VerticalAlignment="Center">00:00:00 / 00:00:00</TextBlock>
+            </ToolBar>
+        </ToolBarPanel>
+    </StackPanel>
+</Window>

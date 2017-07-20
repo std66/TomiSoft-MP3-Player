@@ -52,7 +52,7 @@ namespace TomiSoft.AudioVisualization {
 			int LeftPeak;
 			int RightPeak;
 
-			this.Client.PeakLevel(out LeftPeak, out RightPeak);
+			this.Client.Playback.PeakLevel(out LeftPeak, out RightPeak);
 
 			this.LeftPeaks.Add(LeftPeak);
 			this.RightPeaks.Add(RightPeak);
