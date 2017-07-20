@@ -27,6 +27,21 @@ namespace TomiSoft_MP3_Player {
         private string lyrics;
 		private readonly SaveMediaCommand saveMediaCommand = new SaveMediaCommand();
 
+        private bool lyricsSettingsIsVisible = false;
+
+        /// <summary>
+        /// Gets or sets whether the lyrics settings panel is visible.
+        /// </summary>
+        public bool LyricsSettingsVisible {
+            get {
+                return this.lyricsSettingsIsVisible;
+            }
+            set {
+                this.lyricsSettingsIsVisible = value;
+                this.NotifyPropertyChanged(nameof(LyricsSettingsVisible));
+            }
+        }
+
 		/// <summary>
 		/// Gets the ICommand for the "Save media" button.
 		/// </summary>
