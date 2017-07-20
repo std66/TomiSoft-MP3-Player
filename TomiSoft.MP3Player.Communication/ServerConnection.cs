@@ -10,6 +10,10 @@ namespace TomiSoft.MP3Player.Communication {
 
         private bool keepAlive = false;
 
+        internal double ReadDouble() {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Gets if the connection is kept alive. If false,
         /// you can change it by invoking <see cref="SendKeepAlive"/>.

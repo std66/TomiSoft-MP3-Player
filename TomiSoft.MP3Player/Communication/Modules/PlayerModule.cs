@@ -37,13 +37,18 @@ namespace TomiSoft.MP3Player.Communication.Modules {
 		}
 
 		[ServerCommand]
-		public string PlaybackPosition() {
-			return $"{this.Playback?.Position ?? 0}/{this.Playback?.Length ?? 0}";
+		public double GetPlaybackPosition() {
+			return this.Playback?.Position ?? 0;
 		}
 
+        [ServerCommand]
+        public double GetSongLength() {
+            return this.Playback?.Length ?? 0;
+        }
+
 		[ServerCommand]
-		public void Play(params string[] Files) {
-			this.OpenFiles?.Invoke(this, Files);
+		public void Play(params string[] Sources) {
+			this.OpenFiles?.Invoke(this, Sources);
 		}
 
 		[ServerCommand]
@@ -55,5 +60,28 @@ namespace TomiSoft.MP3Player.Communication.Modules {
 		public void PlayPrevious() {
 			this.PreviousSong?.Invoke(this, EventArgs.Empty);
 		}
-	}
+
+        [ServerCommand]
+        public void SetPlaybackPosition(string Position) {
+            double pos;
+
+            if (double.TryParse(Position, out pos) && this.PlaybackManager != null)
+                this.PlaybackManager.Position = pos;
+        }
+
+        [ServerCommand]
+        public void StartPlayback() {
+            this.PlaybackManager?.Play();
+        }
+
+        [ServerCommand]
+        public void PausePlayback() {
+            this.PlaybackManager?.Pause();
+        }
+
+        [ServerCommand]
+        public void StopPlayback() {
+            this.PlaybackManager?.Stop();
+        }
+    }
 }

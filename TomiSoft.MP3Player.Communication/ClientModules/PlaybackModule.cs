@@ -8,6 +8,33 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
     public class PlaybackModule {
         private readonly ServerConnection Connection;
 
+        /// <summary>
+        /// Gets or sets the playback position.
+        /// </summary>
+        public double PlaybackPosition {
+            get {
+                this.Connection.Send("Player.GetPlaybackPosition");
+                return this.Connection.ReadDouble();
+            }
+
+            set {
+                if (value < 0 || value > SongLength)
+                    throw new ArgumentOutOfRangeException($"{nameof(value)} should be between 0 and {SongLength}");
+
+                this.Connection.Send($"Player.SetPlaybackPosition;{value}");
+            }
+        }
+
+        /// <summary>
+        /// Gets the length of the currently playing song.
+        /// </summary>
+        public double SongLength {
+            get {
+                this.Connection.Send("Player.GetSongLength");
+                return this.Connection.ReadDouble();
+            }
+        }
+
         internal PlaybackModule(ServerConnection Connection) {
             this.Connection = Connection;
         }
@@ -50,23 +77,24 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         }
 
         /// <summary>
-        /// Gets the playback position and the length of the song in
-        /// seconds.
+        /// Sends the command to the server to start the playback.
         /// </summary>
-        /// <param name="Length">The variable to store the length of the song in seconds</param>
-        /// <returns>The playback position in seconds</returns>
-        public double GetPlaybackPosition(out double Length) {
-            this.Connection.Send("Player.PlaybackPosition");
-            string[] Result = this.Connection.Read().Split('/');
+        public void Play() {
+            this.Connection.Send("Player.StartPlayback");
+        }
 
-            if (Result.Length == 2) {
-                Length = Convert.ToDouble(Result[1]);
-                return Convert.ToDouble(Result[0]);
-            }
-            else {
-                Length = 0;
-                return 0;
-            }
+        /// <summary>
+        /// Sends the command to the server to pause the playback.
+        /// </summary>
+        public void Pause() {
+            this.Connection.Send("Player.PausePlayback");
+        }
+
+        /// <summary>
+        /// Sends the command to the server to stop the playback.
+        /// </summary>
+        public void Stop() {
+            this.Connection.Send("Player.StopPlayback");
         }
 
         /// <summary>
@@ -75,7 +103,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// <param name="LeftPeak">The variable to store the left peak level</param>
         /// <param name="RightPeak">The variable to store the right peak level</param>
         /// <returns>The maximum value of the peak level</returns>
-        public int PeakLevel(out int LeftPeak, out int RightPeak) {
+        public int GetPeakLevel(out int LeftPeak, out int RightPeak) {
             this.Connection.Send("Player.PeakLevel");
             string[] Result = this.Connection.Read().Split('/');
 
