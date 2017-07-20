@@ -65,6 +65,7 @@
     <Compile Include="Commands\PlayCommand.cs" />
     <Compile Include="Commands\SaveLyricsCommand.cs" />
     <Compile Include="Commands\StopCommand.cs" />
+    <Compile Include="Converters\DoubleToTimeConverter.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\PlaybackStatus.cs" />
     <Page Include="MainWindow.xaml">

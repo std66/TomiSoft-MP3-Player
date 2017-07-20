@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TomiSoft.LyricsEditor"
         xmlns:viewModels="clr-namespace:TomiSoft.LyricsEditor.ViewModels"
+        xmlns:converters="clr-namespace:TomiSoft.LyricsEditor.Converters"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         Title="Dalszövegszerkesztő" Height="350" Width="525">
@@ -12,6 +13,10 @@
     <Window.DataContext>
         <viewModels:MainWindowViewModel/>
     </Window.DataContext>
+
+    <Window.Resources>
+        <converters:DoubleToTimeConverter x:Key="DoubleToTimeConverter"/>
+    </Window.Resources>
     
     <StackPanel>
         <Menu x:Name="menu">
@@ -35,10 +40,14 @@
                 <Button Height="21" Command="{Binding StopCommand}">
                     <fa:ImageAwesome Icon="Stop" Margin="2"/>
                 </Button>
-                
+
+                <Separator Margin="5,0,10,0"/>
+
+                <TextBlock VerticalAlignment="Center" Text="{Binding Playback.Position, Converter={StaticResource DoubleToTimeConverter}, FallbackValue='00:00:00'}"/>
+
                 <Slider Width="150" Minimum="0" Maximum="{Binding Playback.Length}" Value="{Binding Playback.Position, Mode=TwoWay}" Margin="10,3,3,3"/>
 
-                <TextBlock VerticalAlignment="Center">00:00:00 / 00:00:00</TextBlock>
+                <TextBlock VerticalAlignment="Center" Text="{Binding Playback.Length, Converter={StaticResource DoubleToTimeConverter}, FallbackValue='00:00:00'}"/>
             </ToolBar>
         </ToolBarPanel>
     </StackPanel>
