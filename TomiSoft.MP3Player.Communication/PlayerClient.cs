@@ -20,6 +20,15 @@ namespace TomiSoft.MP3Player.Communication {
         private readonly LyricsModule lyricsModule;
 
         /// <summary>
+        /// Gets the server's default port.
+        /// </summary>
+        public static int DefaultPort {
+            get {
+                return 22613;
+            }
+        }
+
+        /// <summary>
         /// Gets if the connection is open.
         /// </summary>
         public bool IsConnected {
@@ -75,6 +84,14 @@ namespace TomiSoft.MP3Player.Communication {
         }
 
         /// <summary>
+        /// Determines whether the server is running on the default port.
+        /// </summary>
+        /// <returns>True if the server is running, false if not.</returns>
+        public static bool IsServerRunning() {
+            return IsServerRunning(DefaultPort);
+        }
+
+        /// <summary>
         /// Determines whether the server is running.
         /// </summary>
         /// <param name="Port">The port number that the server is listening on</param>
@@ -93,6 +110,14 @@ namespace TomiSoft.MP3Player.Communication {
 
             return Result;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the PlayerClient class. Connets to the already
+        /// running instance on the default port.
+        /// </summary>
+        /// <param name="Port">The port number that the server is listening on</param>
+        /// <exception cref="SocketException">when some connection problems occur</exception>
+        public PlayerClient() : this(DefaultPort) {}
 
         /// <summary>
         /// Initializes a new instance of the PlayerClient class. Connets to the already

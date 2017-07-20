@@ -26,17 +26,17 @@
 
         <ToolBarPanel>
             <ToolBar>
-                <Button Height="21">
+                <Button Height="21" Command="{Binding PlayCommand}">
                     <fa:ImageAwesome Icon="Play" Margin="2"/>
                 </Button>
-                <Button Height="21">
+                <Button Height="21" Command="{Binding PauseCommand}">
                     <fa:ImageAwesome Icon="Pause" Margin="2"/>
                 </Button>
-                <Button Height="21">
+                <Button Height="21" Command="{Binding StopCommand}">
                     <fa:ImageAwesome Icon="Stop" Margin="2"/>
                 </Button>
                 
-                <Slider Width="150" Minimum="0" Maximum="100" Margin="10,3,3,3"/>
+                <Slider Width="150" Minimum="0" Maximum="{Binding Playback.Length}" Value="{Binding Playback.Position, Mode=TwoWay}" Margin="10,3,3,3"/>
 
                 <TextBlock VerticalAlignment="Center">00:00:00 / 00:00:00</TextBlock>
             </ToolBar>

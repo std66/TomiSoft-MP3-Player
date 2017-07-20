@@ -8,18 +8,15 @@ namespace TomiSoft.MP3Player.Communication {
         private readonly StreamWriter ServerWriter;
         private readonly StreamReader ServerReader;
 
-        private bool keepAlive = false;
-        
         /// <summary>
         /// Gets if the connection is kept alive. If false,
         /// you can change it by invoking <see cref="SendKeepAlive"/>.
         /// False by default.
         /// </summary>
         public bool KeepAlive {
-            get {
-                return keepAlive;
-            }
-        }
+            get;
+            private set;
+        } = false;
 
         /// <summary>
         /// Gets if the connection is open.
@@ -95,14 +92,14 @@ namespace TomiSoft.MP3Player.Communication {
         /// </summary>
         public void SendKeepAlive() {
             this.Send("Connection.KeepAlive");
-            this.keepAlive = true;
+            this.KeepAlive = true;
         }
 
         /// <summary>
         /// Closes the connection to the server.
         /// </summary>
         public void Dispose() {
-            if (this.keepAlive)
+            if (this.KeepAlive)
                 this.Send("Connection.Disconnect");
 
             this.ServerReader.Dispose();
