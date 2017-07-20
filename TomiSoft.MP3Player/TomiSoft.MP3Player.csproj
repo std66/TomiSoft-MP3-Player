@@ -280,6 +280,10 @@
       <Project>{4EABF703-A827-4305-A006-14AE7EB65663}</Project>
       <Name>TomiSoft.ExternalApis.YoutubeDl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TomiSoft.MP3Player.Common\TomiSoft.MP3Player.Common.csproj">
+      <Project>{90983566-00fc-4f5f-a126-d4708c19d17e}</Project>
+      <Name>TomiSoft.MP3Player.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TomiSoft.MP3Player.Communication\TomiSoft.MP3Player.Communication.csproj">
       <Project>{fab5119b-1065-45b0-9e71-83fba9ccb811}</Project>
       <Name>TomiSoft.MP3Player.Communication</Name>

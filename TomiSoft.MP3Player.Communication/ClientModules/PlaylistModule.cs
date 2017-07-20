@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using TomiSoft.MP3Player.Common.MediaInformation;
 
 namespace TomiSoft.MP3Player.Communication.ClientModules {
     /// <summary>
@@ -17,13 +17,14 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// is it's title.
         /// </summary>
         /// <returns>A sequence that represents the playlist.</returns>
-        public IEnumerable<KeyValuePair<string, string>> Playlist() {
-            XDocument doc = XDocument.Parse(this.GetPlaylistAsXml());
+        public IEnumerable<ISongMetadata> Playlist() {
+            XDocument doc = XDocument.Parse(this.GetPlaylistAsXmlString());
 
             return from c in doc.Descendants("song")
-                   select new KeyValuePair<string, string>(
-                       key: c.Element("a").Value,
-                       value: c.Element("t").Value
+                   select new SongMetadata(
+                       Title: c.Element("t").Value,
+                       Artist: c.Element("a").Value,
+                       Album: null
                    );
         }
 
@@ -31,9 +32,9 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// Gets the current playlist in XML format.
         /// </summary>
         /// <returns>The XML document that represents the playlist.</returns>
-        public string GetPlaylistAsXml() {
+        public string GetPlaylistAsXmlString() {
             this.Connection.Send("Player.ShowPlaylist");
-            int Count = Convert.ToInt32(this.Connection.Read());
+            int Count = this.Connection.ReadInt32();
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");

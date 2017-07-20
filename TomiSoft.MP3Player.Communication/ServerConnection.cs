@@ -75,6 +75,14 @@ namespace TomiSoft.MP3Player.Communication {
         }
 
         /// <summary>
+        /// Reads an <see cref="int"/> data from the server in a safe way.
+        /// </summary>
+        /// <returns>The <see cref="int"/> value read from the server</returns>
+        public int ReadInt32() {
+            return Convert.ToInt32(this.Read());
+        }
+
+        /// <summary>
         /// Sends a command to the server to keep alive the connection.
         /// </summary>
         public void SendKeepAlive() {

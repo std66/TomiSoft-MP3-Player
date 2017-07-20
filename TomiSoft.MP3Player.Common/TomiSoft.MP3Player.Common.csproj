@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Lyrics\Translation.cs" />
+    <Compile Include="MediaInformation\ISongMetadata.cs" />
+    <Compile Include="MediaInformation\SongMetadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

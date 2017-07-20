@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TomiSoft.MP3Player.Common.Lyrics;
 
@@ -38,7 +37,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         public int NumberOfTranslations {
             get {
                 this.Connection.Send("Lyrics.GetNumberOfTranslations");
-                return Convert.ToInt32(this.Connection.Read());
+                return this.Connection.ReadInt32();
             }
         }
 
@@ -52,6 +51,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
 
                 return this.Translations.FirstOrDefault(x => x.TranslationID == TranslationID);
             }
+
             set {
                 if (value != null && this.SupportsMultipleTranslations)
                     this.Connection.Send($"Lyrics.UseTranslation;" + value.TranslationID);
