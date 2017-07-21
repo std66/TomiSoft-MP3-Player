@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -11,11 +10,12 @@ using System.Threading;
 using TomiSoft.MP3Player.Utils.Extensions;
 using TomiSoft_MP3_Player;
 
-namespace TomiSoft.MP3Player.Communication {
-	/// <summary>
-	/// Ez az osztály felelős a TCP kapcsolaton érkező utasítások kezeléséért.
-	/// </summary>
-	public class PlayerServer : IDisposable {
+namespace TomiSoft.MP3Player.Communication
+{
+    /// <summary>
+    /// Ez az osztály felelős a TCP kapcsolaton érkező utasítások kezeléséért.
+    /// </summary>
+    public class PlayerServer : IDisposable {
 		private TcpListener ServerSocket;
 		private Thread ListenThread;
 
@@ -218,7 +218,7 @@ namespace TomiSoft.MP3Player.Communication {
 					Arguments = RealParameters;
 				}
 			}
-
+            
 			return Method.Invoke(HandlerModule, Arguments)?.ToString() ?? String.Empty;
 		}
 
