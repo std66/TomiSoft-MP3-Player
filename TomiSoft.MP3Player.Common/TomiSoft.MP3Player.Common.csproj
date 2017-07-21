@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FAB5119B-1065-45B0-9E71-83FBA9CCB811}</ProjectGuid>
+    <ProjectGuid>{90983566-00FC-4F5F-A126-D4708C19D17E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TomiSoft.MP3Player.Communication</RootNamespace>
-    <AssemblyName>TomiSoft.MP3Player.Communication</AssemblyName>
+    <RootNamespace>TomiSoft.MP3Player.Common</RootNamespace>
+    <AssemblyName>TomiSoft.MP3Player.Common</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,19 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientModules\LyricsModule.cs" />
-    <Compile Include="ClientModules\PlaybackModule.cs" />
-    <Compile Include="ClientModules\PlaylistModule.cs" />
-    <Compile Include="PlayerClient.cs" />
+    <Compile Include="Lyrics\Translation.cs" />
+    <Compile Include="MediaInformation\ISongMetadata.cs" />
+    <Compile Include="MediaInformation\SongMetadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerConnection.cs" />
-    <Compile Include="ClientModules\SoftwareModule.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TomiSoft.MP3Player.Common\TomiSoft.MP3Player.Common.csproj">
-      <Project>{90983566-00fc-4f5f-a126-d4708c19d17e}</Project>
-      <Name>TomiSoft.MP3Player.Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

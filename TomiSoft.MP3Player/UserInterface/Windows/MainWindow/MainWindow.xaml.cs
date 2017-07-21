@@ -489,6 +489,7 @@ namespace TomiSoft_MP3_Player {
 		/// <param name="Show">Set to true if you want to show the menu, set to false to hide it</param>
 		private void ToggleMenu(bool Show) {
 			if (Show) {
+                this.viewModel.LyricsSettingsVisible = false;
 				(this.Resources["FadeInAnimation"] as Storyboard)?.Begin();
 			}
 			else {
@@ -587,5 +588,9 @@ namespace TomiSoft_MP3_Player {
 				await this.OpenFilesAsync(new string[] { Dialog.UserInput });
 			}
 		}
-	}
+
+        private void lLyrics_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            this.viewModel.LyricsSettingsVisible = !this.viewModel.LyricsSettingsVisible;
+        }
+    }
 }

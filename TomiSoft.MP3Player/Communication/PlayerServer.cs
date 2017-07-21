@@ -76,8 +76,7 @@ namespace TomiSoft.MP3Player.Communication {
 			if (Client == null)
 				return;
 			#endregion
-
-			Trace.TraceInformation("[Server] A client has connected.");
+            
 			bool KeepAliveConnection = false;
 
 			using (StreamReader ClientReader = new StreamReader(Client.GetStream())){
@@ -85,9 +84,7 @@ namespace TomiSoft.MP3Player.Communication {
 					StreamWriter ClientWriter = new StreamWriter(Client.GetStream()) { AutoFlush = true };
 
 					do {
-						Trace.TraceInformation("[Server] Waiting for incoming data...");
 						string Data = ClientReader.ReadLine();
-						Trace.TraceInformation($"[Server] Data received: {Data}");
 
 						#region Error checking
 						if (String.IsNullOrWhiteSpace(Data)) {

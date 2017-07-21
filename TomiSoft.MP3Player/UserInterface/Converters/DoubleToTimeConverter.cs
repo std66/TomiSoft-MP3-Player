@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Data;
-using TomiSoft.MP3Player.Playback;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>

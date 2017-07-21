@@ -47,5 +47,35 @@ namespace TomiSoft.MP3Player.Communication.Modules {
 				LyricsReader.TranslationID = TranslationID;
 			}
 		}
-	}
+
+        [ServerCommand]
+        public int GetNumberOfTranslations() {
+            #region Error checking
+            if (this.LyricsReader == null)
+                return 0;
+            #endregion
+
+            return this.LyricsReader.Translations.Count;
+        }
+
+        [ServerCommand]
+        public string GetCurrentTranslationID() {
+            #region Error checking
+            if (this.LyricsReader == null)
+                return "";
+            #endregion
+
+            return this.LyricsReader.TranslationID;
+        }
+
+        [ServerCommand]
+        public bool SupportsMultipleTranslations() {
+            #region Error checking
+            if (this.LyricsReader == null)
+                return false;
+            #endregion
+
+            return this.LyricsReader.SupportsMultipleTranslations;
+        }
+    }
 }

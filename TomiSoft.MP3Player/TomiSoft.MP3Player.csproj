@@ -47,6 +47,7 @@
       <HintPath>..\packages\FontAwesome.WPF.4.5.0.8\lib\net40\FontAwesome.WPF.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Expression.Drawing, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -100,6 +101,7 @@
     <Compile Include="Playback\YouTube\YoutubePlayback.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="UserInterface\Controls\PlaybackControlViewModel.cs" />
+    <Compile Include="UserInterface\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="UserInterface\Converters\DoubleToTimeConverter.cs" />
     <Compile Include="UserInterface\Controls\PlaybackControl.xaml.cs">
       <DependentUpon>PlaybackControl.xaml</DependentUpon>
@@ -279,6 +281,10 @@
     <ProjectReference Include="..\TomiSoft.ExternalApis.YoutubeDl\TomiSoft.ExternalApis.YoutubeDl.csproj">
       <Project>{4EABF703-A827-4305-A006-14AE7EB65663}</Project>
       <Name>TomiSoft.ExternalApis.YoutubeDl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TomiSoft.MP3Player.Common\TomiSoft.MP3Player.Common.csproj">
+      <Project>{90983566-00fc-4f5f-a126-d4708c19d17e}</Project>
+      <Name>TomiSoft.MP3Player.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\TomiSoft.MP3Player.Communication\TomiSoft.MP3Player.Communication.csproj">
       <Project>{fab5119b-1065-45b0-9e71-83fba9ccb811}</Project>

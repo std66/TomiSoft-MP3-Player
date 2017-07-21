@@ -194,7 +194,7 @@ namespace TomiSoft_MP3_Player {
 					string[] args = Environment.GetCommandLineArgs();
 
 					if (args.Length > 1)
-						Client.Play(args.GetPartOfArray(1, args.Length - 1));
+						Client.Playback.OpenMedia(args.GetPartOfArray(1, args.Length - 1));
 				}
 			}
 			catch (Exception e) {
