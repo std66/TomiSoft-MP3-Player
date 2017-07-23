@@ -234,15 +234,9 @@ namespace TomiSoft_MP3_Player {
 				this.PlayerServerModule
 			);
 
-			this.PlayerServerModule.OpenFiles += (o, e) => {
-				this.Dispatcher.Invoke(() => this.OpenFilesAsync(e));
-			};
-			this.PlayerServerModule.NextSong += (o, e) => {
-				this.Dispatcher.Invoke(this.PlayNext);
-			};
-			this.PlayerServerModule.PreviousSong += (o, e) => {
-				this.Dispatcher.Invoke(this.PlayPrevious);
-			};
+			this.PlayerServerModule.OpenFiles    += (o, e) => this.Dispatcher.Invoke(() => this.OpenFilesAsync(e));
+			this.PlayerServerModule.NextSong     += (o, e) => this.Dispatcher.Invoke(this.PlayNext);
+			this.PlayerServerModule.PreviousSong += (o, e) => this.Dispatcher.Invoke(this.PlayPrevious);
 		}
 
 		private async void Window_KeyUpAsync(object sender, KeyEventArgs e) {
@@ -590,6 +584,9 @@ namespace TomiSoft_MP3_Player {
 		}
 
         private void lLyrics_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            if (this.MenuShowing && !this.viewModel.LyricsSettingsVisible)
+                this.ToggleMenu(Show: false);
+
             this.viewModel.LyricsSettingsVisible = !this.viewModel.LyricsSettingsVisible;
         }
     }

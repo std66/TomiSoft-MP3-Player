@@ -162,8 +162,8 @@ namespace TomiSoft.MP3Player.Playback.BASS {
             Progress?.Report(Status);
 
             await Task.Run(() => { 
-                int BufferLength = 1024;
-                byte[] Buffer = new byte[1024];
+                int BufferLength = 10240;
+                byte[] Buffer = new byte[BufferLength];
                 
                 while (Bass.BASS_ChannelGetPosition(DecodingChannel) < DecodingChannelLength) { 
                     Status.Position += Bass.BASS_ChannelGetData(DecodingChannel, Buffer, BufferLength);
