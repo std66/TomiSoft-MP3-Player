@@ -1,18 +1,20 @@
-﻿namespace TomiSoft.MP3Player.Communication {
-	public class ServerResponse<T> : IServerResponse<T> {
-		public bool RequestSucceeded {
-			get;
-			private set;
-		}
+﻿using System;
 
-		public T Result {
-			get;
-			private set;
-		}
+namespace TomiSoft.MP3Player.Communication {
+    public class ServerResponse {
+        public bool RequestSucceeded {
+            get;
+            set;
+        }
 
-		public ServerResponse(bool IsSuccessful, T Result) {
-			this.RequestSucceeded = IsSuccessful;
-			this.Result = Result;
-		}
-	}
+        public string Message {
+            get;
+            set;
+        }
+
+        internal void Check() {
+            if (!this.RequestSucceeded)
+                throw new Exception($"Request failed. Server message: {this.Message}");
+        }
+    }
 }

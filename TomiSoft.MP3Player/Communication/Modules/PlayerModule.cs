@@ -1,4 +1,5 @@
 ﻿using System;
+using TomiSoft.MP3Player.Common.Playback;
 using TomiSoft.MP3Player.Playback;
 
 namespace TomiSoft.MP3Player.Communication.Modules {

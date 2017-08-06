@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using TomiSoft.MP3Player.Common.Playback;
 using TomiSoft.MP3Player.Playback;
 
 namespace TomiSoft.MP3Player.UserInterface.Controls {

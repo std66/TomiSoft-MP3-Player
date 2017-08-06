@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Net.Sockets;
 
@@ -53,6 +54,48 @@ namespace TomiSoft.MP3Player.Communication {
         }
 
         /// <summary>
+        /// Sends a request to the server.
+        /// </summary>
+        /// <param name="Request">The request to be sent</param>
+        public ServerResponse Send(ServerRequest Request) {
+            #region Error checking
+            if (Request == null)
+                throw new ArgumentNullException(nameof(Request));
+            #endregion
+
+            this.Send(
+                JsonConvert.SerializeObject(Request)
+            );
+
+            var Result = JsonConvert.DeserializeObject<ServerResponse>(
+                this.Read()
+            );
+
+            return Result;
+        }
+
+        /// <summary>
+        /// Sends a request to the server.
+        /// </summary>
+        /// <param name="Request">The request to be sent</param>
+        public ServerResponse<T> Send<T>(ServerRequest Request) {
+            #region Error checking
+            if (Request == null)
+                throw new ArgumentNullException(nameof(Request));
+            #endregion
+
+            this.Send(
+                JsonConvert.SerializeObject(Request)
+            );
+
+            var Result = JsonConvert.DeserializeObject<ServerResponse<T>>(
+                this.Read()
+            );
+
+            return Result;
+        }
+
+        /// <summary>
         /// Reads a <see cref="string"/> data from the server in a safe way.
         /// </summary>
         /// <returns>The data read from the server</returns>
@@ -91,7 +134,9 @@ namespace TomiSoft.MP3Player.Communication {
         /// Sends a command to the server to keep alive the connection.
         /// </summary>
         public void SendKeepAlive() {
-            this.Send("Connection.KeepAlive");
+            this.Send(
+                new ServerRequest("Connection", "KeepAlive")
+            );
             this.KeepAlive = true;
         }
 
@@ -100,7 +145,7 @@ namespace TomiSoft.MP3Player.Communication {
         /// </summary>
         public void Dispose() {
             if (this.KeepAlive)
-                this.Send("Connection.Disconnect");
+                this.Send(new ServerRequest("Connection", "Disconnect"));
 
             this.ServerReader.Dispose();
             this.ServerWriter.Dispose();

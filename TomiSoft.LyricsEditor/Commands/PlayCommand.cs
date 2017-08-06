@@ -6,7 +6,10 @@ namespace TomiSoft.LyricsEditor.Commands {
     class PlayCommand : ICommand {
         private readonly PlayerClient Client;
 
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged {
+            add { }
+            remove { }
+        }
 
         public PlayCommand(PlayerClient Client) {
             this.Client = Client;

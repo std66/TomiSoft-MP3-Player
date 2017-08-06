@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Threading;
+using TomiSoft.MP3Player.Common.Playback;
 using TomiSoft.MP3Player.MediaInformation;
 using Un4seen.Bass;
 

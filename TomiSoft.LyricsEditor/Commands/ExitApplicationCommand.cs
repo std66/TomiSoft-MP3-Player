@@ -6,7 +6,10 @@ namespace TomiSoft.LyricsEditor.Commands {
     /// This command closes the application.
     /// </summary>
     class ExitApplicationCommand : ICommand {
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged {
+            add { }
+            remove { }
+        }
 
         public bool CanExecute(object parameter) {
             return true;

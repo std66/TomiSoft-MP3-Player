@@ -12,8 +12,8 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
 		/// </summary>
 		public bool ServerReady {
             get {
-                this.Connection.Send("Software.IsRunning");
-                return this.Connection.ReadBoolean();
+                ServerResponse<bool> Response = this.Connection.Send<bool>(new ServerRequest("Software", "IsRunning"));
+                return Response.RequestSucceeded && Response.Result;
             }
         }
 
@@ -22,8 +22,12 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public string Name {
             get {
-                this.Connection.Send("Software.Name");
-                return this.Connection.Read();
+                ServerResponse<string> Response = this.Connection.Send<string>(new ServerRequest("Software", "Name"));
+
+                if (!Response.RequestSucceeded)
+                    throw new Exception($"Request failed. Server message: {Response.Message}");
+
+                return Response.Result;
             }
         }
 
@@ -32,8 +36,12 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public Version Version {
             get {
-                this.Connection.Send("Software.Version");
-                return new Version(this.Connection.Read());
+                ServerResponse<Version> Response = this.Connection.Send<Version>(new ServerRequest("Software", "Version"));
+
+                if (!Response.RequestSucceeded)
+                    throw new Exception($"Request failed. Server message: {Response.Message}");
+
+                return Response.Result;
             }
         }
 
