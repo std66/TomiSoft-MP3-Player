@@ -4,7 +4,10 @@ using System.Windows.Input;
 
 namespace TomiSoft.LyricsEditor.Commands {
     class OpenLyricsCommand : ICommand {
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged {
+            add { }
+            remove { }
+        }
 
         public bool CanExecute(object parameter) {
             return true;

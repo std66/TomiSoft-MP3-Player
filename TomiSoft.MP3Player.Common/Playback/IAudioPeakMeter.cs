@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace TomiSoft.MP3Player.Playback {
+namespace TomiSoft.MP3Player.Common.Playback {
 	/// <summary>
 	/// This interface provides a way of managing audio peak meter.
 	/// </summary>

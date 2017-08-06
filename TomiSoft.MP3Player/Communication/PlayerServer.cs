@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -79,47 +80,35 @@ namespace TomiSoft.MP3Player.Communication {
             
 			bool KeepAliveConnection = false;
 
-			using (StreamReader ClientReader = new StreamReader(Client.GetStream())){
+            string Data = "";
+            
+            using (StreamReader ClientReader = new StreamReader(Client.GetStream())){
 				try {
 					StreamWriter ClientWriter = new StreamWriter(Client.GetStream()) { AutoFlush = true };
 
 					do {
-						string Data = ClientReader.ReadLine();
+						Data = ClientReader.ReadLine();
 
 						#region Error checking
 						if (String.IsNullOrWhiteSpace(Data)) {
 							ClientWriter.WriteLine("ERROR: Nothing received.");
 							continue;
 						}
-						#endregion
+                        #endregion
 
-						string[] CommandLine = Data.Split(';');
-						string ModuleAndCommand = CommandLine[0];
+                        ServerRequest Request = JsonConvert.DeserializeObject<ServerRequest>(Data);
 
-						string[] Parameters = new string[0];
-						if (CommandLine.Length > 1)
-							Parameters = CommandLine.GetPartOfArray(1, CommandLine.Length - 1);
-
-						bool HandledByInternalCommandHandler = !this.InternalCommandHandler(ClientWriter, ref KeepAliveConnection, ModuleAndCommand, Parameters);
+						bool HandledByInternalCommandHandler = !this.InternalCommandHandler(ClientWriter, ref KeepAliveConnection, Request.Module, Request.Command);
 
 						if (HandledByInternalCommandHandler) {
-							string[] CommandParts = ModuleAndCommand.Split('.');
+							if (!this.ExecuteHandlerMethod(ClientWriter, Request.Module, Request.Command, Request.Arguments?.ToArray())) {
+                                string Response = JsonConvert.SerializeObject(
+                                    ServerResponse<object>.GetFailed($"Failed to execute: Module={Request.Module} Command={Request.Command}")
+                                );
 
-							#region Error checking
-							if (CommandParts.Length != 2) {
-								ClientWriter.WriteLine("ERROR: Syntax error.");
-								continue;
-							}
-							#endregion
-
-							string Module = CommandParts[0];
-							string Command = CommandParts[1];
-
-							if (!this.ExecuteHandlerMethod(ClientWriter, Module, Command, Parameters)) {
-								ClientWriter.WriteLine("ERROR: Command not supported.");
+                                ClientWriter.WriteLine(Response);
 							}
 						}
-
 					}
 
 					while (KeepAliveConnection && Client.Connected);
@@ -127,6 +116,9 @@ namespace TomiSoft.MP3Player.Communication {
 				catch (ObjectDisposedException) { }
 				catch (IOException) { }
 				catch (ThreadInterruptedException) { }
+                catch (JsonReaderException) {
+                    Trace.WriteLine(Data);
+                }
 			}
 
 			Client.Close();
@@ -161,14 +153,12 @@ namespace TomiSoft.MP3Player.Communication {
 				return false;
 			#endregion
 			
-			string Result = this.InvokeHandlerMethod(HandlerModule, Method, Arguments);
+			object Result = this.InvokeHandlerMethod(HandlerModule, Method, Arguments);
 
-			if (!String.IsNullOrEmpty(Result)) {
-				if (!Result.EndsWith(Environment.NewLine))
-					ClientStream.WriteLine(Result);
-				else
-					ClientStream.Write(Result);
-			}
+            ServerResponse<object> Response = ServerResponse<object>.GetSuccess(Result);
+            ClientStream.WriteLine(
+                JsonConvert.SerializeObject(Response)
+            );
 
 			return true;
 		}
@@ -180,8 +170,8 @@ namespace TomiSoft.MP3Player.Communication {
 		/// <param name="HandlerModule">The instance on which the method will be invoked.</param>
 		/// <param name="Method">The <see cref="MethodInfo"/> instance that holds information about the method that will be invoked.</param>
 		/// <param name="Arguments">An array of arguments to be passed to the method.</param>
-		/// <returns>The invoked method's return value represented as <see cref="string"/></returns>
-		private string InvokeHandlerMethod(IServerModule HandlerModule, MethodInfo Method, object[] Arguments) {
+		/// <returns>The invoked method's return value.</returns>
+		private object InvokeHandlerMethod(IServerModule HandlerModule, MethodInfo Method, object[] Arguments) {
 			#region Error checking
 			if (HandlerModule == null || Method == null || Arguments == null)
 				return String.Empty;
@@ -219,7 +209,7 @@ namespace TomiSoft.MP3Player.Communication {
 				}
 			}
 
-			return Method.Invoke(HandlerModule, Arguments)?.ToString() ?? String.Empty;
+			return Method.Invoke(HandlerModule, Arguments) ?? String.Empty;
 		}
 
 		/// <summary>
@@ -255,15 +245,15 @@ namespace TomiSoft.MP3Player.Communication {
 		/// <summary>
 		/// Belső parancskezelő metódus.
 		/// </summary>
-		/// <param name="Client">A kliens-kapcsolatot reprezentáló TcpClient példány</param>
+		/// <param name="wrt">A kliens-kapcsolatot reprezentáló TcpClient példány</param>
 		/// <param name="KeepAlive">Maradjon-e nyitva a kapcsolat az első parancs fogadása után?</param>
-		/// <param name="ModuleAndCommand">A végrehajtandó parancs</param>
-		/// <param name="Arguments">A parancs paraméterei</param>
+		/// <param name="Module">The name of the module that will execute the command.</param>
+        /// <param name="Command">The name of the command that will be executed by the module.</param>
 		/// <returns>True, ha belső parancskezelő végre tudta hajtani a parancsot, false ha nem</returns>
-		private bool InternalCommandHandler(StreamWriter wrt, ref bool KeepAlive, string ModuleAndCommand, params string[] Arguments) {
+		private bool InternalCommandHandler(StreamWriter wrt, ref bool KeepAlive, string Module, string Command) {
 			bool CommandHandled = false;
 
-			switch (ModuleAndCommand) {
+			switch ($"{Module}.{Command}") {
 				case "Connection.KeepAlive":
 					CommandHandled = true;
 					KeepAlive = true;
@@ -279,6 +269,10 @@ namespace TomiSoft.MP3Player.Communication {
 					wrt.WriteLine(String.Join(";", this.Modules.Select(x => x.ModuleName)));
 					break;
 			}
+
+            if (CommandHandled) {
+                ServerResponse<object>.GetSuccess(null);
+            }
 
 			return CommandHandled;
 		}

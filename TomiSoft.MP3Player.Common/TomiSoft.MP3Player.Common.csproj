@@ -44,6 +44,8 @@
     <Compile Include="Lyrics\Translation.cs" />
     <Compile Include="MediaInformation\ISongMetadata.cs" />
     <Compile Include="MediaInformation\SongMetadata.cs" />
+    <Compile Include="Playback\AudioPeakMeter.cs" />
+    <Compile Include="Playback\IAudioPeakMeter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

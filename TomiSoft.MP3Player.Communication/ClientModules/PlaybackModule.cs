@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TomiSoft.MP3Player.Communication.ClientModules {
     /// <summary>
@@ -13,15 +14,26 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public double PlaybackPosition {
             get {
-                this.Connection.Send("Player.GetPlaybackPosition");
-                return this.Connection.ReadDouble();
+                ServerResponse<double> Response = this.Connection.Send<double>(
+                    new ServerRequest("Player", "GetPlaybackPosition")
+                );
+
+                Response.Check();
+
+                return Response.Result;
             }
 
             set {
                 if (value < 0 || value > SongLength)
                     throw new ArgumentOutOfRangeException($"{nameof(value)} should be between 0 and {SongLength}");
 
-                this.Connection.Send($"Player.SetPlaybackPosition;{value}");
+                ServerResponse Response = this.Connection.Send(
+                    new ServerRequest("Player", "SetPlaybackPosition", new List<string>() {
+                        value.ToString()
+                    })
+                );
+
+                Response.Check();
             }
         }
 
@@ -30,8 +42,13 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public double SongLength {
             get {
-                this.Connection.Send("Player.GetSongLength");
-                return this.Connection.ReadDouble();
+                ServerResponse<double> Response = this.Connection.Send<double>(
+                    new ServerRequest("Player", "GetSongLength")
+                );
+
+                Response.Check();
+
+                return Response.Result;
             }
         }
 
@@ -43,58 +60,76 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// Sends the command to the server to play the specified files.
         /// </summary>
         /// <param name="MediaSources">A sequence of the media sources (eg. filenames, URIs)</param>
-        public void OpenMedia(IEnumerable<string> MediaSources) {
+        public bool OpenMedia(IEnumerable<string> MediaSources) {
             #region Error checking
             if (MediaSources == null)
-                return;
+                return false;
             #endregion
 
-            this.Connection.Send($"Player.Play;{String.Join(";", MediaSources)}");
+            ServerResponse Response = this.Connection.Send(
+                new ServerRequest("Player", "Play", MediaSources.ToList())
+            );
+
+            return Response.RequestSucceeded;
         }
 
         /// <summary>
         /// Sends the command to the server to play the given file.
         /// </summary>
         /// <param name="Source">The source of the media to be played</param>
-        public void OpenMedia(string Source) {
-            this.Connection.Send($"Player.Play;{Source}");
+        public bool OpenMedia(string Source) {
+            return this.Connection.Send(
+                new ServerRequest("Player", "Play", new List<string> {
+                    Source
+                })
+            ).RequestSucceeded;
         }
 
         /// <summary>
         /// Sends the command to the server to play the next song in
         /// the playlist.
         /// </summary>
-        public void PlayNextSongOnPlaylist() {
-            this.Connection.Send("Player.PlayNext");
+        public bool PlayNextSongOnPlaylist() {
+            return this.Connection.Send(
+                new ServerRequest("Player", "PlayNext")
+            ).RequestSucceeded;
         }
 
         /// <summary>
         /// Sends the command to the server to play the previous song
         /// in the playlist.
         /// </summary>
-        public void PlayPreviousSongOnPlaylist() {
-            this.Connection.Send("Player.PlayPrevious");
+        public bool PlayPreviousSongOnPlaylist() {
+            return this.Connection.Send(
+                new ServerRequest("Player", "PlayPrevious")
+            ).RequestSucceeded;
         }
 
         /// <summary>
         /// Sends the command to the server to start the playback.
         /// </summary>
-        public void Play() {
-            this.Connection.Send("Player.StartPlayback");
+        public bool Play() {
+            return this.Connection.Send(
+                new ServerRequest("Player", "StartPlayback")
+            ).RequestSucceeded;
         }
 
         /// <summary>
         /// Sends the command to the server to pause the playback.
         /// </summary>
-        public void Pause() {
-            this.Connection.Send("Player.PausePlayback");
+        public bool Pause() {
+            return this.Connection.Send(
+                new ServerRequest("Player", "PausePlayback")
+            ).RequestSucceeded;
         }
 
         /// <summary>
         /// Sends the command to the server to stop the playback.
         /// </summary>
-        public void Stop() {
-            this.Connection.Send("Player.StopPlayback");
+        public bool Stop() {
+            return this.Connection.Send(
+                new ServerRequest("Player", "StopPlayback")
+            ).RequestSucceeded;
         }
 
         /// <summary>
