@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using TomiSoft.MP3Player.Common.Lyrics;
 using TomiSoft.Music.Lyrics;
 
 namespace TomiSoft.MP3Player.Communication.Modules {
@@ -16,28 +19,24 @@ namespace TomiSoft.MP3Player.Communication.Modules {
 		}
 
 		[ServerCommand]
-		public bool HasLoadedLyrics() {
+		public bool HasLyricsLoaded() {
 			return this.LyricsReader != null;
 		}
 
 		[ServerCommand]
-		public string Translations() {
+		public IEnumerable<Translation> GetTranslations() {
 			#region Error checking
 			if (this.LyricsReader == null)
-				return String.Empty;
+				return null;
 			#endregion
 
-			StringBuilder sb = new StringBuilder();
-
-			foreach (var Translation in LyricsReader.Translations) {
-				sb.AppendLine($"{Translation.Key};{Translation.Value}");
-			}
-
-			return sb.ToString();
+			return this.LyricsReader.Translations.Select(
+				x => new Translation(x.Key, x.Value)
+			);
 		}
 
 		[ServerCommand]
-		public void UseTranslation(string TranslationID) {
+		public void SetCurrentTranslation(string TranslationID) {
 			#region Error checking
 			if (this.LyricsReader == null)
 				return;
@@ -59,14 +58,16 @@ namespace TomiSoft.MP3Player.Communication.Modules {
         }
 
         [ServerCommand]
-        public string GetCurrentTranslationID() {
-            #region Error checking
-            if (this.LyricsReader == null)
-                return "";
-            #endregion
+        public Translation GetCurrentTranslation() {
+			#region Error checking
+			if (this.LyricsReader == null)
+				return null;
+			#endregion
 
-            return this.LyricsReader.TranslationID;
-        }
+			var DisplayName = this.LyricsReader.Translations[this.LyricsReader.TranslationID];
+			return new Translation(this.LyricsReader.TranslationID, DisplayName);
+
+		}
 
         [ServerCommand]
         public bool SupportsMultipleTranslations() {

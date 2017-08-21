@@ -28,13 +28,8 @@ namespace TomiSoft.MP3Player.Communication.Modules {
 		}
 
 		[ServerCommand]
-		public string PeakLevel() {
-			return $"{PeakMeter?.LeftPeak ?? 0}/{PeakMeter?.RightPeak ?? 0}";
-		}
-
-		[ServerCommand]
-		public int MaximumPeakLevel() {
-			return 32768;
+		public IAudioPeakMeter GetPeakLevel() {
+			return PeakMeter;
 		}
 
 		[ServerCommand]

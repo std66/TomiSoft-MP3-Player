@@ -5,14 +5,15 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
     /// Provides commands for controlling the software itself.
     /// </summary>
     public class SoftwareModule {
-        private readonly ServerConnection Connection;
+		private readonly string ServerModule = "Software";
+		private readonly ServerConnection Connection;
 
         /// <summary>
 		/// Gets whether the server is ready to accept commands.
 		/// </summary>
 		public bool ServerReady {
             get {
-                ServerResponse<bool> Response = this.Connection.Send<bool>(new ServerRequest("Software", "IsRunning"));
+                ServerResponse<bool> Response = this.Connection.Send<bool>(new ServerRequest(ServerModule, "IsRunning"));
                 return Response.RequestSucceeded && Response.Result;
             }
         }
@@ -22,7 +23,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public string Name {
             get {
-                ServerResponse<string> Response = this.Connection.Send<string>(new ServerRequest("Software", "Name"));
+                ServerResponse<string> Response = this.Connection.Send<string>(new ServerRequest(ServerModule, "Name"));
 
                 if (!Response.RequestSucceeded)
                     throw new Exception($"Request failed. Server message: {Response.Message}");
@@ -36,7 +37,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public Version Version {
             get {
-                ServerResponse<Version> Response = this.Connection.Send<Version>(new ServerRequest("Software", "Version"));
+                ServerResponse<Version> Response = this.Connection.Send<Version>(new ServerRequest(ServerModule, "Version"));
 
                 if (!Response.RequestSucceeded)
                     throw new Exception($"Request failed. Server message: {Response.Message}");

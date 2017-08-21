@@ -71,7 +71,16 @@ namespace TomiSoft.MP3Player.Playback {
 				return null;
 			}
 		}
-		
+
+		/// <summary>
+		/// Gets the possible maximum value for the peak level. Always returns 0.
+		/// </summary>
+		public int Maximum {
+			get {
+				return 0;
+			}
+		}
+
 		/// <summary>
 		/// Dummy method for staring playback. This method does nothing.
 		/// </summary>

@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,7 +8,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
-using TomiSoft.MP3Player.Utils.Extensions;
 using TomiSoft_MP3_Player;
 
 namespace TomiSoft.MP3Player.Communication
@@ -20,6 +18,10 @@ namespace TomiSoft.MP3Player.Communication
     public class PlayerServer : IDisposable {
 		private TcpListener ServerSocket;
 		private Thread ListenThread;
+
+		private readonly JsonSerializerSettings JsonConfig = new JsonSerializerSettings {
+			TypeNameHandling = TypeNameHandling.All
+		};
 
 		/// <summary>
 		/// Tárolja a csatlakoztatott modulokat.
@@ -157,9 +159,10 @@ namespace TomiSoft.MP3Player.Communication
 			object Result = this.InvokeHandlerMethod(HandlerModule, Method, Arguments);
 
             ServerResponse<object> Response = ServerResponse<object>.GetSuccess(Result);
-            ClientStream.WriteLine(
-                JsonConvert.SerializeObject(Response)
-            );
+
+			ClientStream.WriteLine(
+				JsonConvert.SerializeObject(Response, JsonConfig)
+			);
 
 			return true;
 		}
@@ -180,9 +183,11 @@ namespace TomiSoft.MP3Player.Communication
 
 			ParameterInfo[] ParamInfo = Method.GetParameters();
 
+			object Result = null;
+
 			//If the method has no parameters:
 			if (ParamInfo.Length == 0) {
-				return Method.Invoke(HandlerModule, null)?.ToString() ?? String.Empty;
+				Result = Method.Invoke(HandlerModule, null);
 			}
 
 			//If the method has parameters:
@@ -208,9 +213,11 @@ namespace TomiSoft.MP3Player.Communication
 
 					Arguments = RealParameters;
 				}
+
+				Result = Method.Invoke(HandlerModule, Arguments);
 			}
 
-			return Method.Invoke(HandlerModule, Arguments) ?? String.Empty;
+			return Result;
 		}
 
 		/// <summary>

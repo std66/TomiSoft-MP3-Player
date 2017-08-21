@@ -119,13 +119,13 @@ namespace TomiSoft.MP3Player.Communication {
         /// <exception cref="SocketException">when some connection problems occur</exception>
         public PlayerClient() : this(DefaultPort) {}
 
-        /// <summary>
-        /// Initializes a new instance of the PlayerClient class. Connets to the already
-        /// running instance.
-        /// </summary>
-        /// <param name="Port">The port number that the server is listening on</param>
-        /// <exception cref="SocketException">when some connection problems occur</exception>
-        public PlayerClient(int Port) {
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PlayerClient"/> class. Connets to the already
+		/// running instance.
+		/// </summary>
+		/// <param name="Port">The port number that the server is listening on</param>
+		/// <exception cref="SocketException">when some connection problems occur</exception>
+		public PlayerClient(int Port) {
             this.Connection = new ServerConnection(Port);
 
             this.softwareModule = new SoftwareModule(this.Connection);
