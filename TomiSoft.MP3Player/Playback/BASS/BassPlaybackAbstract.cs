@@ -172,6 +172,15 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 		}
 
 		/// <summary>
+		/// Gets the maximum possible value for the peak meter.
+		/// </summary>
+		public int Maximum {
+			get {
+				return 32768;
+			}
+		}
+
+		/// <summary>
 		/// Initializes a new instance of <see cref="BassPlaybackAbstract"/> using the given channel ID.
 		/// </summary>
 		/// <param name="ChannelID">The channel ID provided by BASS.</param>

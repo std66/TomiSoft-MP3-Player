@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TomiSoft.MP3Player.Common.Playback;
 
 namespace TomiSoft.MP3Player.Communication.ClientModules {
     /// <summary>
     /// Provides commands for controlling the playback.
     /// </summary>
     public class PlaybackModule {
-        private readonly ServerConnection Connection;
+		private readonly string ServerModule = "Player";
+		private readonly ServerConnection Connection;
 
         /// <summary>
         /// Gets or sets the playback position.
@@ -15,7 +17,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         public double PlaybackPosition {
             get {
                 ServerResponse<double> Response = this.Connection.Send<double>(
-                    new ServerRequest("Player", "GetPlaybackPosition")
+                    new ServerRequest(ServerModule, "GetPlaybackPosition")
                 );
 
                 Response.Check();
@@ -28,9 +30,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
                     throw new ArgumentOutOfRangeException($"{nameof(value)} should be between 0 and {SongLength}");
 
                 ServerResponse Response = this.Connection.Send(
-                    new ServerRequest("Player", "SetPlaybackPosition", new List<string>() {
-                        value.ToString()
-                    })
+                    new ServerRequest(ServerModule, "SetPlaybackPosition", value.ToString())
                 );
 
                 Response.Check();
@@ -43,7 +43,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         public double SongLength {
             get {
                 ServerResponse<double> Response = this.Connection.Send<double>(
-                    new ServerRequest("Player", "GetSongLength")
+                    new ServerRequest(ServerModule, "GetSongLength")
                 );
 
                 Response.Check();
@@ -51,6 +51,21 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
                 return Response.Result;
             }
         }
+
+		/// <summary>
+		/// Gets the current level of the audio signal.
+		/// </summary>
+		public IAudioPeakMeter PeakLevel {
+			get {
+				var Response = this.Connection.Send<AudioPeakMeter>(
+					new ServerRequest(ServerModule, "GetPeakLevel")
+				);
+
+				Response.Check();
+
+				return Response.Result;
+			}
+		}
 
         internal PlaybackModule(ServerConnection Connection) {
             this.Connection = Connection;
@@ -67,7 +82,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
             #endregion
 
             ServerResponse Response = this.Connection.Send(
-                new ServerRequest("Player", "Play", MediaSources.ToList())
+                new ServerRequest(ServerModule, "Play", MediaSources.ToArray())
             );
 
             return Response.RequestSucceeded;
@@ -79,9 +94,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// <param name="Source">The source of the media to be played</param>
         public bool OpenMedia(string Source) {
             return this.Connection.Send(
-                new ServerRequest("Player", "Play", new List<string> {
-                    Source
-                })
+                new ServerRequest(ServerModule, "Play", Source)
             ).RequestSucceeded;
         }
 
@@ -91,7 +104,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public bool PlayNextSongOnPlaylist() {
             return this.Connection.Send(
-                new ServerRequest("Player", "PlayNext")
+                new ServerRequest(ServerModule, "PlayNext")
             ).RequestSucceeded;
         }
 
@@ -101,7 +114,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public bool PlayPreviousSongOnPlaylist() {
             return this.Connection.Send(
-                new ServerRequest("Player", "PlayPrevious")
+                new ServerRequest(ServerModule, "PlayPrevious")
             ).RequestSucceeded;
         }
 
@@ -110,7 +123,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public bool Play() {
             return this.Connection.Send(
-                new ServerRequest("Player", "StartPlayback")
+                new ServerRequest(ServerModule, "StartPlayback")
             ).RequestSucceeded;
         }
 
@@ -119,7 +132,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public bool Pause() {
             return this.Connection.Send(
-                new ServerRequest("Player", "PausePlayback")
+                new ServerRequest(ServerModule, "PausePlayback")
             ).RequestSucceeded;
         }
 
@@ -128,24 +141,8 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public bool Stop() {
             return this.Connection.Send(
-                new ServerRequest("Player", "StopPlayback")
+                new ServerRequest(ServerModule, "StopPlayback")
             ).RequestSucceeded;
-        }
-
-        /// <summary>
-        /// Gets the current peak level.
-        /// </summary>
-        /// <param name="LeftPeak">The variable to store the left peak level</param>
-        /// <param name="RightPeak">The variable to store the right peak level</param>
-        /// <returns>The maximum value of the peak level</returns>
-        public int GetPeakLevel(out int LeftPeak, out int RightPeak) {
-            this.Connection.Send("Player.PeakLevel");
-            string[] Result = this.Connection.Read().Split('/');
-
-            LeftPeak = Convert.ToInt32(Result[0]);
-            RightPeak = Convert.ToInt32(Result[1]);
-
-            return 32768;
         }
     }
 }

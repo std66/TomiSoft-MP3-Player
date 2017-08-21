@@ -1,4 +1,6 @@
-﻿namespace TomiSoft.MP3Player.Common.MediaInformation {
+﻿using System.Text;
+
+namespace TomiSoft.MP3Player.Common.MediaInformation {
     /// <summary>
     /// Represents the metadata of a media.
     /// </summary>
@@ -38,5 +40,16 @@
             this.Artist = Artist;
             this.Album = Album;
         }
-    }
+
+		public override string ToString() {
+			StringBuilder sb = new StringBuilder();
+
+			if (this.Artist != null)
+				sb.Append($"{this.Artist} - ");
+
+			sb.Append(this.Title);
+
+			return sb.ToString();
+		}
+	}
 }

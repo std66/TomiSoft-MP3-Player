@@ -42,10 +42,13 @@ namespace TomiSoft.MP3Player.Communication {
 
         }
 
-        public ServerRequest(string Module, string Command, List<string> Arguments) {
+        public ServerRequest(string Module, string Command, params string[] Arguments) {
             this.Module = Module;
             this.Command = Command;
-            this.Arguments = Arguments;
+			this.Arguments = new List<string>();
+
+			if (Arguments != null)
+				this.Arguments.AddRange(Arguments);
         }
     }
 }

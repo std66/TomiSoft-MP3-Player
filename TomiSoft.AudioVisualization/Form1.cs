@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TomiSoft.MP3Player.Common.Playback;
 using TomiSoft.MP3Player.Communication;
 
 namespace TomiSoft.AudioVisualization {
@@ -49,13 +50,10 @@ namespace TomiSoft.AudioVisualization {
 		}
 
 		private void GetNextPeak() {
-			int LeftPeak;
-			int RightPeak;
-
-			this.Client.Playback.GetPeakLevel(out LeftPeak, out RightPeak);
-
-			this.LeftPeaks.Add(LeftPeak);
-			this.RightPeaks.Add(RightPeak);
+			IAudioPeakMeter Peak = this.Client.Playback.PeakLevel;
+			
+			this.LeftPeaks.Add(Peak.LeftPeak);
+			this.RightPeaks.Add(Peak.RightPeak);
 
 			if (this.LeftPeaks.Count == Resolution + 1)
 				this.LeftPeaks.RemoveAt(0);

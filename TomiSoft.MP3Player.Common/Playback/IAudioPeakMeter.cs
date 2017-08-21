@@ -14,5 +14,10 @@ namespace TomiSoft.MP3Player.Common.Playback {
 		/// Gets the current right peak level.
 		/// </summary>
 		int RightPeak { get; }
+
+		/// <summary>
+		/// Gets the maximum possible value of the peak meter.
+		/// </summary>
+		int Maximum { get; }
 	}
 }

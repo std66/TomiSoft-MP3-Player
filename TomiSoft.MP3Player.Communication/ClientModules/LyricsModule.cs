@@ -1,22 +1,27 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using TomiSoft.MP3Player.Common.Lyrics;
 
 namespace TomiSoft.MP3Player.Communication.ClientModules {
-    /// <summary>
-    /// Provides commands for controlling the lyrics.
-    /// </summary>
-    public class LyricsModule {
-        private readonly ServerConnection Connection;
+	/// <summary>
+	/// Provides commands for controlling the lyrics.
+	/// </summary>
+	public class LyricsModule {
+		private readonly string ServerModule = "Lyrics";
+		private readonly ServerConnection Connection;
 
         /// <summary>
         /// Gets whether there is a lyrics loaded.
         /// </summary>
         public bool HasLyricsLoaded {
             get {
-                this.Connection.Send("Lyrics.HasLyricsLoaded");
-                return this.Connection.ReadBoolean();
-            }
+				var Response = this.Connection.Send<bool>(
+					new ServerRequest(ServerModule, "HasLyricsLoaded")
+				);
+
+				Response.Check();
+
+				return Response.Result;
+			}
         }
 
         /// <summary>
@@ -25,9 +30,14 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public bool SupportsMultipleTranslations {
             get {
-                this.Connection.Send("Lyrics.SupportsMultipleTranslations");
-                return this.Connection.ReadBoolean();
-            }
+				var Response = this.Connection.Send<bool>(
+					new ServerRequest(ServerModule, "SupportsMultipleTranslations")
+				);
+
+				Response.Check();
+
+				return Response.Result;
+			}
         }
 
         /// <summary>
@@ -36,25 +46,38 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public int NumberOfTranslations {
             get {
-                this.Connection.Send("Lyrics.GetNumberOfTranslations");
-                return this.Connection.ReadInt32();
-            }
+				var Response = this.Connection.Send<int>(
+					new ServerRequest(ServerModule, "GetNumberOfTranslations")
+				);
+
+				Response.Check();
+
+				return Response.Result;
+			}
         }
 
         /// <summary>
         /// Gets or sets the currently displayed translation.
         /// </summary>
-        public Translation CurrentTranslationID {
+        public Translation CurrentTranslation {
             get {
-                this.Connection.Send("Lyrics.GetCurrentTranslationID");
-                string TranslationID = this.Connection.Read();
+				var Response = this.Connection.Send<Translation>(
+					new ServerRequest(ServerModule, "GetCurrentTranslation")
+				);
 
-                return this.Translations.FirstOrDefault(x => x.TranslationID == TranslationID);
-            }
+				Response.Check();
+
+				return Response.Result;
+			}
 
             set {
-                if (value != null && this.SupportsMultipleTranslations)
-                    this.Connection.Send($"Lyrics.UseTranslation;" + value.TranslationID);
+				if (value != null && this.SupportsMultipleTranslations) {
+					var Response = this.Connection.Send(
+						new ServerRequest(ServerModule, "SetCurrentTranslation", value.TranslationID)
+					);
+
+					Response.Check();
+				}
             }
         }
         
@@ -64,11 +87,14 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public IEnumerable<Translation> Translations {
             get {
-                for (int i = 0; i < NumberOfTranslations; i++) {
-                    string[] Parts = this.Connection.Read().Split(';');
+				var Response = this.Connection.Send<IEnumerable<Translation>>(
+					new ServerRequest(ServerModule, "GetTranslations")
+				);
 
-                    yield return new Translation(Parts[0], Parts[1]);
-                }
+				if (!Response.RequestSucceeded)
+					return null;
+
+				return Response.Result;
             }
         }
 

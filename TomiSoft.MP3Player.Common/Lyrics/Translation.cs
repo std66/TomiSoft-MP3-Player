@@ -36,7 +36,11 @@
             return 7 * this.TranslationID.GetHashCode() * this.DisplayName.GetHashCode();
         }
 
-        public static bool operator ==(Translation a, Translation b) {
+		public override string ToString() {
+			return $"{this.DisplayName} ({this.TranslationID})";
+		}
+
+		public static bool operator ==(Translation a, Translation b) {
             return a?.TranslationID == b?.TranslationID;
         }
 

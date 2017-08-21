@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Text;
-using TomiSoft.MP3Player.MediaInformation;
+using System.Collections.Generic;
+using TomiSoft.MP3Player.Common.MediaInformation;
 
 namespace TomiSoft.MP3Player.Communication.Modules {
 	public class PlaylistModule : IServerModule {
@@ -22,22 +22,18 @@ namespace TomiSoft.MP3Player.Communication.Modules {
 		}
 
 		[ServerCommand]
-		public string List() {
-			StringBuilder sb = new StringBuilder();
-
-			int Index = 0;
-			
-			foreach (ISongInfo Song in this.playlist) {
-				sb.AppendLine($"<index>{Index}</index><artist>{Song.Artist}</artist><title>{Song.Title}</title><source>{Song.Source}</source>");
-				Index++;
-			}
-
-			return sb.ToString();
+		public IEnumerable<ISongMetadata> GetPlaylist() {
+			return this.playlist;
 		}
 
 		[ServerCommand]
 		public string Count() {
 			return this.playlist.Count.ToString();
+		}
+
+		[ServerCommand]
+		public ISongMetadata GetNowPlaying() {
+			return this.playlist.CurrentSongInfo;
 		}
 	}
 }

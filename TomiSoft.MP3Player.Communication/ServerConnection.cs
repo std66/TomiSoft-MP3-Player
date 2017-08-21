@@ -53,6 +53,21 @@ namespace TomiSoft.MP3Player.Communication {
                 this.ServerWriter.WriteLine(Data);
         }
 
+		/// <summary>
+		/// Sends a request without reading a response.
+		/// </summary>
+		/// <param name="Request">The request to be sent</param>
+		private void SendWithoutResponse(ServerRequest Request) {
+			#region Error checking
+			if (Request == null)
+				throw new ArgumentNullException(nameof(Request));
+			#endregion
+
+			this.Send(
+				JsonConvert.SerializeObject(Request)
+			);
+		}
+
         /// <summary>
         /// Sends a request to the server.
         /// </summary>
@@ -107,34 +122,10 @@ namespace TomiSoft.MP3Player.Communication {
         }
 
         /// <summary>
-        /// Reads a <see cref="bool"/> data from the server in a safe way.
-        /// </summary>
-        /// <returns>The <see cref="bool"/> value read from the server</returns>
-        public bool ReadBoolean() {
-            return Convert.ToBoolean(this.Read());
-        }
-
-        /// <summary>
-        /// Reads an <see cref="int"/> data from the server in a safe way.
-        /// </summary>
-        /// <returns>The <see cref="int"/> value read from the server</returns>
-        public int ReadInt32() {
-            return Convert.ToInt32(this.Read());
-        }
-
-        /// <summary>
-        /// Reads an <see cref="double"/> data from the server in a safe way.
-        /// </summary>
-        /// <returns>The <see cref="double"/> value read from the server</returns>
-        public double ReadDouble() {
-            return Convert.ToDouble(this.Read());
-        }
-
-        /// <summary>
         /// Sends a command to the server to keep alive the connection.
         /// </summary>
         public void SendKeepAlive() {
-            this.Send(
+            this.SendWithoutResponse(
                 new ServerRequest("Connection", "KeepAlive")
             );
             this.KeepAlive = true;
@@ -145,7 +136,7 @@ namespace TomiSoft.MP3Player.Communication {
         /// </summary>
         public void Dispose() {
             if (this.KeepAlive)
-                this.Send(new ServerRequest("Connection", "Disconnect"));
+                this.SendWithoutResponse(new ServerRequest("Connection", "Disconnect"));
 
             this.ServerReader.Dispose();
             this.ServerWriter.Dispose();
