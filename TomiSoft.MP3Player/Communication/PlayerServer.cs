@@ -10,11 +10,12 @@ using System.Reflection;
 using System.Threading;
 using TomiSoft_MP3_Player;
 
-namespace TomiSoft.MP3Player.Communication {
-	/// <summary>
-	/// Ez az osztály felelős a TCP kapcsolaton érkező utasítások kezeléséért.
-	/// </summary>
-	public class PlayerServer : IDisposable {
+namespace TomiSoft.MP3Player.Communication
+{
+    /// <summary>
+    /// Ez az osztály felelős a TCP kapcsolaton érkező utasítások kezeléséért.
+    /// </summary>
+    public class PlayerServer : IDisposable {
 		private TcpListener ServerSocket;
 		private Thread ListenThread;
 

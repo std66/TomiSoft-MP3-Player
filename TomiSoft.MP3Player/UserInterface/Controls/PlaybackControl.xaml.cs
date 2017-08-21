@@ -37,20 +37,26 @@ namespace TomiSoft_MP3_Player {
 				this.DataContext = new PlaybackControlViewModel(value);
 
 				this.Player.PropertyChanged += (o, e) => {
-					switch (e.PropertyName) {
-						case "IsPlaying":
-							UI_PlayButton.IsEnabled = !this.player.IsPlaying;
-							UI_PauseButton.IsEnabled = this.player.IsPlaying;
-							UI_StopButton.IsEnabled = this.player.IsPlaying;
-							break;
-
-						case "IsPaused":
-							this.UI_StopButton.IsEnabled = this.player.IsPaused || this.player.IsPlaying;
-							break;
-					}
-				};
+                    this.Dispatcher.Invoke(() => UpdatePlaybackButtons(e.PropertyName));
+                };
 			}
 		}
+
+        private void UpdatePlaybackButtons(string PropertyName)
+        {
+            switch (PropertyName)
+            {
+                case "IsPlaying":
+                    UI_PlayButton.IsEnabled = !this.player.IsPlaying;
+                    UI_PauseButton.IsEnabled = this.player.IsPlaying;
+                    UI_StopButton.IsEnabled = this.player.IsPlaying;
+                    break;
+
+                case "IsPaused":
+                    this.UI_StopButton.IsEnabled = this.player.IsPaused || this.player.IsPlaying;
+                    break;
+            }
+        }
 		
 		public PlaybackControl() {
 			InitializeComponent();
