@@ -1,55 +1,55 @@
 ﻿using System;
 
 namespace TomiSoft.MP3Player.Communication.ClientModules {
-    /// <summary>
-    /// Provides commands for controlling the software itself.
-    /// </summary>
-    public class SoftwareModule {
+	/// <summary>
+	/// Provides commands for controlling the software itself.
+	/// </summary>
+	public class SoftwareModule {
 		private readonly string ServerModule = "Software";
 		private readonly ServerConnection Connection;
 
-        /// <summary>
+		/// <summary>
 		/// Gets whether the server is ready to accept commands.
 		/// </summary>
 		public bool ServerReady {
-            get {
-                var Response = this.Connection.Send<bool>(
+			get {
+				var Response = this.Connection.Send<bool>(
 					new ServerRequest(ServerModule, "IsRunning")
 				);
 
-                return Response.RequestSucceeded && Response.Result;
-            }
-        }
+				return Response.RequestSucceeded && Response.Result;
+			}
+		}
 
-        /// <summary>
-        /// Gets the name of the server.
-        /// </summary>
-        public string Name {
-            get {
-                var Response = this.Connection.Send<string>(
+		/// <summary>
+		/// Gets the name of the server.
+		/// </summary>
+		public string Name {
+			get {
+				var Response = this.Connection.Send<string>(
 					new ServerRequest(ServerModule, "Name")
 				);
 
 				Response.Check();
 
 				return Response.Result;
-            }
-        }
+			}
+		}
 
-        /// <summary>
-        /// Gets the version of the server.
-        /// </summary>
-        public Version Version {
-            get {
-                var Response = this.Connection.Send<Version>(
+		/// <summary>
+		/// Gets the version of the server.
+		/// </summary>
+		public Version Version {
+			get {
+				var Response = this.Connection.Send<Version>(
 					new ServerRequest(ServerModule, "Version")
 				);
 
 				Response.Check();
 
 				return Response.Result;
-            }
-        }
+			}
+		}
 
 		/// <summary>
 		/// Gets the website of the software.
@@ -87,7 +87,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
 		public string TraceLog {
 			get {
 				var Response = this.Connection.Send<string>(
-					new ServerRequest(ServerModule, "ApiVersion")
+					new ServerRequest(ServerModule, "TraceLog")
 				);
 
 				Response.Check();
@@ -97,7 +97,7 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
 		}
 
 		internal SoftwareModule(ServerConnection Connection) {
-            this.Connection = Connection;
-        }
-    }
+			this.Connection = Connection;
+		}
+	}
 }

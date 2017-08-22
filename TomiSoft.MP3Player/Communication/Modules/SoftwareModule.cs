@@ -41,7 +41,7 @@ namespace TomiSoft.MP3Player.Communication.Modules {
 
 		[ServerCommand]
 		public Version ApiVersion() {
-			return new Version(2, 0);
+			return new Version(2, 0, 0, 0);
 		}
 
 		[ServerCommand]
