@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using TomiSoft.ExternalApis.YoutubeDl;
 using TomiSoft.ExternalApis.YoutubeDl.MediaInformation;
-using TomiSoft.MP3Player.Playback.YouTube;
 using TomiSoft.MP3Player.Utils;
 using TomiSoft_MP3_Player;
 
@@ -34,7 +30,7 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		}
 
 		/// <summary>
-		/// Gets the artist of the song. Always returns a <see cref="string"/> similar to "Source: YouTube".
+		/// Gets the artist of the song.
 		/// </summary>
 		public string Artist {
 			get;
@@ -92,7 +88,7 @@ namespace TomiSoft.MP3Player.MediaInformation {
 			this.Source = Source;
 			this.Title = Title;
 			this.Length = DurationInSeconds;
-			this.Artist = "Forrás: YouTube";
+			this.Artist = null;
 		}
 
 		/// <summary>
@@ -103,8 +99,8 @@ namespace TomiSoft.MP3Player.MediaInformation {
 		/// <param name="Artist">The artist of the video</param>
 		/// <param name="DurationInSeconds">The length of the video in seconds</param>
 		private YoutubeSongInfo(string Source, string Title, string Artist, double DurationInSeconds)
-			:this (Source, Title, DurationInSeconds) {
-			this.Artist = Artist ?? "Forrás: YouTube";
+			: this(Source, Title, DurationInSeconds) {
+			this.Artist = Artist;
 		}
 
 		/// <summary>

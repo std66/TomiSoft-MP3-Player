@@ -3,16 +3,13 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using TomiSoft.ExternalApis.YoutubeDl;
 using TomiSoft.ExternalApis.YoutubeDl.MediaInformation;
 using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.MP3Player.Playback.BASS;
 using TomiSoft.MP3Player.Utils;
-using TomiSoft.MP3Player.Utils.Extensions;
 using TomiSoft_MP3_Player;
 
 namespace TomiSoft.MP3Player.Playback.YouTube {
@@ -31,23 +28,20 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 		/// </summary>
 		/// <param name="DownloadedFile">The path of the media file downloaded and converted by youtube-dl.</param>
 		private YoutubePlayback(ISongInfo SongInfo, string DownloadedFile) : base(DownloadedFile) {
-			this.songInfo = new SongInfo(SongInfo) {
-				Title = SongInfo.Title,
-				Artist = SongInfo.Artist != "Forrás: YouTube" ? SongInfo.Artist : null
-			};
+			this.songInfo = new SongInfo(SongInfo);
 
 			this.DownloadedFile = DownloadedFile;
 		}
 
-        /// <summary>
-        /// Creates a copy of the downloaded file to the given <see cref="Stream"/>. If the
-        /// <paramref name="TargetStream"/> is a <see cref="FileStream"/>, additional metatags will
-        /// be added.
-        /// </summary>
-        /// <param name="TargetStream">The <see cref="Stream"/> where the file is copied to</param>
-        /// <param param name="Progress">An <see cref="IProgress{T}"/> instance that will be used to report the save progress. Can be null.</param>
-        /// <returns>True if saving was successful, false if not</returns>
-        public override async Task<bool> SaveToAsync(Stream TargetStream, IProgress<LongOperationProgress> Progress) {
+		/// <summary>
+		/// Creates a copy of the downloaded file to the given <see cref="Stream"/>. If the
+		/// <paramref name="TargetStream"/> is a <see cref="FileStream"/>, additional metatags will
+		/// be added.
+		/// </summary>
+		/// <param name="TargetStream">The <see cref="Stream"/> where the file is copied to</param>
+		/// <param param name="Progress">An <see cref="IProgress{T}"/> instance that will be used to report the save progress. Can be null.</param>
+		/// <returns>True if saving was successful, false if not</returns>
+		public override async Task<bool> SaveToAsync(Stream TargetStream, IProgress<LongOperationProgress> Progress) {
 			bool SavedSuccessfully = await base.SaveToAsync(TargetStream, Progress);
 
 			if (!SavedSuccessfully)
@@ -58,7 +52,7 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 				return true;
 
 			TargetStream.Dispose();
-			
+
 			TagLib.File f = TagLib.File.Create(fs.Name);
 			f.Tag.Title = this.songInfo.Title;
 			f.Tag.AlbumArtists = new string[] { this.songInfo.Artist };
@@ -122,7 +116,7 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 			if (!YoutubeUri.IsValidYoutubeUri(SongInfo.Source))
 				throw new ArgumentException("Not a valid YouTube URI");
 			#endregion
-			
+
 			string MediaFilename = Path.ChangeExtension(Path.GetTempFileName(), "mp3");
 
 			#region Cleanup
@@ -159,7 +153,7 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 			else
 				return null;
 		}
-		
+
 		/// <summary>
 		/// Downloads the required additional softwares asynchronously for downloading and converting
 		/// YouTube videos.

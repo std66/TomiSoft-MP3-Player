@@ -10,12 +10,11 @@ using System.Reflection;
 using System.Threading;
 using TomiSoft_MP3_Player;
 
-namespace TomiSoft.MP3Player.Communication
-{
-    /// <summary>
-    /// Ez az osztály felelős a TCP kapcsolaton érkező utasítások kezeléséért.
-    /// </summary>
-    public class PlayerServer : IDisposable {
+namespace TomiSoft.MP3Player.Communication {
+	/// <summary>
+	/// Ez az osztály felelős a TCP kapcsolaton érkező utasítások kezeléséért.
+	/// </summary>
+	public class PlayerServer : IDisposable {
 		private TcpListener ServerSocket;
 		private Thread ListenThread;
 
@@ -48,7 +47,7 @@ namespace TomiSoft.MP3Player.Communication
 			this.ServerSocket = new TcpListener(IPAddress.Loopback, App.Config.ServerPort);
 			this.ServerSocket.Start();
 			Trace.TraceInformation("[Server] Server is running.");
-			
+
 			try {
 				while (true) {
 					if (!this.ServerSocket.Pending()) {
@@ -80,12 +79,12 @@ namespace TomiSoft.MP3Player.Communication
 			if (Client == null)
 				return;
 			#endregion
-            
+
 			bool KeepAliveConnection = false;
 
-            string Data = "";
-            
-            using (StreamReader ClientReader = new StreamReader(Client.GetStream())){
+			string Data = "";
+
+			using (StreamReader ClientReader = new StreamReader(Client.GetStream())) {
 				try {
 					StreamWriter ClientWriter = new StreamWriter(Client.GetStream()) { AutoFlush = true };
 
@@ -97,19 +96,19 @@ namespace TomiSoft.MP3Player.Communication
 							ClientWriter.WriteLine("ERROR: Nothing received.");
 							continue;
 						}
-                        #endregion
+						#endregion
 
-                        ServerRequest Request = JsonConvert.DeserializeObject<ServerRequest>(Data);
+						ServerRequest Request = JsonConvert.DeserializeObject<ServerRequest>(Data);
 
 						bool HandledByInternalCommandHandler = !this.InternalCommandHandler(ClientWriter, ref KeepAliveConnection, Request.Module, Request.Command);
 
 						if (HandledByInternalCommandHandler) {
 							if (!this.ExecuteHandlerMethod(ClientWriter, Request.Module, Request.Command, Request.Arguments?.ToArray())) {
-                                string Response = JsonConvert.SerializeObject(
-                                    ServerResponse<object>.GetFailed($"Failed to execute: Module={Request.Module} Command={Request.Command}")
-                                );
+								string Response = JsonConvert.SerializeObject(
+									ServerResponse<object>.GetFailed($"Failed to execute: Module={Request.Module} Command={Request.Command}")
+								);
 
-                                ClientWriter.WriteLine(Response);
+								ClientWriter.WriteLine(Response);
 							}
 						}
 					}
@@ -119,9 +118,9 @@ namespace TomiSoft.MP3Player.Communication
 				catch (ObjectDisposedException) { }
 				catch (IOException) { }
 				catch (ThreadInterruptedException) { }
-                catch (JsonReaderException) {
-                    Trace.WriteLine(Data);
-                }
+				catch (JsonReaderException) {
+					Trace.WriteLine(Data);
+				}
 			}
 
 			Client.Close();
@@ -155,10 +154,10 @@ namespace TomiSoft.MP3Player.Communication
 			if (!Method.GetCustomAttributes(typeof(ServerCommandAttribute)).Any())
 				return false;
 			#endregion
-			
+
 			object Result = this.InvokeHandlerMethod(HandlerModule, Method, Arguments);
 
-            ServerResponse<object> Response = ServerResponse<object>.GetSuccess(Result);
+			ServerResponse<object> Response = ServerResponse<object>.GetSuccess(Result);
 
 			ClientStream.WriteLine(
 				JsonConvert.SerializeObject(Response, JsonConfig)
@@ -256,7 +255,7 @@ namespace TomiSoft.MP3Player.Communication
 		/// <param name="wrt">A kliens-kapcsolatot reprezentáló TcpClient példány</param>
 		/// <param name="KeepAlive">Maradjon-e nyitva a kapcsolat az első parancs fogadása után?</param>
 		/// <param name="Module">The name of the module that will execute the command.</param>
-        /// <param name="Command">The name of the command that will be executed by the module.</param>
+		/// <param name="Command">The name of the command that will be executed by the module.</param>
 		/// <returns>True, ha belső parancskezelő végre tudta hajtani a parancsot, false ha nem</returns>
 		private bool InternalCommandHandler(StreamWriter wrt, ref bool KeepAlive, string Module, string Command) {
 			bool CommandHandled = false;
@@ -278,9 +277,9 @@ namespace TomiSoft.MP3Player.Communication
 					break;
 			}
 
-            if (CommandHandled) {
-                ServerResponse<object>.GetSuccess(null);
-            }
+			if (CommandHandled) {
+				ServerResponse<object>.GetSuccess(null);
+			}
 
 			return CommandHandled;
 		}
