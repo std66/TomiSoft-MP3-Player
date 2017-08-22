@@ -1,4 +1,5 @@
-﻿using TomiSoft_MP3_Player;
+﻿using System;
+using TomiSoft_MP3_Player;
 
 namespace TomiSoft.MP3Player.Communication.Modules {
 	public class SoftwareModule : IServerModule {
@@ -14,8 +15,8 @@ namespace TomiSoft.MP3Player.Communication.Modules {
 		}
 
 		[ServerCommand]
-		public string Version() {
-			return App.Version.ToString();
+		public Version Version() {
+			return App.Version;
 		}
 
 		[ServerCommand]
@@ -24,8 +25,8 @@ namespace TomiSoft.MP3Player.Communication.Modules {
 		}
 
 		[ServerCommand]
-		public string Website() {
-			return App.Website.ToString();
+		public Uri Website() {
+			return App.Website;
 		}
 
 		[ServerCommand]
@@ -34,8 +35,13 @@ namespace TomiSoft.MP3Player.Communication.Modules {
 		}
 
 		[ServerCommand]
-		public string IsRunning() {
-			return "true";
+		public bool IsRunning() {
+			return true;
+		}
+
+		[ServerCommand]
+		public Version ApiVersion() {
+			return new Version(2, 0);
 		}
 
 		[ServerCommand]

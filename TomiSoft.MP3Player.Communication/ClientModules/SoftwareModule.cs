@@ -13,7 +13,10 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
 		/// </summary>
 		public bool ServerReady {
             get {
-                ServerResponse<bool> Response = this.Connection.Send<bool>(new ServerRequest(ServerModule, "IsRunning"));
+                var Response = this.Connection.Send<bool>(
+					new ServerRequest(ServerModule, "IsRunning")
+				);
+
                 return Response.RequestSucceeded && Response.Result;
             }
         }
@@ -23,12 +26,13 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public string Name {
             get {
-                ServerResponse<string> Response = this.Connection.Send<string>(new ServerRequest(ServerModule, "Name"));
+                var Response = this.Connection.Send<string>(
+					new ServerRequest(ServerModule, "Name")
+				);
 
-                if (!Response.RequestSucceeded)
-                    throw new Exception($"Request failed. Server message: {Response.Message}");
+				Response.Check();
 
-                return Response.Result;
+				return Response.Result;
             }
         }
 
@@ -37,16 +41,62 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
         /// </summary>
         public Version Version {
             get {
-                ServerResponse<Version> Response = this.Connection.Send<Version>(new ServerRequest(ServerModule, "Version"));
+                var Response = this.Connection.Send<Version>(
+					new ServerRequest(ServerModule, "Version")
+				);
 
-                if (!Response.RequestSucceeded)
-                    throw new Exception($"Request failed. Server message: {Response.Message}");
+				Response.Check();
 
-                return Response.Result;
+				return Response.Result;
             }
         }
 
-        internal SoftwareModule(ServerConnection Connection) {
+		/// <summary>
+		/// Gets the website of the software.
+		/// </summary>
+		public Uri Website {
+			get {
+				var Response = this.Connection.Send<Uri>(
+					new ServerRequest(ServerModule, "Website")
+				);
+
+				Response.Check();
+
+				return Response.Result;
+			}
+		}
+
+		/// <summary>
+		/// Gets the version of the server's API.
+		/// </summary>
+		public Version ApiVersion {
+			get {
+				var Response = this.Connection.Send<Version>(
+					new ServerRequest(ServerModule, "ApiVersion")
+				);
+
+				Response.Check();
+
+				return Response.Result;
+			}
+		}
+
+		/// <summary>
+		/// Gets the trace log from the software.
+		/// </summary>
+		public string TraceLog {
+			get {
+				var Response = this.Connection.Send<string>(
+					new ServerRequest(ServerModule, "ApiVersion")
+				);
+
+				Response.Check();
+
+				return Response.Result;
+			}
+		}
+
+		internal SoftwareModule(ServerConnection Connection) {
             this.Connection = Connection;
         }
     }
