@@ -33,7 +33,7 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		/// </summary>
 		public string Title {
 			get {
-				return doc.Root.Attribute("Title").Value;
+				return doc.Root.Attribute("Title")?.Value;
 			}
 		}
 
@@ -67,7 +67,7 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		/// </summary>
 		public string Artist {
 			get {
-				return doc.Root.Attribute("Artist").Value;
+				return doc.Root.Attribute("Artist")?.Value;
 			}
 		}
 
@@ -76,7 +76,7 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		/// </summary>
 		public string Album {
 			get {
-				return doc.Root.Attribute("Album").Value;
+				return doc.Root.Attribute("Album")?.Value;
 			}
 		}
 
@@ -104,6 +104,7 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		/// <param name="Filename">The file's URI to load.</param>
 		public XmlLyricsReader(string Filename) {
 			this.doc = XDocument.Load(Filename);
+			this.QuickValidateFile();
 			this.TranslationID = this.DefaultTranslationID;
 		}
 
@@ -113,7 +114,24 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		/// <param name="Stream">A <see cref="Stream"/> that represents the file.</param>
 		public XmlLyricsReader(System.IO.Stream Stream) {
 			this.doc = XDocument.Load(Stream);
+			this.QuickValidateFile();
 			this.TranslationID = this.DefaultTranslationID;
+		}
+
+		/// <summary>
+		/// Checks whether the loaded file is containing all the
+		/// tags and attributes that are necessary for working with it.
+		/// </summary>
+		private void QuickValidateFile() {
+			object[] MustNotBeNull = {
+				this.doc.Root.Element("Translations"),
+				this.doc.Root.Element("Translations")?.Attribute("Default"),
+				this.doc.Root.Element("Lines")
+			};
+
+			if (MustNotBeNull.Any(x => x == null)) {
+				throw new Exception("This is not a valid lyrics file.");
+			}
 		}
 
 		/// <summary>
