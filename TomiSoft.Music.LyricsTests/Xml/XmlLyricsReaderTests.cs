@@ -7,21 +7,26 @@ using System.Xml;
 using TomiSoft.Music.LyricsTests.Xml;
 
 namespace TomiSoft.Music.Lyrics.Xml.Tests {
-	[TestClass()]
+	[TestClass]
 	public class XmlLyricsReaderTests {
-		[TestMethod()]
+		[TestMethod]
+		[TestCategory("XML Lyrics Processing - loading and parsing")]
 		public void XmlLyricsReader_CanLoadCorrectFile() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetCorrectXmlLyricsFile()) {
-				try {
-					new XmlLyricsReader(LyricsStream);
-				}
-				catch (Exception e) {
-					Assert.Fail(e.Message, e);
-				}
+				new XmlLyricsReader(LyricsStream);
 			}
 		}
 
-		[TestMethod()]
+		[TestMethod]
+		[TestCategory("XML Lyrics Processing - loading and parsing")]
+		public void XmlLyricsReader_CanLoadCorrectFile_WithMissingSongMetadata() {
+			using (Stream LyricsStream = SampleXmlLyrics.GetLyricsFileWithMetadataMissing()) {
+				new XmlLyricsReader(LyricsStream);
+			}
+		}
+
+		[TestMethod]
+		[TestCategory("XML Lyrics Processing - loading and parsing")]
 		[ExpectedException(typeof(XmlException))]
 		public void XmlLyricsReader_CannotLoadInvalidFile_NonWellFormattedXml() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetIncorrectXmlLyricsFile()) {
@@ -29,7 +34,8 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 			}
 		}
 
-		[TestMethod()]
+		[TestMethod]
+		[TestCategory("XML Lyrics Processing - loading and parsing")]
 		[ExpectedException(typeof(Exception))]
 		public void XmlLyricsReader_CannotLoadInvalidFile_TranslationsTagMissing() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetLyricsFileWithTranslationsTagMissing()) {
@@ -37,7 +43,8 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 			}
 		}
 
-		[TestMethod()]
+		[TestMethod]
+		[TestCategory("XML Lyrics Processing - loading and parsing")]
 		[ExpectedException(typeof(Exception))]
 		public void XmlLyricsReader_CannotLoadInvalidFile_LinesTagMissing() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetLyricsFileWithLinesTagMissing()) {
@@ -46,6 +53,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - translation support")]
 		public void XmlLyricsReader_SupportsMultipleTranslations() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetCorrectXmlLyricsFile()) {
 				ILyricsReader Reader = new XmlLyricsReader(LyricsStream);
@@ -54,6 +62,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - translation support")]
 		public void XmlLyricsReader_GetTranslations() {
 			Dictionary<string, string> Expected = new Dictionary<string, string>() {
 				{ "jp_romaji", "Japanese (romaji)" },
@@ -70,7 +79,8 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
-		public void XmlLyricsReader_DefaultTranslationID() {
+		[TestCategory("XML Lyrics Processing - translation support")]
+		public void XmlLyricsReader_GetDefaultTranslationID() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetCorrectXmlLyricsFile()) {
 				ILyricsReader Reader = new XmlLyricsReader(LyricsStream);
 				Assert.AreEqual("jp", Reader.DefaultTranslationID);
@@ -78,6 +88,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - translation support")]
 		public void XmlLyricsReader_GetTranslationID() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetCorrectXmlLyricsFile()) {
 				ILyricsReader Reader = new XmlLyricsReader(LyricsStream);
@@ -86,6 +97,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - translation support")]
 		public void XmlLyricsReader_SetTranslationID_ToAnExistingTranslation() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetCorrectXmlLyricsFile()) {
 				ILyricsReader Reader = new XmlLyricsReader(LyricsStream);
@@ -95,6 +107,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - song metadata support")]
 		public void XmlLyricsReader_LyricsMetadata_GetTitle() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetCorrectXmlLyricsFile()) {
 				ILyricsMetadata Reader = new XmlLyricsReader(LyricsStream);
@@ -103,6 +116,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - song metadata support")]
 		public void XmlLyricsReader_LyricsMetadata_GetTitle_MissingMetadataInFile() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetLyricsFileWithMetadataMissing()) {
 				ILyricsMetadata Reader = new XmlLyricsReader(LyricsStream);
@@ -111,6 +125,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - song metadata support")]
 		public void XmlLyricsReader_LyricsMetadata_GetArtist() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetCorrectXmlLyricsFile()) {
 				ILyricsMetadata Reader = new XmlLyricsReader(LyricsStream);
@@ -119,6 +134,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - song metadata support")]
 		public void XmlLyricsReader_LyricsMetadata_GetArtist_MissingMetadataInFile() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetLyricsFileWithMetadataMissing()) {
 				ILyricsMetadata Reader = new XmlLyricsReader(LyricsStream);
@@ -127,6 +143,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - song metadata support")]
 		public void XmlLyricsReader_LyricsMetadata_GetAlbum() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetCorrectXmlLyricsFile()) {
 				ILyricsMetadata Reader = new XmlLyricsReader(LyricsStream);
@@ -135,6 +152,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - song metadata support")]
 		public void XmlLyricsReader_LyricsMetadata_GetAlbum_MissingMetadataInFile() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetLyricsFileWithMetadataMissing()) {
 				ILyricsMetadata Reader = new XmlLyricsReader(LyricsStream);
@@ -143,6 +161,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - translation support")]
 		[ExpectedException(typeof(Exception))]
 		public void XmlLyricsReader_SetTranslationID_ToANonExistingTranslation() {
 			using (Stream LyricsStream = SampleXmlLyrics.GetCorrectXmlLyricsFile()) {
@@ -152,6 +171,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - lyrics text reading")]
 		public void XmlLyricsReader_GetLyricsLine_WithDefaultTranslation() {
 			Dictionary<double, List<string>> Tests = new Dictionary<double, List<string>>() {
 				{
@@ -181,6 +201,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - lyrics text reading")]
 		public void XmlLyricsReader_GetLyricsLine_WithNonDefaultTranslation() {
 			Dictionary<double, List<string>> Tests = new Dictionary<double, List<string>>() {
 				{
@@ -212,6 +233,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - lyrics text reading")]
 		public void XmlLyricsReader_GetLyricsLine_MultipleLinesWithDefaultTranslation() {
 			Dictionary<double, List<string>> Tests = new Dictionary<double, List<string>>() {
 				{
@@ -236,6 +258,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - lyrics text reading")]
 		public void XmlLyricsReader_GetLyricsLine_UndefinedLines() {
 			double[] TimestampsForEmptyLines = {
 				37.84, 37.90, 38.36
@@ -252,6 +275,7 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 		}
 
 		[TestMethod]
+		[TestCategory("XML Lyrics Processing - lyrics text reading")]
 		public void XmlLyricsReader_GetLyricsLine_DefinedEmptyLines() {
 			double[] TimestampsForEmptyLines = {
 				29.30, 29.30, 29.51
@@ -269,6 +293,56 @@ namespace TomiSoft.Music.Lyrics.Xml.Tests {
 						)
 					);
 				}
+			}
+		}
+
+		[TestMethod]
+		[TestCategory("XML Lyrics Processing - lyrics text reading")]
+		public void XmlLyricsReader_GetAllLines_WithDefaultTranslationID() {
+			ILyricsLine[] Expected = new LyricsLine[] {
+				new LyricsLine(22.19, 26.23, "完璧な空気に酔って秘める小悪魔の"),
+				new LyricsLine(26.24, 29.29, "隙間を狙ってく"),
+				new LyricsLine(29.30, 29.51, ""),
+				new LyricsLine(29.52, 33.57, "夢に見た未来の凄い装置で"),
+				new LyricsLine(33.57, 37.83, "どんな世界も作り出せる"),
+				new LyricsLine(38.37, 44.38, "この星は弾けるソーダのような")
+			};
+
+			using (Stream LyricsStream = SampleXmlLyrics.GetCorrectXmlLyricsFile()) {
+				ILyricsReader Reader = new XmlLyricsReader(LyricsStream);
+
+				Assert.IsTrue(
+					Enumerable.SequenceEqual(
+						Expected,
+						Reader.GetAllLines()
+					)
+				);
+			}
+		}
+
+		[TestMethod]
+		[TestCategory("XML Lyrics Processing - lyrics text reading")]
+		public void XmlLyricsReader_GetAllLines_WithNonDefaultTranslationID() {
+			ILyricsLine[] Expected = new LyricsLine[] {
+				new LyricsLine(22.19, 26.23, "Kanpeki na kuuki ni yotte himeru koakuma no"),
+				new LyricsLine(26.24, 29.29, "Sukima o neratteku"),
+				new LyricsLine(29.30, 29.51, ""),
+				new LyricsLine(29.52, 33.57, "Yume ni mita mirai no sugoi souchi de"),
+				new LyricsLine(33.57, 37.83, "Donna sekai mo tsukuridaseru"),
+				new LyricsLine(38.37, 44.38, "Kono hoshi wa hajikeru sou da no you na")
+			};
+
+			using (Stream LyricsStream = SampleXmlLyrics.GetCorrectXmlLyricsFile()) {
+				ILyricsReader Reader = new XmlLyricsReader(LyricsStream) {
+					TranslationID = "jp_romaji"
+				};
+
+				Assert.IsTrue(
+					Enumerable.SequenceEqual(
+						Expected,
+						Reader.GetAllLines()
+					)
+				);
 			}
 		}
 	}
