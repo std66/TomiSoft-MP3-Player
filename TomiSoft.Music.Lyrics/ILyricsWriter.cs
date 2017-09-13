@@ -24,7 +24,8 @@ namespace TomiSoft.Music.Lyrics {
 		/// Adds a new translation to the lyrics file.
 		/// </summary>
 		/// <param name="Language">The language of the translation</param>
-		void AddTranslation(string Language);
+		/// <returns>The ID generated for the translation</returns>
+		string AddTranslation(string Language);
 
 		/// <summary>
 		/// Adds a new line to the lyrics file.

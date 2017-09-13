@@ -7,6 +7,7 @@ namespace TomiSoft.Music.LyricsTests {
 				AutoFlush = true
 			};
 
+			Writer.Write("\xfeff");
 			Writer.Write(Contents);
 			this.Seek(0, SeekOrigin.Begin);
 		}

@@ -27,6 +27,9 @@ namespace TomiSoft.Music.Lyrics.Xml {
         /// </summary>
 		public string Title {
 			get {
+				if (!doc.Root.HasAttribute("Title"))
+					return null;
+
 				return doc.Root.GetAttributeValue("Title");
 			}
 			set {
@@ -39,6 +42,9 @@ namespace TomiSoft.Music.Lyrics.Xml {
         /// </summary>
 		public string Artist {
 			get {
+				if (!doc.Root.HasAttribute("Artist"))
+					return null;
+				
 				return doc.Root.GetAttributeValue("Artist");
 			}
 			set {
@@ -51,6 +57,9 @@ namespace TomiSoft.Music.Lyrics.Xml {
         /// </summary>
 		public string Album {
 			get {
+				if (!doc.Root.HasAttribute("Album"))
+					return null;
+
 				return doc.Root.GetAttributeValue("Album");
 			}
 			set {
@@ -64,6 +73,9 @@ namespace TomiSoft.Music.Lyrics.Xml {
         /// <exception cref="ArgumentException">when a translation with ID <paramref name="value"/> has not added yet</exception>
 		public string DefaultTranslationID {
 			get {
+				if (!doc.Root.Element("Translations").HasAttribute("Default"))
+					return null;
+				
 				return doc.Root.Element("Translations").GetAttributeValue("Default");
 			}
 			set {
@@ -111,9 +123,10 @@ namespace TomiSoft.Music.Lyrics.Xml {
 			this.BuildLines();
 
 			StringBuilder sb = new StringBuilder();
-			using (XmlWriter wrt = XmlWriter.Create(sb, new XmlWriterSettings() { Indent=true })) {
+			using (XmlWriter wrt = XmlWriter.Create(sb, new XmlWriterSettings() { Indent=false, Encoding=new UTF8Encoding(true) })) {
 				this.doc.WriteTo(wrt);
 			}
+
 			return sb.ToString();
 		}
 
@@ -151,13 +164,16 @@ namespace TomiSoft.Music.Lyrics.Xml {
 			}
 		}
 
-		public void AddTranslation(string Language) {
+		public string AddTranslation(string Language) {
 			string TranslationID = this.GenerateTranslationID(Language);
+
 			if (!this.translations.ContainsKey(TranslationID)) {
 				this.translations.Add(TranslationID, Language);
 				this.lines.Add(TranslationID, new List<ILyricsLine>());
 				this.UpdateTranslations();
 			}
+
+			return TranslationID;
 		}
 
 		public void AddLine(string TranslationID, double StartTime, double EndTime, string Text) {
@@ -186,15 +202,7 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		}
 
 		private string GenerateTranslationID(string Language) {
-			StringBuilder sb = new StringBuilder();
-			foreach (var c in Language) {
-				if (Char.IsLetter(c))
-					sb.Append(Char.ToLower(c));
-				else if (c == ' ')
-					sb.Append('_');
-			}
-
-			return sb.ToString();
+			return Guid.NewGuid().ToString();
 		}
 
 		private string SecondsToTimestamp(double Seconds) {

@@ -56,6 +56,7 @@
     <Compile Include="Xml\SampleXmlLyrics.cs" />
     <Compile Include="StringMemoryStream.cs" />
     <Compile Include="Xml\XmlLyricsReaderTests.cs" />
+    <Compile Include="Xml\XmlLyricsWriterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TomiSoft.Music.Lyrics\TomiSoft.Music.Lyrics.csproj">

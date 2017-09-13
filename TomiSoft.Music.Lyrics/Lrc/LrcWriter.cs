@@ -67,7 +67,7 @@ namespace TomiSoft.Music.Lyrics.Lrc {
 			throw new NotImplementedException();
 		}
 
-		public void AddTranslation(string Language) {
+		public string AddTranslation(string Language) {
 			throw new NotImplementedException();
 		}
 
