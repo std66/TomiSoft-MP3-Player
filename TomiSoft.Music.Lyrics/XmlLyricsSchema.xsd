@@ -20,7 +20,7 @@
 				<xs:element name="Lines">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="Line" maxOccurs="unbounded">
+							<xs:element name="Line" maxOccurs="unbounded" minOccurs="0">
 								<xs:complexType>
 									<xs:sequence>
 										<xs:element name="Translation" maxOccurs="unbounded">
