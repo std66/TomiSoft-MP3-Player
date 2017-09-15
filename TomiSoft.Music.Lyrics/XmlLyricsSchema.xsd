@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="Lyrics">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Translations">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Translation" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="ID" type="xs:ID"/>
+									<xs:attribute name="Name" type="xs:string"/>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="Default" type="xs:IDREF"></xs:attribute>
+					</xs:complexType>
+				</xs:element>
+
+				<xs:element name="Lines">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Line" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Translation" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute name="ID" type="xs:IDREF" use="required"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="Start">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:pattern value="\d+:[0-5][0-9]\.\d{2}"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+									<xs:attribute name="End">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:pattern value="\d+:[0-5][0-9]\.\d{2}"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+
+			<xs:attribute name="Title" type="xs:string"></xs:attribute>
+			<xs:attribute name="Artist" type="xs:string"></xs:attribute>
+			<xs:attribute name="Album" type="xs:string"></xs:attribute>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
