@@ -15,6 +15,11 @@ namespace TomiSoft.Music.Lyrics.Xml {
         /// </summary>
 		private XDocument doc;
 
+		/// <summary>
+		/// Stores the default XML namespace.
+		/// </summary>
+		private readonly XNamespace Namespace;
+
         /// <summary>
         /// Stores the translations. The key is the TranslationID and the value is a user-friendly name.
         /// </summary>
@@ -114,9 +119,23 @@ namespace TomiSoft.Music.Lyrics.Xml {
         }
 
         public XmlLyricsWriter() {
-			this.doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), new XElement("Lyrics"));
-			this.doc.Root.Add(new XElement("Translations"));
-			this.doc.Root.Add(new XElement("Lines"));
+			this.Namespace = XmlLyrics.XmlNamespace;
+			XNamespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
+
+			XElement Root = new XElement(
+				Namespace + "Lyrics",
+
+				new XAttribute(XNamespace.Xmlns + "xsi", xsi),
+				new XAttribute(xsi + "schemaLocation", $"{XmlLyrics.XmlNamespace} {XmlLyrics.XmlSchemaLocation}"),
+
+				new XElement(this.Namespace + "Translations"),
+				new XElement(this.Namespace + "Lines")
+			);
+
+			this.doc = new XDocument(
+				new XDeclaration("1.0", "utf-8", "yes"), 
+				Root
+			);
 		}
 
 		public string Build() {
@@ -131,7 +150,7 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		}
 
 		private void BuildLines() {
-			XElement Lines = this.doc.Root.Element("Lines");
+			XElement Lines = this.doc.Root.Element(this.Namespace + "Lines");
 			Lines.Elements().Remove();
 
 			foreach (var Translation in this.lines) {
@@ -146,7 +165,7 @@ namespace TomiSoft.Music.Lyrics.Xml {
 					XElement TargetLine = null;
 
 					if (Line.Count() == 0) {
-						TargetLine = new XElement("Line",
+						TargetLine = new XElement(this.Namespace + "Line",
 							new XAttribute("Start", Start),
 							new XAttribute("End", End)
 						);
@@ -156,7 +175,7 @@ namespace TomiSoft.Music.Lyrics.Xml {
 					else
 						TargetLine = Line.First();
 
-					TargetLine.Add(new XElement("Translation",
+					TargetLine.Add(new XElement(this.Namespace + "Translation",
 						new XAttribute("ID", Translation.Key),
 						CurrentLine.Text
 					));
@@ -188,16 +207,16 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		}
 
 		private void UpdateTranslations() {
-			this.doc.Root.Element("Translations").Elements().Remove();
+			this.doc.Root.Element(this.Namespace + "Translations").Elements().Remove();
 
 			foreach (var item in this.translations) {
 				XElement e = new XElement(
-					"Translation",
+					this.Namespace + "Translation",
 					new XAttribute("ID", item.Key),
 					new XAttribute("Name", item.Value)
 				);
 
-				this.doc.Root.Element("Translations").Add(e);
+				this.doc.Root.Element(this.Namespace + "Translations").Add(e);
 			}
 		}
 

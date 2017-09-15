@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="https://github.com/std66/TomiSoft-MP3-Player" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="Lyrics">
 		<xs:complexType>
 			<xs:sequence>
