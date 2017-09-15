@@ -9,134 +9,139 @@
         AllowDrop="True"
         Drop="Window_Drop"
         MouseRightButtonUp="ToggleMenuVisibility">
-    <Window.Resources>
-        <!-- Fade in animation for the menu -->
-        <Storyboard x:Key="FadeInAnimation">
-            <DoubleAnimation From="0" To="1" Storyboard.TargetName="Menu" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2"/>
-            <DoubleAnimation From="-235" To="0" Storyboard.TargetName="Menu" Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)" Duration="0:0:0.2"/>
-        </Storyboard>
+	<Window.Resources>
+		<!-- Fade in animation for the menu -->
+		<Storyboard x:Key="FadeInAnimation">
+			<DoubleAnimation From="0" To="1" Storyboard.TargetName="Menu" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2"/>
+			<DoubleAnimation From="-235" To="0" Storyboard.TargetName="Menu" Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)" Duration="0:0:0.2"/>
+		</Storyboard>
 
-        <!-- Fade out animation for the menu -->
-        <Storyboard x:Key="FadeOutAnimation">
-            <DoubleAnimation From="1" To="0" Storyboard.TargetName="Menu" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2"/>
-            <DoubleAnimation From="0" To="-235" Storyboard.TargetName="Menu" Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)" Duration="0:0:0.2"/>
-        </Storyboard>
+		<!-- Fade out animation for the menu -->
+		<Storyboard x:Key="FadeOutAnimation">
+			<DoubleAnimation From="1" To="0" Storyboard.TargetName="Menu" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2"/>
+			<DoubleAnimation From="0" To="-235" Storyboard.TargetName="Menu" Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)" Duration="0:0:0.2"/>
+		</Storyboard>
 
-        <!-- Hover effect style for the menu items -->
-        <Style x:Key="MenuLabelStyle" TargetType="{x:Type Label}">
-            <Setter Property="Background" Value="Transparent"/>
+		<!-- Hover effect style for the menu items -->
+		<Style x:Key="MenuLabelStyle" TargetType="{x:Type Label}">
+			<Setter Property="Background" Value="Transparent"/>
 
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="true">
-                    <Setter Property="Background" Value="DarkGray"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+			<Style.Triggers>
+				<Trigger Property="IsMouseOver" Value="true">
+					<Setter Property="Background" Value="#D0D0D0"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
 
-        <!-- Converters -->
-        <local:DoubleToTimeConverter x:Key="DoubleToTimeConverter" />
-        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-    </Window.Resources>
+		<!-- Converters -->
+		<local:DoubleToTimeConverter x:Key="DoubleToTimeConverter" />
+		<local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+	</Window.Resources>
 
-    <Window.DataContext>
-        <local:MainWindowViewModel/>
-    </Window.DataContext>
+	<Window.DataContext>
+		<local:MainWindowViewModel/>
+	</Window.DataContext>
 
-    <Grid Height="336" Width="270" x:Name="UI_Player">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="23*"/>
-            <RowDefinition Height="161*"/>
-            <RowDefinition Height="23*"/>
-            <RowDefinition Height="99"/>
-        </Grid.RowDefinitions>
+	<Grid Height="336" Width="270" x:Name="UI_Player">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="23*"/>
+			<RowDefinition Height="161*"/>
+			<RowDefinition Height="23*"/>
+			<RowDefinition Height="99"/>
+		</Grid.RowDefinitions>
 
-        <local:PlaybackControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="3" x:Name="PlaybackController">
-            <local:PlaybackControl.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="Black" Offset="1"/>
-                    <GradientStop Color="#FF151515"/>
-                </LinearGradientBrush>
-            </local:PlaybackControl.Background>
-        </local:PlaybackControl>
-        <Image x:Name="albumArt" Margin="0,0,0,0" Source="{Binding AlbumImage}" Stretch="Uniform" Grid.Row="1"/>
-        <Label x:Name="lSongTitle" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  Foreground="#FFAAAAAA" Content="{Binding Title}">
-            <Label.Effect>
-                <DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
-            </Label.Effect>
-        </Label>
+		<local:PlaybackControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Grid.Row="3" x:Name="PlaybackController">
+			<local:PlaybackControl.Background>
+				<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+					<GradientStop Color="Black" Offset="1"/>
+					<GradientStop Color="#FF151515"/>
+				</LinearGradientBrush>
+			</local:PlaybackControl.Background>
+		</local:PlaybackControl>
+		<Image x:Name="albumArt" Margin="0,0,0,0" Source="{Binding AlbumImage}" Stretch="Uniform" Grid.Row="1"/>
+		<Label x:Name="lSongTitle" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  Foreground="#FFAAAAAA" Content="{Binding Title}">
+			<Label.Effect>
+				<DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
+			</Label.Effect>
+		</Label>
 
-        <Label x:Name="lLyrics" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,0,0" Foreground="#FFAAAAAA" Grid.Row="2" MouseLeftButtonDown="lLyrics_MouseLeftButtonDown">
-            <Label.Effect>
-                <DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
-            </Label.Effect>
-            <TextBlock TextWrapping="WrapWithOverflow" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Lyrics}"/>
-        </Label>
+		<Label x:Name="lLyrics" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,0,0" Foreground="#FFAAAAAA" Grid.Row="2" MouseLeftButtonDown="lLyrics_MouseLeftButtonDown">
+			<Label.Effect>
+				<DropShadowEffect BlurRadius="3" ShadowDepth="1"/>
+			</Label.Effect>
+			<TextBlock TextWrapping="WrapWithOverflow" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Lyrics}"/>
+		</Label>
 
-        <!-- Menu -->
-        <StackPanel HorizontalAlignment="Left" Height="237" Grid.RowSpan="3" Width="235" Background="LightGray" x:Name="Menu">
-            <StackPanel.Effect>
-                <DropShadowEffect Direction="0" ShadowDepth="4" BlurRadius="10"/>
-            </StackPanel.Effect>
-            <StackPanel.RenderTransform>
-                <TranslateTransform X="-235"/>
-            </StackPanel.RenderTransform>
+		<!-- Menu -->
+		<StackPanel HorizontalAlignment="Left" Height="237" Grid.RowSpan="3" Width="235" Background="#F2F2F2" x:Name="Menu">
+			<StackPanel.Effect>
+				<DropShadowEffect Direction="0" ShadowDepth="4" BlurRadius="10"/>
+			</StackPanel.Effect>
+			<StackPanel.RenderTransform>
+				<TranslateTransform X="-235"/>
+			</StackPanel.RenderTransform>
 
-            <DockPanel Height="237">
-                <StackPanel DockPanel.Dock="Top">
-                    <Label Height="23">
-                        <StackPanel Orientation="Horizontal">
-                            <fa:ImageAwesome Icon="Bars" VerticalAlignment="Center" Margin="0,0,7,0"/>
-                            <TextBlock FontWeight="Bold" VerticalAlignment="Center"><Run Text="MENÜ"/></TextBlock>
-                        </StackPanel>
-                    </Label>
+			<DockPanel Height="237">
+				<StackPanel DockPanel.Dock="Top" Margin="0,3,0,0">
+					<StackPanel Orientation="Horizontal" Height="22" HorizontalAlignment="Center">
+						<StackPanel.Resources>
+							<Style BasedOn="{StaticResource MenuLabelStyle}" TargetType="{x:Type Label}"/>
+						</StackPanel.Resources>
 
-                    <Separator/>
+						<Label MouseLeftButtonUp="FileOpenButton_Click" ToolTip="Zene kiválasztása" Margin="0,0,0,0">
+							<fa:ImageAwesome Icon="FolderOpen"/>
+						</Label>
+						<Label MouseLeftButtonUp="UriOpen_Click" ToolTip="YouTube-média megnyitása" Margin="2,0,0,0">
+							<fa:ImageAwesome Icon="YoutubePlay"/>
+						</Label>
+						<Label MouseLeftButtonUp="HideMenu" ToolTip="Zene mentése" Margin="2,0,0,0">
+							<Label.InputBindings>
+								<MouseBinding Command="{Binding SaveMediaCommand}" MouseAction="LeftClick"/>
+							</Label.InputBindings>
+							<fa:ImageAwesome Icon="Save"/>
+						</Label>
+						<Label MouseLeftButtonUp="AboutClicked" ToolTip="Névjegy">
+							<fa:ImageAwesome Icon="InfoCircle"/>
+						</Label>
+					</StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Height="22">
-                        <StackPanel.Resources>
-                            <Style BasedOn="{StaticResource MenuLabelStyle}" TargetType="{x:Type Label}"/>
-                        </StackPanel.Resources>
+					<Separator/>
+				</StackPanel>
 
-                        <Label MouseLeftButtonUp="FileOpenButton_Click" ToolTip="Zene kiválasztása" Margin="2,0,0,0">
-                            <fa:ImageAwesome Icon="FolderOpen"/>
-                        </Label>
-                        <Label MouseLeftButtonUp="UriOpen_Click" ToolTip="YouTube-média megnyitása" Margin="2,0,0,0">
-                            <fa:ImageAwesome Icon="YoutubePlay"/>
-                        </Label>
-                        <Label MouseLeftButtonUp="HideMenu" ToolTip="Zene mentése" Margin="2,0,0,0">
-                            <Label.InputBindings>
-                                <MouseBinding Command="{Binding SaveMediaCommand}" MouseAction="LeftClick"/>
-                            </Label.InputBindings>
-                            <fa:ImageAwesome Icon="Save"/>
-                        </Label>
-                        <Label MouseLeftButtonUp="AboutClicked" ToolTip="Névjegy">
-                            <fa:ImageAwesome Icon="InfoCircle"/>
-                        </Label>
-                    </StackPanel>
+				<DockPanel DockPanel.Dock="Bottom">
+					<Label Content="{Binding Playlist.Count, FallbackValue=0}"/>
+					<Label Content="szám" Margin="-5,0,0,0"/>
+					<Label HorizontalAlignment="Right" Content="{Binding Playlist.TotalLength, Converter={StaticResource DoubleToTimeConverter}, FallbackValue=00:00:00}"/>
+				</DockPanel>
 
-                    <Separator/>
-                </StackPanel>
+				<ListView x:Name="lvPlaylist" MouseDoubleClick="lvPlaylist_MouseDoubleClick" Background="Transparent" ItemsSource="{Binding Playlist}"  BorderBrush="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="*"/>
+									<RowDefinition Height="*"/>
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="22px"/>
+									<ColumnDefinition Width="*"/>
+								</Grid.ColumnDefinitions>
 
-                <DockPanel DockPanel.Dock="Bottom">
-                    <Label Content="{Binding Playlist.Count, FallbackValue=0}"/>
-                    <Label Content="szám" Margin="-5,0,0,0"/>
-                    <Label HorizontalAlignment="Right" Content="{Binding Playlist.TotalLength, Converter={StaticResource DoubleToTimeConverter}, FallbackValue=00:00:00}"/>
-                </DockPanel>
+								<TextBlock Width="14px" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Center">
+									<fa:ImageAwesome Icon="Music"/>
+								</TextBlock>
 
-                <ListView x:Name="lvPlaylist" MouseDoubleClick="lvPlaylist_MouseDoubleClick" Height="156" Background="Transparent" ItemsSource="{Binding Playlist}"  BorderBrush="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock FontWeight="Bold" Text="{Binding Title, FallbackValue=Ismeretlen szám}"/>
-                                <TextBlock FontStyle="Italic" Text="{Binding Artist, FallbackValue=Ismeretlen előadó}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </DockPanel>
-        </StackPanel>
+								<TextBlock Text="{Binding Title, FallbackValue='Ismeretlen szám'}" Grid.Column="1" Grid.Row="0"/>
+								<TextBlock Foreground="#707070" Text="{Binding Artist, FallbackValue='Ismeretlen előadó'}" Grid.Column="1" Grid.Row="1"/>
 
-        <ed:Callout x:Name="LyricsSettings" 
+							</Grid>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+			</DockPanel>
+		</StackPanel>
+
+		<ed:Callout x:Name="LyricsSettings" 
                     AnchorPoint="0.25,1.2" 
                     CalloutStyle="Rectangle" 
                     Fill="#FFF4F4F5"
@@ -147,13 +152,13 @@
                     Height="60" 
                     VerticalAlignment="Bottom"
                     Visibility="{Binding LyricsSettingsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <ed:Callout.Effect>
-                <DropShadowEffect/>
-            </ed:Callout.Effect>
-            <StackPanel>
-                <TextBlock>Dalszöveg fordítások:</TextBlock>
-                <ComboBox Width="172" ItemsSource="{Binding LyricsReader.Translations}" SelectedValue="{Binding LyricsReader.TranslationID}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
-            </StackPanel>
-        </ed:Callout>
-    </Grid>
+			<ed:Callout.Effect>
+				<DropShadowEffect/>
+			</ed:Callout.Effect>
+			<StackPanel>
+				<TextBlock>Dalszöveg fordítások:</TextBlock>
+				<ComboBox Width="172" ItemsSource="{Binding LyricsReader.Translations}" SelectedValue="{Binding LyricsReader.TranslationID}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+			</StackPanel>
+		</ed:Callout>
+	</Grid>
 </Window>
