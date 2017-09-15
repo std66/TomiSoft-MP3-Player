@@ -6,7 +6,7 @@
 				<xs:element name="Translations">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="Translation" maxOccurs="unbounded">
+							<xs:element name="Translation" maxOccurs="unbounded" minOccurs="0">
 								<xs:complexType>
 									<xs:attribute name="ID" type="xs:ID"/>
 									<xs:attribute name="Name" type="xs:string"/>
