@@ -13,7 +13,7 @@
 								</xs:complexType>
 							</xs:element>
 						</xs:sequence>
-						<xs:attribute name="Default" type="xs:IDREF"></xs:attribute>
+						<xs:attribute name="Default" type="xs:IDREF" use="required"/>
 					</xs:complexType>
 				</xs:element>
 
