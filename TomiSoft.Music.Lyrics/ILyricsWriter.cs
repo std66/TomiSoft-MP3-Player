@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace TomiSoft.Music.Lyrics {
 	/// <summary>
@@ -48,5 +49,10 @@ namespace TomiSoft.Music.Lyrics {
 		/// </summary>
 		/// <returns>The contents of the lyrics file.</returns>
 		string Build();
+
+		/// <summary>
+		/// Constructs the lyrics file and writes the result to the given <see cref="Stream"/>.
+		/// </summary>
+		void Build(Stream TargetStream);
 	}
 }

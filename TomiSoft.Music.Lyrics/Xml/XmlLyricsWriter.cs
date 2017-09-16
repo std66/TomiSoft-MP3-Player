@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -78,16 +79,21 @@ namespace TomiSoft.Music.Lyrics.Xml {
         /// <exception cref="ArgumentException">when a translation with ID <paramref name="value"/> has not added yet</exception>
 		public string DefaultTranslationID {
 			get {
-				if (!doc.Root.Element("Translations").HasAttribute("Default"))
+				if (!doc.Root.Element(this.Namespace + "Translations").HasAttribute("Default"))
 					return null;
 				
-				return doc.Root.Element("Translations").GetAttributeValue("Default");
+				var Value = doc.Root.Element(this.Namespace + "Translations").GetAttributeValue("Default");
+
+				if (String.IsNullOrEmpty(Value))
+					return null;
+
+				return Value;
 			}
 			set {
 				if (!this.translations.ContainsKey(value))
 					throw new ArgumentException($"A translation with ID '{value}' has not added yet.");
 
-				doc.Root.Element("Translations").SetAttributeValue("Default", value);
+				doc.Root.Element(this.Namespace + "Translations").SetAttributeValue("Default", value);
 			}
 		}
 
@@ -128,7 +134,9 @@ namespace TomiSoft.Music.Lyrics.Xml {
 				new XAttribute(XNamespace.Xmlns + "xsi", xsi),
 				new XAttribute(xsi + "schemaLocation", $"{XmlLyrics.XmlNamespace} {XmlLyrics.XmlSchemaLocation}"),
 
-				new XElement(this.Namespace + "Translations"),
+				new XElement(this.Namespace + "Translations",
+					new XAttribute("Default", "")
+				),
 				new XElement(this.Namespace + "Lines")
 			);
 
@@ -139,6 +147,10 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		}
 
 		public string Build() {
+			#region Error checking
+			this.ChecksBeforeBuild();
+			#endregion
+
 			this.BuildLines();
 
 			StringBuilder sb = new StringBuilder();
@@ -147,6 +159,24 @@ namespace TomiSoft.Music.Lyrics.Xml {
 			}
 
 			return sb.ToString();
+		}
+
+		public void Build(Stream TargetStream) {
+			#region Error checking
+			if (TargetStream == null)
+				throw new ArgumentNullException(nameof(TargetStream));
+
+			if (!TargetStream.CanWrite)
+				throw new ArgumentException($"{nameof(TargetStream)} is not a writeable stream.");
+
+			this.ChecksBeforeBuild();
+			#endregion
+
+			long PreviousPosition = TargetStream.Position;
+			XmlWriter wrt = XmlWriter.Create(TargetStream, new XmlWriterSettings { Indent = false, Encoding = Encoding.UTF8 });
+			this.doc.WriteTo(wrt);
+			wrt.Flush();
+			TargetStream.Position = PreviousPosition;
 		}
 
 		private void BuildLines() {
@@ -221,7 +251,9 @@ namespace TomiSoft.Music.Lyrics.Xml {
 		}
 
 		private string GenerateTranslationID(string Language) {
-			return Guid.NewGuid().ToString();
+			var b = Guid.NewGuid().ToByteArray();
+			b[3] |= 0xF0;
+			return new Guid(b).ToString();
 		}
 
 		private string SecondsToTimestamp(double Seconds) {
@@ -258,6 +290,14 @@ namespace TomiSoft.Music.Lyrics.Xml {
 			wrt.DefaultTranslationID = Reader.DefaultTranslationID;
 
 			return wrt;
+		}
+
+		private void ChecksBeforeBuild() {
+			if (this.translations.Count == 0)
+				throw new InvalidOperationException("You must add at least one translation to build a valid file.");
+
+			if (this.DefaultTranslationID == null)
+				throw new InvalidOperationException($"You must set {nameof(DefaultTranslationID)} to build a valid file.");
 		}
 	}
 

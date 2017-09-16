@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,6 +73,10 @@ namespace TomiSoft.Music.Lyrics.Lrc {
 		}
 
 		public string Build() {
+			throw new NotImplementedException();
+		}
+
+		public void Build(Stream TargetStream) {
 			throw new NotImplementedException();
 		}
 	}

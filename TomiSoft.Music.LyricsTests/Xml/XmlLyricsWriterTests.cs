@@ -1,33 +1,48 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Linq;
 using TomiSoft.Music.Lyrics;
 using TomiSoft.Music.Lyrics.Xml;
+using System.Linq;
 
 namespace TomiSoft.Music.LyricsTests.Xml {
 	[TestClass]
 	public class XmlLyricsWriterTests {
-		[TestMethod]
-		public void XmlLyricsWriter_CreateEmptyFile() {
-			ILyricsWriter Writer = new XmlLyricsWriter();
-			string Actual = Writer.Build();
+		private readonly XNamespace ns = XmlLyrics.XmlNamespace;
 
-			Assert.AreEqual(
-				"<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?><Lyrics><Translations /><Lines /></Lyrics>",
-				Actual
-			);
+		[TestMethod]
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void XmlLyricsWriter_BuildAsString_WithoutTranslationAdded() {
+			ILyricsWriter Writer = new XmlLyricsWriter();
+			Writer.Build();
 		}
 
 		[TestMethod]
-		public void XmlLyricsWriter_AddTranslation() {
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void XmlLyricsWriter_BuildAsString_WithoutSettingDefaultTranslation() {
 			ILyricsWriter Writer = new XmlLyricsWriter();
-			string TranslationName = "Hungarian";
-			string TranslationID = Writer.AddTranslation(TranslationName);
-			string Actual = Writer.Build();
+			Writer.AddTranslation("Hungarian");
+			Writer.Build();
+		}
 
-			Assert.AreEqual(
-				$"<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?><Lyrics><Translations><Translation ID=\"{TranslationID}\" Name=\"{TranslationName}\" /></Translations><Lines /></Lyrics>",
-				Actual
-			);
+		[TestMethod]
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void XmlLyricsWriter_BuildAsStream_WithoutTranslationAdded() {
+			ILyricsWriter Writer = new XmlLyricsWriter();
+			using (Stream s = new MemoryStream())
+				Writer.Build(s);
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void XmlLyricsWriter_BuildAsStream_WithoutSettingDefaultTranslation() {
+			ILyricsWriter Writer = new XmlLyricsWriter();
+			Writer.AddTranslation("Hungarian");
+			using (Stream s = new MemoryStream())
+				Writer.Build(s);
 		}
 
 		[TestMethod]
@@ -37,14 +52,27 @@ namespace TomiSoft.Music.LyricsTests.Xml {
 			string TranslationID = Writer.AddTranslation(TranslationName);
 			Writer.DefaultTranslationID = TranslationID;
 			string ActualDefaultTranslationID = Writer.DefaultTranslationID;
-			string Actual = Writer.Build();
-
-			Assert.AreEqual(
-				$"<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?><Lyrics><Translations Default=\"{TranslationID}\"><Translation ID=\"{TranslationID}\" Name=\"{TranslationName}\" /></Translations><Lines /></Lyrics>",
-				Actual
-			);
 
 			Assert.AreEqual(TranslationID, ActualDefaultTranslationID);
+
+			using (Stream Xml = new MemoryStream()) {
+				Writer.Build(Xml);
+				Assert.IsTrue(this.IsValidXmlBySchema(Xml));
+
+				XDocument doc = XDocument.Load(Xml);
+
+				Assert.AreEqual(
+					expected: TranslationID,
+					actual: doc.Root.Element(ns + "Translations").Attribute("Default").Value
+				);
+
+				Assert.IsTrue(
+					doc.Root.Element(ns + "Translations").Elements(ns + "Translation").Where(
+						x => x.Attribute("Name").Value == TranslationName &&
+							 x.Attribute("ID").Value == TranslationID
+					).Any()
+				);
+			}
 		}
 
 		[TestMethod]
@@ -81,6 +109,7 @@ namespace TomiSoft.Music.LyricsTests.Xml {
 		[TestMethod]
 		public void XmlLyricsWriter_Metadata_SetAlbum() {
 			XmlLyricsWriter wrt = new XmlLyricsWriter();
+			wrt.DefaultTranslationID = wrt.AddTranslation("Hungarian");
 
 			const string ExpectedAlbum = "Sample album";
 			wrt.Album = ExpectedAlbum;
@@ -95,6 +124,7 @@ namespace TomiSoft.Music.LyricsTests.Xml {
 		[TestMethod]
 		public void XmlLyricsWriter_Metadata_SetTitle_RemovesDeclarationWhenSetToNull() {
 			XmlLyricsWriter wrt = new XmlLyricsWriter();
+			wrt.DefaultTranslationID = wrt.AddTranslation("Hungarian");
 
 			wrt.Title = "Sample";
 			wrt.Title = null;
@@ -108,6 +138,7 @@ namespace TomiSoft.Music.LyricsTests.Xml {
 		[TestMethod]
 		public void XmlLyricsWriter_Metadata_SetAlbum_RemovesDeclarationWhenSetToNull() {
 			XmlLyricsWriter wrt = new XmlLyricsWriter();
+			wrt.DefaultTranslationID = wrt.AddTranslation("Hungarian");
 
 			wrt.Album = "Sample";
 			wrt.Album = null;
@@ -121,6 +152,7 @@ namespace TomiSoft.Music.LyricsTests.Xml {
 		[TestMethod]
 		public void XmlLyricsWriter_Metadata_SetArtist_RemovesDeclarationWhenSetToNull() {
 			XmlLyricsWriter wrt = new XmlLyricsWriter();
+			wrt.DefaultTranslationID = wrt.AddTranslation("Hungarian");
 
 			wrt.Artist = "Sample";
 			wrt.Artist = null;
@@ -134,6 +166,7 @@ namespace TomiSoft.Music.LyricsTests.Xml {
 		[TestMethod]
 		public void XmlLyricsWriter_Metadata_SetTitle() {
 			XmlLyricsWriter wrt = new XmlLyricsWriter();
+			wrt.DefaultTranslationID = wrt.AddTranslation("Hungarian");
 
 			const string ExpectedTitle = "Sample title";
 			wrt.Title = ExpectedTitle;
@@ -148,6 +181,7 @@ namespace TomiSoft.Music.LyricsTests.Xml {
 		[TestMethod]
 		public void XmlLyricsWriter_Metadata_SetArtist() {
 			XmlLyricsWriter wrt = new XmlLyricsWriter();
+			wrt.DefaultTranslationID = wrt.AddTranslation("Hungarian");
 
 			const string ExpectedArtist = "Sample artist";
 			wrt.Artist = ExpectedArtist;
@@ -157,6 +191,36 @@ namespace TomiSoft.Music.LyricsTests.Xml {
 			Assert.IsTrue(
 				GeneratedXml.Contains($"Artist=\"{ExpectedArtist}\"")
 			);
+		}
+
+		public bool IsValidXmlBySchema(Stream Xml) {
+			bool ValidationResult = true;
+
+			long PreviousPosition = Xml.Position;
+
+			// Set the validation settings.
+			XmlReaderSettings settings = new XmlReaderSettings();
+			settings.ValidationType = ValidationType.Schema;
+			settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessInlineSchema;
+			settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessSchemaLocation;
+			settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
+			settings.ValidationEventHandler += (o, e) => {
+				if (e.Severity == XmlSeverityType.Error || e.Severity == XmlSeverityType.Warning)
+					ValidationResult = false;
+
+				if (e.Exception != null)
+					ValidationResult = false;
+			};
+
+			// Create the XmlReader object.
+			XmlReader reader = XmlReader.Create(Xml, settings);
+
+			// Parse the file. 
+			while (reader.Read()) ;
+
+			Xml.Position = PreviousPosition;
+
+			return ValidationResult;
 		}
 	}
 }
