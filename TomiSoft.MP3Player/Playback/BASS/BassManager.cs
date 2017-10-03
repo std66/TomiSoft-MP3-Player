@@ -95,6 +95,8 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 				Environment.Is64BitProcess ? "x64" : "x86"
 			);
 
+			BassNet.Registration("sinkutamas@gmail.com", "2X28292820152222");
+
 			if (!LoadBass(Directory))
 				return false;
 
