@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 
 namespace TomiSoft.MP3Player.Communication {
@@ -35,7 +36,10 @@ namespace TomiSoft.MP3Player.Communication {
 		/// <param name="Port">The port number.</param>
 		/// <exception cref="SocketException">when some connection problems occur</exception>
 		internal ServerConnection(int Port) {
-			this.Client = new TcpClient("localhost", Port);
+            this.Client = new TcpClient();
+            if (!this.Client.ConnectAsync(IPAddress.Loopback, Port).Wait(100)) {
+                throw new SocketException();
+            }
 
 			this.ServerWriter = new StreamWriter(this.Client.GetStream()) {
 				AutoFlush = true

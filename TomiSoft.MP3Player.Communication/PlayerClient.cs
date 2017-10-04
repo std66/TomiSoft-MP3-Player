@@ -112,7 +112,7 @@ namespace TomiSoft.MP3Player.Communication {
         }
 
         /// <summary>
-        /// Initializes a new instance of the PlayerClient class. Connets to the already
+        /// Initializes a new instance of the <see cref="PlayerClient"/> class. Connets to the already
         /// running instance on the default port.
         /// </summary>
         /// <param name="Port">The port number that the server is listening on</param>
