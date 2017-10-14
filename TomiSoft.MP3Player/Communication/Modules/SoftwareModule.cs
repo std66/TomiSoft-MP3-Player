@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using TomiSoft.MP3Player.Playback;
+using TomiSoft.MP3Player.Playback.BASS;
 using TomiSoft_MP3_Player;
 
 namespace TomiSoft.MP3Player.Communication.Modules {
@@ -47,6 +50,16 @@ namespace TomiSoft.MP3Player.Communication.Modules {
 		[ServerCommand]
 		public string TraceLog() {
 			return App.TraceLog;
+		}
+
+		[ServerCommand]
+		public string[] GetSupportedFileExtensions() {
+			return BassManager.GetSupportedExtensions().ToArray();
+		}
+
+		[ServerCommand]
+		public bool IsSupportedMedia(string Source) {
+			return PlaybackFactory.IsSupportedMedia(Source);
 		}
 	}
 }

@@ -96,8 +96,38 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
 			}
 		}
 
+		/// <summary>
+		/// Gets the media file extensions that are supported by the software.
+		/// </summary>
+		public string[] SupportedFileExtensions {
+			get {
+				var Response = this.Connection.Send<string[]>(
+					new ServerRequest(ServerModule, "GetSupportedFileExtensions")
+				);
+
+				Response.Check();
+
+				return Response.Result;
+			}
+		}
+
 		internal SoftwareModule(ServerConnection Connection) {
 			this.Connection = Connection;
+		}
+
+		/// <summary>
+		/// Determines whether a given media is supported by the software.
+		/// </summary>
+		/// <param name="Source">The location of the media. Can be a URI, path to a file, ...</param>
+		/// <returns>True if the media is supported by the software, false otherwise.</returns>
+		public bool IsSupportedMedia(string Source) {
+			var Response = this.Connection.Send<bool>(
+					new ServerRequest(ServerModule, "IsSupportedMedia", Source)
+				);
+
+			Response.Check();
+
+			return Response.Result;
 		}
 	}
 }
