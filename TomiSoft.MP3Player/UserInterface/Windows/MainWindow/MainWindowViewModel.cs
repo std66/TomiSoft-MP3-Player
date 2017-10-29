@@ -60,7 +60,7 @@ namespace TomiSoft_MP3_Player {
                 return this.lyricsSettingsIsVisible;
             }
             set {
-				if (value)
+				if (this.MenuVisible && value)
 					this.MenuVisible = false;
 
                 this.lyricsSettingsIsVisible = value;
