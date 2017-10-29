@@ -25,7 +25,9 @@ namespace TomiSoft_MP3_Player {
 		private ILyricsReader lyricsReader;
         private Playlist playlist;
         private string lyrics;
+
 		private readonly SaveMediaCommand saveMediaCommand = new SaveMediaCommand();
+		private readonly ConnectWithPhoneCommand connectWithPhoneCommand = new ConnectWithPhoneCommand();
 
         private bool lyricsSettingsIsVisible = false;
 
@@ -43,7 +45,7 @@ namespace TomiSoft_MP3_Player {
         }
 
 		/// <summary>
-		/// Gets the ICommand for the "Save media" button.
+		/// Gets the <see cref="ICommand"/> for the "Save media" button.
 		/// </summary>
 		public ICommand SaveMediaCommand {
 			get {
@@ -51,10 +53,19 @@ namespace TomiSoft_MP3_Player {
 			}
 		}
 
-        /// <summary>
-        /// Gets the name of the application
-        /// </summary>
-        public string ApplicationName {
+		/// <summary>
+		/// Gets the <see cref="ICommand"/> for the "Connect with phone" button.
+		/// </summary>
+		public ICommand ConnectWithPhoneCommand {
+			get {
+				return this.connectWithPhoneCommand;
+			}
+		}
+
+		/// <summary>
+		/// Gets the name of the application
+		/// </summary>
+		public string ApplicationName {
             get {
                 return App.Name;
             }

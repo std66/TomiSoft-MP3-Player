@@ -100,6 +100,12 @@
 							</Label.InputBindings>
 							<fa:ImageAwesome Icon="Save"/>
 						</Label>
+						<Label ToolTip="Kapcsolódás telefonnal">
+							<Label.InputBindings>
+								<MouseBinding Command="{Binding ConnectWithPhoneCommand}" MouseAction="LeftClick"/>
+							</Label.InputBindings>
+							<fa:ImageAwesome Icon="MobilePhone"/>
+						</Label>
 						<Label MouseLeftButtonUp="AboutClicked" ToolTip="Névjegy">
 							<fa:ImageAwesome Icon="InfoCircle"/>
 						</Label>
