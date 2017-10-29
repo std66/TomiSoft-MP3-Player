@@ -222,7 +222,7 @@ namespace TomiSoft_MP3_Player {
 			if (Window != null) {
 				this.Resources = Window.Resources;
 				this.saveMediaCommand = new SaveMediaCommand(this);
-				this.connectWithPhoneCommand = new ConnectWithPhoneCommand(this, Window);
+				this.connectWithPhoneCommand = new ConnectWithPhoneCommand(this);
 				this.showAboutWindowCommand = new ShowAboutWindowCommand(this, Window);
 			}
 
