@@ -134,6 +134,7 @@
     <Compile Include="UserInterface\Windows\MainWindow\ConnectWithPhoneCommand.cs" />
     <Compile Include="UserInterface\Windows\MainWindow\MainWindowViewModel.cs" />
     <Compile Include="UserInterface\Windows\MainWindow\SaveMediaCommand.cs" />
+    <Compile Include="UserInterface\Windows\MainWindow\ShowAboutWindowCommand.cs" />
     <Compile Include="UserInterface\Windows\ProgressBarDialog\ProgressBarDialog.xaml.cs">
       <DependentUpon>ProgressBarDialog.xaml</DependentUpon>
     </Compile>

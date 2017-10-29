@@ -59,7 +59,7 @@ namespace TomiSoft_MP3_Player {
 			InitializeComponent();
 			Menu.Opacity = 0;
 
-			this.viewModel = new MainWindowViewModel(this.Resources) {
+			this.viewModel = new MainWindowViewModel(this) {
 				Playlist = this.Playlist
 			};
 			this.DataContext = viewModel;
@@ -473,22 +473,7 @@ namespace TomiSoft_MP3_Player {
 			HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
 			source.AddHook(this.Hotkeys.Hook);
 		}
-
-		/// <summary>
-		/// This method is executed when the user clicks the "About"
-		/// in the menu. Closes the menu and shows the about window.
-		/// </summary>
-		/// <param name="sender">The "About" label's instance</param>
-		/// <param name="e">Event parameters</param>
-		private void AboutClicked(object sender, MouseButtonEventArgs e) {
-			this.viewModel.MenuVisible = false;
-
-			AboutWindow wnd = new AboutWindow() {
-				Owner = this
-			};
-			wnd.ShowDialog();
-		}
-
+		
 		/// <summary>
 		/// This method is executed when an item in the playlist is double clicked.
 		/// </summary>

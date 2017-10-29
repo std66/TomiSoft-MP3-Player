@@ -106,7 +106,10 @@
 							</Label.InputBindings>
 							<fa:ImageAwesome Icon="MobilePhone"/>
 						</Label>
-						<Label MouseLeftButtonUp="AboutClicked" ToolTip="Névjegy">
+						<Label ToolTip="Névjegy">
+							<Label.InputBindings>
+								<MouseBinding Command="{Binding ShowAboutWindowCommand}" MouseAction="LeftClick"/>
+							</Label.InputBindings>
 							<fa:ImageAwesome Icon="InfoCircle"/>
 						</Label>
 					</StackPanel>

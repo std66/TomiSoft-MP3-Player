@@ -31,6 +31,7 @@ namespace TomiSoft_MP3_Player {
 
 		private readonly SaveMediaCommand saveMediaCommand;
 		private readonly ConnectWithPhoneCommand connectWithPhoneCommand;
+		private readonly ShowAboutWindowCommand showAboutWindowCommand;
 
         private bool lyricsSettingsIsVisible = false;
 
@@ -82,6 +83,15 @@ namespace TomiSoft_MP3_Player {
 		public ICommand ConnectWithPhoneCommand {
 			get {
 				return this.connectWithPhoneCommand;
+			}
+		}
+
+		/// <summary>
+		/// Gets the <see cref="ICommand"/> for the "Show About window" button.
+		/// </summary>
+		public ICommand ShowAboutWindowCommand {
+			get {
+				return this.showAboutWindowCommand;
 			}
 		}
 
@@ -208,10 +218,14 @@ namespace TomiSoft_MP3_Player {
 		
 		public MainWindowViewModel() : this(null) {}
 
-		public MainWindowViewModel(ResourceDictionary WindowResources) {
-			this.Resources = WindowResources;
-			this.saveMediaCommand = new SaveMediaCommand(this);
-			this.connectWithPhoneCommand = new ConnectWithPhoneCommand(this);
+		public MainWindowViewModel(Window Window) {
+			if (Window != null) {
+				this.Resources = Window.Resources;
+				this.saveMediaCommand = new SaveMediaCommand(this);
+				this.connectWithPhoneCommand = new ConnectWithPhoneCommand(this, Window);
+				this.showAboutWindowCommand = new ShowAboutWindowCommand(this, Window);
+			}
+
 			this.NotifyAll();
 		}
 
