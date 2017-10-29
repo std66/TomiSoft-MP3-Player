@@ -4,9 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using TomiSoft.MP3Player.Playback;
-using TomiSoft.MP3Player.Playback.BASS;
 using TomiSoft.MP3Player.Utils;
-using TomiSoft.MP3Player.Utils.Windows;
 using TomiSoft_MP3_Player;
 
 namespace TomiSoft.MP3Player.UserInterface.Windows.MainWindow {
@@ -20,6 +18,12 @@ namespace TomiSoft.MP3Player.UserInterface.Windows.MainWindow {
 		private IPlaybackManager playbackManager;
 
 		/// <summary>
+		/// Stores the view model for the main window that is used for hiding
+		/// the menu when this command is executed.
+		/// </summary>
+		private readonly MainWindowViewModel ViewModel;
+		
+		/// <summary>
 		/// Gets or sets the <see cref="IPlaybackManager"/> instance.
 		/// </summary>
 		public IPlaybackManager PlaybackManager {
@@ -29,11 +33,21 @@ namespace TomiSoft.MP3Player.UserInterface.Windows.MainWindow {
 				this.CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
-		
+
 		/// <summary>
-		/// This event occures when the return value of CanExecute is changed.
+		/// This event occures when the return value of <see cref="CanExecute"/> is changed.
 		/// </summary>
 		public event EventHandler CanExecuteChanged;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SaveMediaCommand"/> class.
+		/// </summary>
+		/// <param name="ViewModel">
+		///		The view model for the main window that is used for hiding the menu when this command is executed.
+		/// </param>
+		public SaveMediaCommand(MainWindowViewModel ViewModel) {
+			this.ViewModel = ViewModel;
+		}
 
 		/// <summary>
 		/// Gets if the command can be executed in the current state.
@@ -57,7 +71,9 @@ namespace TomiSoft.MP3Player.UserInterface.Windows.MainWindow {
 			if (SavableMedia == null)
 				return;
 			#endregion
-			
+
+			this.ViewModel.MenuVisible = false;
+
 			string Filename = String.Empty;
 			if (this.ShowSaveDialog(SavableMedia, out Filename)) {
 				bool Result = false;

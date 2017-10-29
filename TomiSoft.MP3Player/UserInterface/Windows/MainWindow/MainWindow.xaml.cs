@@ -50,29 +50,20 @@ namespace TomiSoft_MP3_Player {
 				this.PlayerServerModule.PlaybackManager = value;
 			}
 		}
-
-		/// <summary>
-		/// Gets if the menu is currently visible or not.
-		/// </summary>
-		private bool MenuShowing {
-			get {
-				return Menu.Opacity != 0;
-			}
-		}
-
+		
 		public MainWindow() {
 			this.StartServer();
 
 			Trace.TraceInformation("[Player startup] Preparing main window to display...");
-
+			
 			InitializeComponent();
 			Menu.Opacity = 0;
 
-			this.viewModel = new MainWindowViewModel() {
+			this.viewModel = new MainWindowViewModel(this.Resources) {
 				Playlist = this.Playlist
 			};
-
 			this.DataContext = viewModel;
+
 			this.PreparePlaybackController();
 			this.Icon = TomiSoft.MP3Player.Properties.Resources.AbstractAlbumArt.ToImageSource();
 
@@ -462,7 +453,7 @@ namespace TomiSoft_MP3_Player {
 		/// <param name="sender">The sender object's instance</param>
 		/// <param name="e">Event parameters</param>
 		private async void FileOpenButton_Click(object sender, RoutedEventArgs e) {
-			this.ToggleMenu(Show: false);
+			this.viewModel.MenuVisible = false;
 
 			await this.OpenFileAsync();
 		}
@@ -474,21 +465,7 @@ namespace TomiSoft_MP3_Player {
 		/// <param name="sender">The sender object's instance</param>
 		/// <param name="e">Event parameters</param>
 		private void ToggleMenuVisibility(object sender, MouseButtonEventArgs e) {
-			this.ToggleMenu(!this.MenuShowing);
-		}
-
-		/// <summary>
-		/// Changes the visibility of the menu.
-		/// </summary>
-		/// <param name="Show">Set to true if you want to show the menu, set to false to hide it</param>
-		private void ToggleMenu(bool Show) {
-			if (Show) {
-                this.viewModel.LyricsSettingsVisible = false;
-				(this.Resources["FadeInAnimation"] as Storyboard)?.Begin();
-			}
-			else {
-				(this.Resources["FadeOutAnimation"] as Storyboard)?.Begin();
-			}
+			this.viewModel.MenuVisible = !this.viewModel.MenuVisible;
 		}
 
 		protected override void OnSourceInitialized(EventArgs e) {
@@ -504,7 +481,7 @@ namespace TomiSoft_MP3_Player {
 		/// <param name="sender">The "About" label's instance</param>
 		/// <param name="e">Event parameters</param>
 		private void AboutClicked(object sender, MouseButtonEventArgs e) {
-			this.ToggleMenu(Show: false);
+			this.viewModel.MenuVisible = false;
 
 			AboutWindow wnd = new AboutWindow() {
 				Owner = this
@@ -525,7 +502,7 @@ namespace TomiSoft_MP3_Player {
 			#endregion
 
 			this.Playlist.MoveTo(lvPlaylist.SelectedIndex);
-			this.ToggleMenu(Show: false);
+			this.viewModel.MenuVisible = false;
 		}
 
 		/// <summary>
@@ -535,7 +512,7 @@ namespace TomiSoft_MP3_Player {
 		/// <param name="sender">The sender object's instance</param>
 		/// <param name="e">Event parameters</param>
 		private void HideMenu(object sender, MouseButtonEventArgs e) {
-			this.ToggleMenu(Show: false);
+			this.viewModel.MenuVisible = false;
 		}
 
 		/// <summary>
@@ -544,7 +521,7 @@ namespace TomiSoft_MP3_Player {
 		/// <param name="sender">The sender object's instance</param>
 		/// <param name="e">Event parameters</param>
 		private async void UriOpen_Click(object sender, MouseButtonEventArgs e) {
-			ToggleMenu(Show: false);
+			this.viewModel.MenuVisible = false;
 
 			#region Check requirements
 			if (!YoutubePlayback.ToolsAvailable) {
@@ -584,10 +561,10 @@ namespace TomiSoft_MP3_Player {
 		}
 
         private void lLyrics_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            if (this.MenuShowing && !this.viewModel.LyricsSettingsVisible)
-                this.ToggleMenu(Show: false);
+            if (this.viewModel.MenuVisible && !this.viewModel.LyricsSettingsVisible)
+				this.viewModel.MenuVisible = false;
 
-            this.viewModel.LyricsSettingsVisible = !this.viewModel.LyricsSettingsVisible;
+			this.viewModel.LyricsSettingsVisible = !this.viewModel.LyricsSettingsVisible;
         }
     }
 }

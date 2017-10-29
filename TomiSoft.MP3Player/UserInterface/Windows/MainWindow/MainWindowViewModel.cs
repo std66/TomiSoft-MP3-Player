@@ -10,6 +10,7 @@ using TomiSoft.MP3Player.Playlist;
 using System.Collections.Specialized;
 using TomiSoft.MP3Player.UserInterface.Windows.MainWindow;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 
 namespace TomiSoft_MP3_Player {
 	/// <summary>
@@ -25,11 +26,30 @@ namespace TomiSoft_MP3_Player {
 		private ILyricsReader lyricsReader;
         private Playlist playlist;
         private string lyrics;
+		private bool menuVisible = false;
+		private readonly ResourceDictionary Resources;
 
-		private readonly SaveMediaCommand saveMediaCommand = new SaveMediaCommand();
-		private readonly ConnectWithPhoneCommand connectWithPhoneCommand = new ConnectWithPhoneCommand();
+		private readonly SaveMediaCommand saveMediaCommand;
+		private readonly ConnectWithPhoneCommand connectWithPhoneCommand;
 
         private bool lyricsSettingsIsVisible = false;
+
+		public bool MenuVisible {
+			get {
+				return this.menuVisible;
+			}
+			set {
+				this.menuVisible = value;
+
+				if (value) {
+					this.LyricsSettingsVisible = false;
+					(this.Resources["FadeInAnimation"] as Storyboard)?.Begin();
+				}
+				else {
+					(this.Resources["FadeOutAnimation"] as Storyboard)?.Begin();
+				}
+			}
+		}
 
         /// <summary>
         /// Gets or sets whether the lyrics settings panel is visible.
@@ -39,6 +59,9 @@ namespace TomiSoft_MP3_Player {
                 return this.lyricsSettingsIsVisible;
             }
             set {
+				if (value)
+					this.MenuVisible = false;
+
                 this.lyricsSettingsIsVisible = value;
                 this.NotifyPropertyChanged(nameof(LyricsSettingsVisible));
             }
@@ -182,8 +205,13 @@ namespace TomiSoft_MP3_Player {
 				this.NotifyAll();
 			}
 		}
+		
+		public MainWindowViewModel() : this(null) {}
 
-		public MainWindowViewModel() {
+		public MainWindowViewModel(ResourceDictionary WindowResources) {
+			this.Resources = WindowResources;
+			this.saveMediaCommand = new SaveMediaCommand(this);
+			this.connectWithPhoneCommand = new ConnectWithPhoneCommand(this);
 			this.NotifyAll();
 		}
 

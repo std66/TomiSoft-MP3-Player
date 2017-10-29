@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TomiSoft.MP3Player.UserInterface.Windows.ApiAccessQrDialog"
         mc:Ignorable="d"
-        Title="Kapcsolódás telefonnal" Height="300" Width="300" ResizeMode="NoResize">
+        Title="Kapcsolódás telefonnal" Height="300" Width="300" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
 	<Window.DataContext>
 		<local:ApiAccessQrDialogViewModel/>
 	</Window.DataContext>
