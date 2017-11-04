@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using TomiSoft.ExternalApis.YoutubeDl;
@@ -27,10 +28,11 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 		/// Initializes a new instance of the <see cref="YoutubePlayback"/> class.
 		/// </summary>
 		/// <param name="DownloadedFile">The path of the media file downloaded and converted by youtube-dl.</param>
-		private YoutubePlayback(ISongInfo SongInfo, string DownloadedFile) : base(DownloadedFile) {
+		private YoutubePlayback(ISongInfo SongInfo, UnmanagedStream DownloadedFile, string Filename) 
+			: base(DownloadedFile, SongInfo) {
 			this.songInfo = new SongInfo(SongInfo);
 
-			this.DownloadedFile = DownloadedFile;
+			this.DownloadedFile = Filename;
 		}
 
 		/// <summary>
@@ -108,7 +110,7 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 		/// </returns>
 		/// <exception cref="ArgumentNullException">when <paramref name="SongInfo"/> is null</exception> 
 		/// <exception cref="ArgumentException">when <see cref="ISongInfo.Source"/> is not a valid YouTube URI</exception>
-		public static async Task<IPlaybackManager> DownloadVideoAsync(ISongInfo SongInfo, IProgress<YoutubeDownloadProgress> Progress) {
+		public static async Task<IPlaybackManager> DownloadVideoAsync(ISongInfo SongInfo, IProgress<LongOperationProgress> Progress) {
 			#region Error checking
 			if (SongInfo == null)
 				throw new ArgumentNullException(nameof(SongInfo));
@@ -133,25 +135,43 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 					VideoID = YoutubeUri.GetVideoID(SongInfo.Source)
 				};
 
+				Progress<YoutubeDownloadProgress> YTProgress = new Progress<YoutubeDownloadProgress>();
+				YTProgress.ProgressChanged += (po, pe) => Progress?.Report(pe.ToLongOperationProgress());
+
 				//When download fails and youtube-dl reports that an update is required, update it and retry.
 				Downloader.UpdateRequired += async (o, e) => {
-					Progress.Report(new YoutubeDownloadProgress(YoutubeDownloadStatus.Updating, 0));
+					Progress.Report(
+						new YoutubeDownloadProgress(YoutubeDownloadStatus.Updating, 0).ToLongOperationProgress()
+					);
 					await Downloader.UpdateAsync();
 
-					await Downloader.DownloadAudioAsync(Progress);
+					
+
+					await Downloader.DownloadAudioAsync(YTProgress);
 				};
 
-				await Downloader.DownloadAudioAsync(Progress, Format);
+				await Downloader.DownloadAudioAsync(YTProgress, Format);
 			}
 			catch (Exception e) {
 				Trace.WriteLine(e.Message);
 				return null;
 			}
 
-			if (File.Exists(MediaFilename))
-				return new YoutubePlayback(SongInfo, MediaFilename);
-			else
+			if (File.Exists(MediaFilename)) {
+				using (Stream s = File.OpenRead(MediaFilename)) {
+					Progress<LongOperationProgress> OpenMediaProgress = new Progress<LongOperationProgress>();
+					OpenMediaProgress.ProgressChanged += (o, e) => Progress?.Report(e);
+
+					return new YoutubePlayback(
+						SongInfo,
+						await UnmanagedStream.CreateFromStream(s, OpenMediaProgress),
+						MediaFilename
+					);
+				}
+			}
+			else {
 				return null;
+			}
 		}
 
 		/// <summary>
@@ -185,6 +205,32 @@ namespace TomiSoft.MP3Player.Playback.YouTube {
 
 			//Delete unnecessary ffmpeg archive
 			File.Delete(FFMpegLocation);
+		}
+	}
+
+	static class YoutubeProgressExtensions {
+		private static YoutubeDownloadStatus[] IndetermineStates = {
+			YoutubeDownloadStatus.Completed,
+			YoutubeDownloadStatus.Converting,
+			YoutubeDownloadStatus.Error,
+			YoutubeDownloadStatus.Initializing,
+			YoutubeDownloadStatus.Updating
+		};
+		
+		public static LongOperationProgress ToLongOperationProgress(this YoutubeDownloadProgress p) {
+			#region Error checking
+			if (p == null)
+				return null;
+			#endregion
+
+			var IsIndetermine = IndetermineStates.Contains(p.Status);
+
+			return new LongOperationProgress {
+				IsIndetermine = IsIndetermine,
+				Maximum = 100,
+				Position = IsIndetermine ? 0 : (long)p.Percentage,
+				StatusText = p.ToString()
+			};
 		}
 	}
 }

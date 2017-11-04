@@ -19,6 +19,12 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 		/// </summary>
 		private readonly string Filename;
 
+		/// <summary>
+		/// If the file is loaded from an unmanaged memory location, this field
+		/// holds it's informations.
+		/// </summary>
+		private UnmanagedStream AllocatedMemory;
+
         /// <summary>
         /// Gets if the opened file is a track from an audio CD.
         /// </summary>
@@ -43,6 +49,18 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 					Title = Path.GetFileNameWithoutExtension(Filename)
 				};
 			}
+		}
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="LocalAudioFilePlayback"/> using
+		/// the given <see cref="UnmanagedStream"/> and its song informations.
+		/// </summary>
+		/// <param name="MediaStream">An <see cref="UnmanagedStream"/> that represents the file copied to an unmanaged memory location.</param>
+		/// <param name="SongInfo">An <see cref="ISongInfo"/> instance that holds informations about the media.</param>
+		public LocalAudioFilePlayback(UnmanagedStream MediaStream, ISongInfo SongInfo)
+			: base(Bass.BASS_StreamCreateFile(MediaStream.PointerToUnmanagedMemory, 0, MediaStream.Length, BASSFlag.BASS_DEFAULT)) {
+			this.songInfo = SongInfo;
+			this.AllocatedMemory = MediaStream;
 		}
 
 		/// <summary>
@@ -179,5 +197,15 @@ namespace TomiSoft.MP3Player.Playback.BASS {
                 this.Play();
             }
         }
+
+		/// <summary>
+		/// Releases all resources used by this instance.
+		/// </summary>
+		public override void Dispose() {
+			base.Dispose();
+
+			if (this.AllocatedMemory != null)
+				this.AllocatedMemory.Dispose();
+		}
 	}
 }

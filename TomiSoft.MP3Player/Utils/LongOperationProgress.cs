@@ -15,6 +15,11 @@
             set;
         }
 
+		public string StatusText {
+			get;
+			set;
+		}
+
         public int Percent {
             get {
                 return (int)((double)this.Position / this.Maximum * 100);

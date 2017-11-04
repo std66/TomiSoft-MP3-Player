@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using TomiSoft.ExternalApis.YoutubeDl;
 using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.MP3Player.Playback.BASS;
 using TomiSoft.MP3Player.Playback.YouTube;
@@ -38,9 +37,18 @@ namespace TomiSoft.MP3Player.Playback {
 			if (File.Exists(SongInfo.Source)) {
 				string Extension = PlayerUtils.GetFileExtension(SongInfo.Source);
 
+				Progress<LongOperationProgress> FileOpenProgress = new Progress<LongOperationProgress>();
+				FileOpenProgress.ProgressChanged += OpenFileProgressChanged;
+
 				//In case of any file supported by BASS:
 				if (BassManager.GetSupportedExtensions().Contains(Extension)) {
-					lastInstance = new LocalAudioFilePlayback(SongInfo.Source);
+					using (Stream SourceStream = File.OpenRead(SongInfo.Source)) {
+						lastInstance = new LocalAudioFilePlayback(
+							await UnmanagedStream.CreateFromStream(SourceStream, FileOpenProgress),
+							SongInfo
+						);
+					}
+
 					return lastInstance;
 				}
 			}
@@ -49,12 +57,12 @@ namespace TomiSoft.MP3Player.Playback {
 			else if (Uri.IsWellFormedUriString(SongInfo.Source, UriKind.Absolute)) {
 				//Youtube link:
 				if (SongInfo is YoutubeSongInfo) {
-					Progress<YoutubeDownloadProgress> Progress = new Progress<YoutubeDownloadProgress>();
-					Progress.ProgressChanged += YoutubeDownloadProgressChanged;
+					Progress<LongOperationProgress> Progress = new Progress<LongOperationProgress>();
+					Progress.ProgressChanged += OpenFileProgressChanged;
 
 					lastInstance = await YoutubePlayback.DownloadVideoAsync(SongInfo, Progress);
 
-					Progress.ProgressChanged -= YoutubeDownloadProgressChanged;
+					Progress.ProgressChanged -= OpenFileProgressChanged;
 					return lastInstance;
 				}
 			}
@@ -63,13 +71,15 @@ namespace TomiSoft.MP3Player.Playback {
 			throw new NotSupportedException("Nem támogatott média");
 		}
 
-		private static void YoutubeDownloadProgressChanged(object sender, YoutubeDownloadProgress e) {
+		private static void OpenFileProgressChanged(object sender, LongOperationProgress e) {
 			#region Error checking
 			if (e == null)
 				return;
 			#endregion
 
-			MediaOpenProgressChanged?.Invoke(e.Percentage, e.ToString());
+			string StatusText = String.IsNullOrEmpty(e.StatusText) ? $"Zene megnyitása: {e.Percent}%" : e.StatusText;
+
+			MediaOpenProgressChanged?.Invoke(e.Percent, StatusText);
 		}
 		
 		/// <summary>

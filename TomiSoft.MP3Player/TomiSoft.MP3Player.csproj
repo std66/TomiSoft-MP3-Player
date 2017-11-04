@@ -146,6 +146,7 @@
     <Compile Include="Utils\LongOperationProgress.cs" />
     <Compile Include="Utils\PlaybackHotkeys.cs" />
     <Compile Include="Utils\Extensions\StringRegexExtensions.cs" />
+    <Compile Include="Utils\UnmanagedStream.cs" />
     <Compile Include="Utils\Windows\Hotkeys.cs" />
     <Compile Include="Utils\Windows\Toast.cs" />
     <Compile Include="Utils\PlayerUtils.cs" />
