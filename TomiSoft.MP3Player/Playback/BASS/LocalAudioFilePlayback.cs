@@ -15,25 +15,10 @@ namespace TomiSoft.MP3Player.Playback.BASS {
     /// </summary>
     internal class LocalAudioFilePlayback : BassPlaybackAbstract, ISavable {
 		/// <summary>
-		/// Stores the loaded file's path.
-		/// </summary>
-		private readonly string Filename;
-
-		/// <summary>
 		/// If the file is loaded from an unmanaged memory location, this field
 		/// holds it's informations.
 		/// </summary>
 		private UnmanagedStream AllocatedMemory;
-
-        /// <summary>
-        /// Gets if the opened file is a track from an audio CD.
-        /// </summary>
-        public bool IsAudioCd {
-            get {
-                string Extension = Path.GetExtension(this.Filename).ToLower();
-                return Extension == ".cda";
-            }
-        }
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="LocalAudioFilePlayback"/> using
@@ -42,13 +27,7 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 		/// <param name="Filename">The file to play.</param>
 		public LocalAudioFilePlayback(string Filename)
 			:base(Bass.BASS_StreamCreateFile(Filename, 0, 0, BASSFlag.BASS_DEFAULT)){
-			this.Filename = Filename;
-
-			if (this.SongInfo.Title == null) {
-				this.songInfo = new SongInfo(this.songInfo) {
-					Title = Path.GetFileNameWithoutExtension(Filename)
-				};
-			}
+			
 		}
 
 		/// <summary>
@@ -68,7 +47,7 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 		/// </summary>
 		public string OriginalFilename {
 			get {
-				return Path.GetFileName(this.Filename);
+				return Path.GetFileName(this.songInfo.Source);
 			}
 		}
 
@@ -77,7 +56,7 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 		/// </summary>
 		public string OriginalSource {
 			get {
-				return this.Filename;
+				return this.songInfo.Source;
 			}
 		}
 
@@ -87,16 +66,14 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 		public string RecommendedFilename {
 			get {
 				if (this.SongInfo.Title == null)
-					return this.Filename.RemovePathInvalidChars();
+					return this.songInfo.Source.RemovePathInvalidChars();
 
-				string Extension = Path.GetExtension(this.OriginalFilename);
+				string Extension = ".mp3";
 
 				if (this.SongInfo.Artist != null)
 					return $"{this.SongInfo.Artist} - {this.SongInfo.Title}{Extension}".RemovePathInvalidChars();
 				
-				string Result = $"{this.SongInfo.Title}{Extension}".RemovePathInvalidChars();
-
-                return (this.IsAudioCd) ? Path.ChangeExtension(Result, "mp3") : Result;
+                return $"{this.SongInfo.Title}{Extension}".RemovePathInvalidChars();
 			}
 		}
 
@@ -118,11 +95,6 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 				return false;
 			#endregion
 			
-            if (this.IsAudioCd) {
-                await this.CopyFromAudioCdAsync(TargetStream, Progress);
-                return true;
-            }
-
             LongOperationProgress Status = new LongOperationProgress {
                 IsIndetermine = true,
                 Maximum = 1,
@@ -132,9 +104,7 @@ namespace TomiSoft.MP3Player.Playback.BASS {
             Progress?.Report(Status);
 
             try {
-				using (Stream Source = File.OpenRead(this.Filename)) {
-					await Source.CopyToAsync(TargetStream);
-				}
+				await this.AllocatedMemory.CopyToAsync(TargetStream, Progress);
 			}
 			catch (Exception) {
 				return false;
@@ -142,61 +112,6 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 
 			return true;
 		}
-
-        /// <summary>
-        /// Stops the playback and copies the audio stream from CD to a <see cref="Stream"/> in MP3
-        /// format asynchronously. If the song was playing before copying, playback will be restored.
-        /// </summary>
-        /// <param name="TargetStream">The <see cref="Stream"/> where the media is written to.</param>
-        /// <param param name="Progress">An <see cref="IProgress{T}"/> instance that will be used to report the save progress. Can be null.</param>
-        /// <returns>A <see cref="Task"/> that represents the asynchronous process.</returns>
-        private async Task CopyFromAudioCdAsync(Stream TargetStream, IProgress<LongOperationProgress> Progress) {
-            bool RequiresRestore = this.IsPlaying;
-            double Position = this.Position;
-
-            if (this.IsPlaying) {
-                this.Stop();
-            }
-
-            ENCODEPROC proc = new ENCODEPROC(
-                (handle, channel, buffer, length, user) => {
-                    byte[] ManagedBuffer = new byte[length];
-                    Marshal.Copy(buffer, ManagedBuffer, 0, length);
-
-                    TargetStream.Write(ManagedBuffer, 0, length);
-                }
-            );
-            
-            int DecodingChannel = Bass.BASS_StreamCreateFile(this.Filename, 0, 0, BASSFlag.BASS_STREAM_DECODE);
-            long DecodingChannelLength = Bass.BASS_ChannelGetLength(DecodingChannel);
-            int Handle = BassEnc.BASS_Encode_Start(DecodingChannel, (new Lame()).GetCommandLine(), BASSEncode.BASS_ENCODE_AUTOFREE, proc, IntPtr.Zero);
-
-            LongOperationProgress Status = new LongOperationProgress {
-                IsIndetermine = false,
-                Maximum = DecodingChannelLength,
-                Position = 0
-            };
-
-            Progress?.Report(Status);
-
-            await Task.Run(() => { 
-                int BufferLength = 10240;
-                byte[] Buffer = new byte[BufferLength];
-                
-                while (Bass.BASS_ChannelGetPosition(DecodingChannel) < DecodingChannelLength) { 
-                    Status.Position += Bass.BASS_ChannelGetData(DecodingChannel, Buffer, BufferLength);
-                    Progress?.Report(Status);
-                }
-
-                BassEnc.BASS_Encode_Stop(Handle);
-            });
-
-            this.ChannelID = Bass.BASS_StreamCreateFile(this.Filename, 0, 0, BASSFlag.BASS_DEFAULT);
-            if (RequiresRestore) {
-                this.Position = Position;
-                this.Play();
-            }
-        }
 
 		/// <summary>
 		/// Releases all resources used by this instance.

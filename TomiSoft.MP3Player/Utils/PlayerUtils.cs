@@ -19,6 +19,9 @@ namespace TomiSoft.MP3Player.Utils {
 			#endregion
 
 			FileInfo f = new FileInfo(Filename);
+			if (String.IsNullOrEmpty(f.Extension))
+				return String.Empty;
+			
 			return f.Extension.Substring(1).ToLower();
 		}
 

@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace TomiSoft.Music.Lyrics {
     /// <summary>
@@ -44,25 +47,36 @@ namespace TomiSoft.Music.Lyrics {
 			return null;
 		}
 
-        /// <summary>
-        /// Gets the path to all the lyrics files that possibly found in the specified directory
-        /// </summary>
-        /// <param name="Dir">The directory in which the files are searched.</param>
-        /// <returns>
-        /// A sequence of file paths.
-        /// An empty sequence is returned if the specified directory does not exists.
-        /// </returns>
-        public static IEnumerable<string> FindAllLyricsFiles(string Dir) {
-            #region Error checking
-            if (!Directory.Exists(Dir))
-                return new string[0];
-            #endregion
+		/// <summary>
+		/// Gets the path to all the lyrics files that possibly found in the specified directory
+		/// </summary>
+		/// <param name="Dir">The directory in which the files are searched.</param>
+		/// <returns>
+		/// A sequence of file paths.
+		/// An empty sequence is returned if the specified directory does not exists.
+		/// </returns>
+		public static IEnumerable<string> FindAllLyricsFiles(string Dir) {
+			#region Error checking
+			if (!Directory.Exists(Dir))
+				return new string[0];
+			#endregion
 
-            return Directory.GetFiles(Dir).Where(
-                x => LyricsLoader.SupportedExtensions.Contains(
-                    new FileInfo(x).Extension.Substring(1)
-                )
-            );
+			ConcurrentStack<string> Result = new ConcurrentStack<string>();
+			
+			Parallel.ForEach(Directory.GetFiles(Dir), x => {
+				string Extension = new FileInfo(x).Extension;
+
+				if (!string.IsNullOrWhiteSpace(Extension)) {
+					bool IsSupported = LyricsLoader.SupportedExtensions.Contains(
+						Extension.Substring(1)
+					);
+
+					if (IsSupported)
+						Result.Push(x);
+				}
+			});
+			
+			return Result;
         }
 
 		/// <summary>

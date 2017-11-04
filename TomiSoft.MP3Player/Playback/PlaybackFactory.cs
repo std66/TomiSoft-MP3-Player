@@ -39,9 +39,16 @@ namespace TomiSoft.MP3Player.Playback {
 
 				Progress<LongOperationProgress> FileOpenProgress = new Progress<LongOperationProgress>();
 				FileOpenProgress.ProgressChanged += OpenFileProgressChanged;
-
+				
 				//In case of any file supported by BASS:
 				if (BassManager.GetSupportedExtensions().Contains(Extension)) {
+					//If Audio CD track:
+					if (Extension == "cda") {
+						lastInstance = new AudioCdPlayback(SongInfo.Source);
+						return lastInstance;
+					}
+
+					//Any other stuff...
 					using (Stream SourceStream = File.OpenRead(SongInfo.Source)) {
 						lastInstance = new LocalAudioFilePlayback(
 							await UnmanagedStream.CreateFromStream(SourceStream, FileOpenProgress),

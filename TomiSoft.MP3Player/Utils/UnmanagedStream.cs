@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -27,6 +26,42 @@ namespace TomiSoft.MP3Player.Utils {
 		public void Dispose() {
 			if (this.gcHandle.IsAllocated)
 				this.gcHandle.Free();
+		}
+
+		public async Task<bool> CopyToAsync(Stream TargetStream, IProgress<LongOperationProgress> Progress) {
+			byte[] Source = null;
+
+			if (this.gcHandle.IsAllocated)
+				Source = this.gcHandle.Target as byte[];
+
+			#region Error checking
+			if (!TargetStream.CanWrite)
+				return false;
+
+			if (Source == null)
+				return false;
+			#endregion
+
+			LongOperationProgress p = new LongOperationProgress {
+				IsIndetermine = false,
+				Maximum = Source.Length,
+				Position = 0
+			};
+
+			int Position = 0;
+			while (Position < Source.Length) {
+				long BytesLeft = Source.Length - Position;
+				int BytesToWrite = BytesLeft > 10240 ? 10240 : (int)BytesLeft;
+
+				await TargetStream.WriteAsync(Source, Position, BytesToWrite);
+
+				Position += BytesToWrite;
+				p.Position += BytesToWrite;
+
+				Progress?.Report(p);
+			}
+
+			return true;
 		}
 
 		public static async Task<UnmanagedStream> CreateFromStream(Stream SourceStream, IProgress<LongOperationProgress> Progress) {
