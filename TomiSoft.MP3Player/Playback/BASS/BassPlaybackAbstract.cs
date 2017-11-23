@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Threading;
 using TomiSoft.MP3Player.Common.Playback;
 using TomiSoft.MP3Player.MediaInformation;
@@ -13,12 +15,16 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 	/// BASS to play the media.
 	/// </summary>
 	internal abstract class BassPlaybackAbstract : IPlaybackManager, IAudioPeakMeter {
-		private bool playing;
+        private readonly IEnumerable<string> Properties = typeof(BassPlaybackAbstract).GetProperties().Select(x => x.Name);
+        private bool playing;
 		private bool paused;
 		private int channelID;
 		private DispatcherTimer PlaybackTimer;
-		protected ISongInfo songInfo;
+        private long PositionInBytes;
+        private long LengthInBytes;
 
+        protected ISongInfo songInfo;
+        
 		/// <summary>
 		/// Occures when a property is changed.
 		/// </summary>
@@ -40,12 +46,10 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 				this.playing = value;
 				this.NotifyPropertyChanged("IsPlaying");
 
-				if (this.playing) {
+				if (this.playing)
 					this.PlaybackTimer.Start();
-				}
-				else {
+				else
 					this.PlaybackTimer.Stop();
-				}
 			}
 		}
 
@@ -130,7 +134,7 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 			get {
 				return Bass.BASS_ChannelBytes2Seconds(
 					this.ChannelID,
-					Bass.BASS_ChannelGetPosition(this.ChannelID)
+					this.PositionInBytes
 				);
 			}
 			set {
@@ -143,9 +147,13 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 					));
 				#endregion
 
-				Bass.BASS_ChannelSetPosition(this.ChannelID,
-					Bass.BASS_ChannelSeconds2Bytes(this.ChannelID, value)
+				Bass.BASS_ChannelSetPosition(
+                    this.ChannelID,
+					value
 				);
+
+                this.PositionInBytes = Bass.BASS_ChannelGetPosition(this.channelID);
+
 				this.NotifyPropertyChanged("Position");
 			}
 		}
@@ -157,15 +165,15 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 			get {
 				return Bass.BASS_ChannelBytes2Seconds(
 					this.ChannelID,
-					Bass.BASS_ChannelGetLength(this.ChannelID)
+					this.LengthInBytes
 				);
 			}
 		}
-
-		/// <summary>
-		/// Gets informations about the song.
-		/// </summary>
-		public ISongInfo SongInfo {
+        
+        /// <summary>
+        /// Gets informations about the song.
+        /// </summary>
+        public ISongInfo SongInfo {
 			get {
 				return this.songInfo;
 			}
@@ -211,11 +219,14 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 		/// <param name="sender">The <see cref="DispatcherTimer"/> instance</param>
 		/// <param name="e">Event parameters</param>
 		private void TimerTick(object sender, EventArgs e) {
-            if (Position >= Length) {
+            this.PositionInBytes = Bass.BASS_ChannelGetPosition(this.channelID);
+            this.LengthInBytes = Bass.BASS_ChannelGetLength(this.channelID);
+
+            if (this.Length - this.Position < 0.15) {
                 this.Stop();
                 this.SongEnded?.Invoke();
             }
-
+            
             this.NotifyAll();
         }
         
@@ -239,7 +250,7 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 			if (Bass.BASS_ChannelStop(this.ChannelID)) {
 				this.IsPlaying = false;
 				this.IsPaused = false;
-				this.Position = 0;
+                this.Position = 0;
 				this.NotifyAll();
 			}
 			else {
@@ -278,9 +289,9 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 		/// <summary>
 		/// Fires the <see cref="PropertyChanged"/> event for the given property.
 		/// </summary>
-		/// <param name="info">The property's name that changed.</param>
-		private void NotifyPropertyChanged(String info) {
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+		/// <param name="PropertyName">The property's name that changed.</param>
+		private void NotifyPropertyChanged(string PropertyName) {
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
 		}
 
 		/// <summary>
@@ -292,8 +303,8 @@ namespace TomiSoft.MP3Player.Playback.BASS {
 				return;
 			#endregion
 
-			foreach (var Property in this.GetType().GetProperties()) {
-				PropertyChanged(this, new PropertyChangedEventArgs(Property.Name));
+			foreach (var PropertyName in this.Properties) {
+				PropertyChanged(this, new PropertyChangedEventArgs(PropertyName));
 			}
 		}
 	}
