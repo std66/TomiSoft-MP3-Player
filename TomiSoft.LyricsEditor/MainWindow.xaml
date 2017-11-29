@@ -8,7 +8,7 @@
         xmlns:converters="clr-namespace:TomiSoft.LyricsEditor.Converters"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
-        Title="Dalszövegszerkesztő" Height="350" Width="525">
+        Title="Dalszövegszerkesztő" Height="520" Width="937">
 
     <Window.DataContext>
         <viewModels:MainWindowViewModel/>
@@ -17,9 +17,16 @@
     <Window.Resources>
         <converters:DoubleToTimeConverter x:Key="DoubleToTimeConverter"/>
     </Window.Resources>
+
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Offset="0" Color="#506684"/>
+            <GradientStop Offset="1" Color="#2b3747"/>
+        </LinearGradientBrush>
+    </Window.Background>
     
-    <StackPanel>
-        <Menu x:Name="menu">
+    <DockPanel>
+        <Menu x:Name="menu" DockPanel.Dock="Top">
             <MenuItem Header="Fájl">
                 <MenuItem Header="Új dalszöveg" Command="{Binding NewLyricsCommand}"/>
                 <MenuItem Header="Megnyitás" Command="{Binding OpenLyricsCommand}"/>
@@ -29,26 +36,76 @@
             </MenuItem>
         </Menu>
 
-        <ToolBarPanel>
-            <ToolBar>
-                <Button Height="21" Command="{Binding PlayCommand}">
-                    <fa:ImageAwesome Icon="Play" Margin="2"/>
-                </Button>
-                <Button Height="21" Command="{Binding PauseCommand}">
-                    <fa:ImageAwesome Icon="Pause" Margin="2"/>
-                </Button>
-                <Button Height="21" Command="{Binding StopCommand}">
-                    <fa:ImageAwesome Icon="Stop" Margin="2"/>
-                </Button>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="600"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                <Separator Margin="5,0,10,0"/>
+            <ToolBarPanel Grid.Row="0" Grid.ColumnSpan="3" Opacity="0.7" Panel.ZIndex="3">
+                <ToolBarPanel.Effect>
+                    <DropShadowEffect BlurRadius="10" Color="Black"/>
+                </ToolBarPanel.Effect>
+                <ToolBar>
+                    <Button Height="21" Command="{Binding PlayCommand}">
+                        <fa:ImageAwesome Icon="Play" Margin="2"/>
+                    </Button>
+                    <Button Height="21" Command="{Binding PauseCommand}">
+                        <fa:ImageAwesome Icon="Pause" Margin="2"/>
+                    </Button>
+                    <Button Height="21" Command="{Binding StopCommand}">
+                        <fa:ImageAwesome Icon="Stop" Margin="2"/>
+                    </Button>
 
-                <TextBlock VerticalAlignment="Center" Text="{Binding Playback.Position, Converter={StaticResource DoubleToTimeConverter}, FallbackValue='00:00:00'}"/>
+                    <Separator Margin="5,0,10,0"/>
 
-                <Slider Width="150" Minimum="0" Maximum="{Binding Playback.Length}" Value="{Binding Playback.Position, Mode=TwoWay}" Margin="10,3,3,3"/>
+                    <TextBlock VerticalAlignment="Center" Text="{Binding Playback.Position, Converter={StaticResource DoubleToTimeConverter}, FallbackValue='00:00:00'}"/>
+                    <Slider Width="150" Minimum="0" Maximum="{Binding Playback.Length}" Value="{Binding Playback.Position, Mode=TwoWay}" Margin="10,3,3,3"/>
+                    <TextBlock VerticalAlignment="Center" Text="{Binding Playback.Length, Converter={StaticResource DoubleToTimeConverter}, FallbackValue='00:00:00'}"/>
+                </ToolBar>
+            </ToolBarPanel>
 
-                <TextBlock VerticalAlignment="Center" Text="{Binding Playback.Length, Converter={StaticResource DoubleToTimeConverter}, FallbackValue='00:00:00'}"/>
-            </ToolBar>
-        </ToolBarPanel>
-    </StackPanel>
+            <DockPanel Grid.Row="1" Grid.Column="1" Background="White" Opacity="0.8">
+                <DockPanel.Effect>
+                    <DropShadowEffect ShadowDepth="0" BlurRadius="50"/>
+                </DockPanel.Effect>
+                <TextBlock x:Name="SongTitle" Text="Styx Helix" TextAlignment="Center" Margin="0,15,0,5" FontSize="20pt" FontWeight="ExtraLight" DockPanel.Dock="Top">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="Black" ShadowDepth="0" Opacity="0.5" BlurRadius="10"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+                <TextBlock x:Name="SongArtist" Text="Myth &amp; Roid" TextAlignment="Right" Margin="0,0,15,15" FontSize="9pt" DockPanel.Dock="Top" Opacity="0.5"/>
+                <ListView BorderBrush="Transparent">
+                    <ListViewItem Margin="0,5,0,5">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="00:02.12" Opacity="0.7" FontSize="9pt" Foreground="#bc1212"/>
+                                <TextBlock Text="Oh, please don't let me die" Opacity="0.7" FontSize="9pt" Foreground="#3111bc" Margin="15,0,0,0"/>
+                            </StackPanel>
+                            <TextBlock Text="Oh, please don't let me die" Margin="15,0,0,0" FontSize="12pt" FontWeight="Light">
+                                
+                            </TextBlock>
+                        </StackPanel>
+                    </ListViewItem>
+
+                    <ListViewItem Margin="0,5,0,5">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="00:05.27" Opacity="0.7" FontSize="9pt" Foreground="#bc1212"/>
+                                <TextBlock Text="Waiting for your touch" Opacity="0.7" FontSize="9pt" Foreground="#3111bc" Margin="15,0,0,0"/>
+                            </StackPanel>
+                            <TextBlock Text="Waiting for your touch" Margin="15,0,0,0" FontSize="12pt" FontWeight="Light">
+
+                            </TextBlock>
+                        </StackPanel>
+                    </ListViewItem>
+                </ListView>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
 </Window>
