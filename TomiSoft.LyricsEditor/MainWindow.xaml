@@ -47,10 +47,10 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <ToolBarPanel Grid.Row="0" Grid.ColumnSpan="3" Opacity="0.7" Panel.ZIndex="3">
-                <ToolBarPanel.Effect>
+            <ToolBarTray Grid.Row="0" Grid.ColumnSpan="3" Opacity="0.7" Panel.ZIndex="3" IsLocked="True">
+                <ToolBarTray.Effect>
                     <DropShadowEffect BlurRadius="10" Color="Black"/>
-                </ToolBarPanel.Effect>
+                </ToolBarTray.Effect>
                 <ToolBar>
                     <Button Height="21" Command="{Binding PlayCommand}">
                         <fa:ImageAwesome Icon="Play" Margin="2"/>
@@ -68,18 +68,18 @@
                     <Slider Width="150" Minimum="0" Maximum="{Binding Playback.Length}" Value="{Binding Playback.Position, Mode=TwoWay}" Margin="10,3,3,3"/>
                     <TextBlock VerticalAlignment="Center" Text="{Binding Playback.Length, Converter={StaticResource DoubleToTimeConverter}, FallbackValue='00:00:00'}"/>
                 </ToolBar>
-            </ToolBarPanel>
+            </ToolBarTray>
 
             <DockPanel Grid.Row="1" Grid.Column="1" Background="White" Opacity="0.8">
                 <DockPanel.Effect>
                     <DropShadowEffect ShadowDepth="0" BlurRadius="50"/>
                 </DockPanel.Effect>
-                <TextBlock x:Name="SongTitle" Text="Styx Helix" TextAlignment="Center" Margin="0,15,0,5" FontSize="20pt" FontWeight="ExtraLight" DockPanel.Dock="Top">
+                <TextBlock Text="{Binding Path=SongMetadata.Title}" TextAlignment="Center" Margin="0,15,0,5" FontSize="20pt" FontWeight="ExtraLight" DockPanel.Dock="Top">
                     <TextBlock.Effect>
                         <DropShadowEffect Color="Black" ShadowDepth="0" Opacity="0.5" BlurRadius="10"/>
                     </TextBlock.Effect>
                 </TextBlock>
-                <TextBlock x:Name="SongArtist" Text="Myth &amp; Roid" TextAlignment="Right" Margin="0,0,15,15" FontSize="9pt" DockPanel.Dock="Top" Opacity="0.5"/>
+                <TextBlock Text="{Binding Path=SongMetadata.Artist}" TextAlignment="Right" Margin="0,0,15,15" FontSize="9pt" DockPanel.Dock="Top" Opacity="0.5"/>
                 <ListView BorderBrush="Transparent">
                     <ListViewItem Margin="0,5,0,5">
                         <StackPanel>

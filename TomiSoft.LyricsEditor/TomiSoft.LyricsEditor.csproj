@@ -111,6 +111,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TomiSoft.MP3Player.Common\TomiSoft.MP3Player.Common.csproj">
+      <Project>{90983566-00FC-4F5F-A126-D4708C19D17E}</Project>
+      <Name>TomiSoft.MP3Player.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TomiSoft.MP3Player.Communication\TomiSoft.MP3Player.Communication.csproj">
       <Project>{FAB5119B-1065-45B0-9E71-83FBA9CCB811}</Project>
       <Name>TomiSoft.MP3Player.Communication</Name>
