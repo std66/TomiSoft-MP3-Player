@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace TomiSoft.MP3Player.Communication.ClientModules {
 	/// <summary>
@@ -122,8 +123,26 @@ namespace TomiSoft.MP3Player.Communication.ClientModules {
 		/// <returns>True if the media is supported by the software, false otherwise.</returns>
 		public bool IsSupportedMedia(string Source) {
 			var Response = this.Connection.Send<bool>(
-					new ServerRequest(ServerModule, "IsSupportedMedia", Source)
-				);
+				new ServerRequest(ServerModule, "IsSupportedMedia", Source)
+			);
+
+			Response.Check();
+
+			return Response.Result;
+		}
+
+		/// <summary>
+		/// Determines whether a given media is supported by the software.
+		/// </summary>
+		/// <param name="Source">The location of the media. Can be a URI, path to a file, ...</param>
+		/// <returns>
+		///		A <see cref="Task{bool}"/> that represents the asynchronous process.
+		///		True if the media is supported by the software, false otherwise.
+		///	</returns>
+		public async Task<bool> IsSupportedMediaAsync(string Source) {
+			var Response = await this.Connection.SendAsync<bool>(
+				new ServerRequest(ServerModule, "IsSupportedMedia", Source)
+			);
 
 			Response.Check();
 

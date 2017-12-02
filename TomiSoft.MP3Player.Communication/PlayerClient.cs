@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using TomiSoft.MP3Player.Communication.ClientModules;
 
 namespace TomiSoft.MP3Player.Communication {
@@ -140,6 +141,14 @@ namespace TomiSoft.MP3Player.Communication {
         public void KeepAlive() {
             this.Connection.SendKeepAlive();
         }
+
+		/// <summary>
+		/// Sends a command to the server to keep alive the connection.
+		/// </summary>
+		/// <returns>A <see cref="Task"/> that represents the asynchronous process.</returns>
+		public Task KeepAliveAsync() {
+			return this.Connection.SendKeepAliveAsync();
+		}
 
         /// <summary>
         /// Closes the connection to the server.

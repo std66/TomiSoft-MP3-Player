@@ -19,8 +19,8 @@ namespace TomiSoft.LyricsEditor.Commands {
             return true;
         }
 
-        public void Execute(object parameter) {
-            this.Client.Playback.Pause();
+        public async void Execute(object parameter) {
+            await this.Client.Playback.PauseAsync();
         }
     }
 }
