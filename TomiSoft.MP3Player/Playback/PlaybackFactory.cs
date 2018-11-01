@@ -13,11 +13,6 @@ namespace TomiSoft.MP3Player.Playback {
 	/// Provides a simple way of loading media to play.
 	/// </summary>
 	public class PlaybackFactory {
-		/// <summary>
-		/// Stores the last IPlaybackManager instance.
-		/// </summary>
-		private static IPlaybackManager lastInstance;
-
 		public static event Action<double, string> MediaOpenProgressChanged;
 
 		/// <summary>
@@ -31,8 +26,8 @@ namespace TomiSoft.MP3Player.Playback {
 			#region Error checking
 			if (SongInfo == null)
 				throw new ArgumentNullException(nameof(SongInfo));
-			#endregion
-
+            #endregion
+            
 			//If the Source is file:
 			if (File.Exists(SongInfo.Source)) {
 				string Extension = PlayerUtils.GetFileExtension(SongInfo.Source);
@@ -42,21 +37,32 @@ namespace TomiSoft.MP3Player.Playback {
 				
 				//In case of any file supported by BASS:
 				if (BassManager.GetSupportedExtensions().Contains(Extension)) {
-					//If Audio CD track:
-					if (Extension == "cda") {
-						lastInstance = new AudioCdPlayback(SongInfo.Source);
-						return lastInstance;
-					}
+                    //If Audio CD track:
+                    if (Extension == "cda") {
+                         return new AudioCdPlayback(SongInfo.Source);
+                    }
+                    else {
+                        using (Stream SourceStream = File.OpenRead(SongInfo.Source)) {
+                            var unmanagedStream = await UnmanagedStream.CreateFromStream(SourceStream, FileOpenProgress);
 
-					//Any other stuff...
-					using (Stream SourceStream = File.OpenRead(SongInfo.Source)) {
-						lastInstance = new LocalAudioFilePlayback(
-							await UnmanagedStream.CreateFromStream(SourceStream, FileOpenProgress),
-							SongInfo
-						);
-					}
+                            //If Midi file:
+                            if (new string[] { "mid", "midi", "kar", "rmi" }.Contains(Extension)) {
+                                return new LocalMidiFilePlayback(
+                                    unmanagedStream,
+                                    SongInfo,
+                                    @"C:\SGM-V2.01.sf2"
+                                );
+                            }
 
-					return lastInstance;
+                            //Any other stuff...
+                            else {
+                                return new LocalAudioFilePlayback(
+                                    unmanagedStream,
+                                    SongInfo
+                                );
+                            }
+                        }
+                    }
 				}
 			}
 
@@ -67,10 +73,11 @@ namespace TomiSoft.MP3Player.Playback {
 					Progress<LongOperationProgress> Progress = new Progress<LongOperationProgress>();
 					Progress.ProgressChanged += OpenFileProgressChanged;
 
-					lastInstance = await YoutubePlayback.DownloadVideoAsync(SongInfo, Progress);
+                    IPlaybackManager Result = await YoutubePlayback.DownloadVideoAsync(SongInfo, Progress);
 
 					Progress.ProgressChanged -= OpenFileProgressChanged;
-					return lastInstance;
+
+                    return Result;
 				}
 			}
 
@@ -95,11 +102,9 @@ namespace TomiSoft.MP3Player.Playback {
 		/// <param name="Volume">The volume to initialize with.</param>
 		/// <returns>An <see cref="IPlaybackManager"/> that represents the Null-Playback manager instance</returns>
 		public static IPlaybackManager NullPlayback(int Volume) {
-			lastInstance = new NullPlayback() {
-				Volume = Volume
-			};
-
-			return lastInstance;
+			return new NullPlayback() {
+                Volume = Volume
+            };
 		}
 
 		/// <summary>

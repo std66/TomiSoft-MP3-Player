@@ -1,13 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using TomiSoft.MP3Player.Encoder.Lame;
 using TomiSoft.MP3Player.MediaInformation;
 using TomiSoft.MP3Player.Utils;
 using TomiSoft.MP3Player.Utils.Extensions;
 using Un4seen.Bass;
-using Un4seen.Bass.AddOn.Enc;
 
 namespace TomiSoft.MP3Player.Playback.BASS {
     /// <summary>

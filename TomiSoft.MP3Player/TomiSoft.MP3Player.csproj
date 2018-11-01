@@ -109,6 +109,7 @@
     <Compile Include="MediaInformation\SongInfo.cs" />
     <Compile Include="MediaInformation\YoutubeSongInfo.cs" />
     <Compile Include="Playback\BASS\AudioCdPlayback.cs" />
+    <Compile Include="Playback\BASS\LocalMidiFilePlayback.cs" />
     <Compile Include="Playback\ISavable.cs" />
     <Compile Include="Playback\YouTube\YoutubePlayback.cs" />
     <Compile Include="Settings.cs" />
