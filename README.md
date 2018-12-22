@@ -42,4 +42,4 @@ System requirements:
   
 Author:
 -------
-Sinku Tamás (sinkutamas@gmail.com)
+Tamás Sinku (sinkutamas@gmail.com)
